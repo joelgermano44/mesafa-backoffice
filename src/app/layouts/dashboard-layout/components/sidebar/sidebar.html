@@ -1,0 +1,64 @@
+<nav
+  class="flex flex-col gap-2.5 h-full fixed left-0 z-50 border-r border-[#ECECEC] font-inter py-10 px-7.5"
+>
+  @for (item of navItems; track item) {
+    <ul class="flex flex-col gap-2 w-55.75">
+      <h2 class="text-black text-[15px] font-semibold">{{ item.title }}</h2>
+
+      @for (subItem of item.items; track subItem) {
+        <li class="flex w-full">
+          <a
+            routerLink="{{ subItem.route }}"
+            routerLinkActive="bg-primary/10 text-primary"
+            #rla="routerLinkActive"
+            class="flex gap-2.5 items-center p-2.5 rounded-lg w-full text-[#8C8C8C] hover:bg-[#F5F5F5] transition-all duration-300 cursor-pointer hover:scale-105"
+          >
+            <img
+              [src]="rla.isActive ? subItem.activeIcon : subItem.icon"
+              alt="{{ subItem.label }}"
+              class="w-6 h-6"
+            />
+
+            <span class="text-xs font-semibold">{{ subItem.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+
+  <ul class="flex flex-col gap-2 w-55.75">
+    <h2 class="text-black text-[15px] font-semibold">Configurações</h2>
+
+    <li class="flex w-full">
+      <a
+        routerLink="/settings"
+        routerLinkActive="bg-primary/10 text-primary"
+        #config="routerLinkActive"
+        class="flex gap-2.5 items-center p-2.5 rounded-lg w-full text-[#8C8C8C] hover:bg-[#F5F5F5] transition-all duration-300 cursor-pointer hover:scale-105"
+      >
+        <img
+          [src]="
+            config.isActive
+              ? '/images/icons/dashboard/sidebar/active/configuracoes.svg'
+              : '/images/icons/dashboard/sidebar/configuracoes.svg'
+          "
+          alt="Configurações"
+          class="w-6 h-6"
+        />
+
+        <span class="text-xs font-semibold">Configurações</span>
+      </a>
+    </li>
+
+    <li class="flex w-full">
+      <button
+        (click)="logout()"
+        class="flex gap-2.5 items-center p-2.5 rounded-lg w-full text-[#8C8C8C] hover:bg-[#F5F5F5] transition-all duration-300 cursor-pointer hover:scale-105"
+      >
+        <img src="/images/icons/dashboard/sidebar/sair.svg" alt="Sair" class="w-6 h-6" />
+
+        <span class="text-xs font-semibold">Sair</span>
+      </button>
+    </li>
+  </ul>
+</nav>

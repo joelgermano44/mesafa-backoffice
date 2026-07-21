@@ -1,0 +1,49 @@
+<section class="w-full h-119.5 bg-primary justify-center items-center flex text-white font-inter">
+  <div class="max-w-374.25 w-full h-full flex flex-1 justify-between items-center gap-22">
+    <div class="max-w-128.5 flex flex-col w-full gap-3.75">
+      <h1 class="text-[40px] font-bold leading-13">
+        Queremos que você tenha uma vida tranquila ao procurar um serviço.
+      </h1>
+
+      <div class="flex flex-col gap-2.5">
+        <p class="font-semibold">Descarregue a Aplicação MeSafa</p>
+
+        <div class="flex gap-2.5">
+          <a
+            routerLink=""
+            class="hover:opacity-80 transition-all duration-300 cursor-pointer hover:scale-105"
+          >
+            <img src="/images/landing/we-offer/apple-store.svg" alt="Apple Store" />
+          </a>
+
+          <a
+            routerLink=""
+            class="hover:opacity-80 transition-all duration-300 cursor-pointer hover:scale-105"
+          >
+            <img src="/images/landing/we-offer/google-play.svg" alt="Google Play" />
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      <h1 class="text-[30px] font-bold">O que lhe oferecemos?</h1>
+
+      <ul class="grid grid-cols-2 gap-x-24 gap-y-5 max-w-228.75 w-full">
+        @for (item of offerItems; track item.id) {
+          <li class="flex gap-5 w-full">
+            <span class="text-[20px] font-semibold"> {{ item.id }}. </span>
+
+            <div class="flex flex-col gap-1.5">
+              <h3 class="text-[20px] font-semibold">{{ item.title }}</h3>
+
+              <p class="text-[15px] font-medium text-[#E4E4E4]">
+                {{ item.description }}
+              </p>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

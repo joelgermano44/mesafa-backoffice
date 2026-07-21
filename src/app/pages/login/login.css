@@ -1,0 +1,5 @@
+@reference "./../../../styles.css";
+
+.btn-primary {
+  @apply bg-primary rounded-lg text-white font-semibold hover:opacity-80 transition-all duration-300 cursor-pointer;
+}
