@@ -1,15 +1,15 @@
-<header class="w-full flex justify-center items-center bg-white py-5 px-4 font-inter shadow-black/5 shadow-md sticky top-0 z-50">
-  <nav class="max-w-374.25 w-full flex items-center justify-start gap-10.25">
+<header class="w-full flex justify-center items-center bg-white py-5 px-4 max-sm:py-3.5 max-sm:px-3 font-inter shadow-black/5 shadow-md sticky top-0 z-50">
+  <nav class="max-w-374.25 w-full flex items-center justify-start gap-10.25 max-lg:gap-6 max-md:flex-col max-md:items-start max-md:gap-3">
     <a routerLink="/">
-      <img src="/images/logos/logo.svg" alt="Logo" class="w-26.5 h-10 object-fit" />
+      <img src="/images/logos/logo.svg" alt="Logo" class="w-26.5 h-10 max-sm:w-22 max-sm:h-auto object-fit" />
     </a>
 
-    <ul class="flex items-center justify-start gap-4">
+    <ul class="flex items-center justify-start gap-4 max-sm:gap-2.5 max-sm:flex-wrap">
       @for (item of navItems; track item.id) {
         <li class="transition-transform cursor-pointer duration-300 hover:scale-105">
           <a
             [routerLink]="item.link"
-            class="text-sm font-semibold hover:text-primary"
+            class="text-sm max-sm:text-xs font-semibold hover:text-primary"
           >
             {{ item.label }}
           </a>

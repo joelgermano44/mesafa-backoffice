@@ -1,41 +1,42 @@
-<div class="w-full bg-white relative min-h-screen">
-  <div class="relative w-full h-full flex justify-center items-center">
-    <img src="/images/login/bg.svg" alt="Login" class="w-full h-full object-cover" />
+<div class="w-full bg-white relative h-screen flex flex-col">
+  <div class="relative w-full flex justify-center items-center max-lg:flex-col max-lg:gap-6">
+    <img src="/images/login/bg.svg" alt="Login" class="w-full object-cover max-2xl:h-screen" />
+    
     <img
       src="/images/logos/logo-white.svg"
       alt="Login"
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-2xl:top-1/5"
     />
 
     <form
       [formGroup]="loginForm"
       (ngSubmit)="onSubmit()"
-      class="absolute left-1/2 transform -bottom-105 -translate-x-1/2 -translate-y-1/2 max-w-85 w-full py-10 px-4.75 rounded-lg bg-white min-h-44 border border-[#EAECF0] shadow-black/8 shadow-lg flex flex-col gap-3.25"
+      class="absolute left-1/2 transform -bottom-110 -translate-x-1/2 -translate-y-1/2 max-w-85 w-full py-10 px-4.75 rounded-lg bg-white min-h-44 border border-[#EAECF0] shadow-black/8 shadow-lg flex flex-col gap-3.25 max-2xl:top-1/2 max-2xl:h-fit"
     >
-      <h1 class="font-semibold text-[#302F43]">Entrar na minha conta</h1>
+      <h1 class="font-semibold text-[#302F43] max-sm:text-sm">Entrar na minha conta</h1>
 
-      <div class="flex flex-col gap-3.25">
-        <label class="flex flex-col w-full gap-2.5">
-          <p class="text-[#302F43] font-semibold text-[13px]">Endereço de e-mail</p>
+      <div class="flex flex-col gap-3.25 max-sm:gap-2.5">
+        <label class="flex flex-col w-full gap-2.5 max-sm:gap-1.5">
+          <p class="text-[#302F43] font-semibold text-[13px] max-sm:text-xs">Endereço de e-mail</p>
 
           <div>
             <div
-              class="flex gap-3 px-2 py-4 rounded-lg w-full border"
+              class="flex gap-3 px-2 py-4 rounded-lg w-full border max-sm:py-3 max-sm:gap-2"
               [class.border-red-500]="email?.invalid && email?.touched"
               [class.border-primary]="!(email?.invalid && email?.touched)"
             >
-              <img src="/images/icons/email.svg" alt="Email" />
+              <img src="/images/icons/email.svg" alt="Email" class="max-sm:w-4" />
 
               <input
                 type="email"
                 formControlName="email"
                 placeholder="Digite seu email"
-                class="w-full outline-none text-sm text-[#1D1D1B] font-semibold"
+                class="w-full outline-none text-sm text-[#1D1D1B] font-semibold max-sm:text-xs"
               />
             </div>
 
             @if (submitted && email?.errors) {
-              <span class="text-xs text-red-500">
+              <span class="text-xs text-red-500 max-sm:text-[10px]">
                 @if (email?.errors?.['required']) {
                   O e-mail é obrigatório.
                 }
@@ -48,26 +49,26 @@
           </div>
         </label>
 
-        <label class="flex flex-col w-full gap-2.5">
-          <p class="text-[#302F43] font-semibold text-[13px]">Senha</p>
+        <label class="flex flex-col w-full gap-2.5 max-sm:gap-1.5">
+          <p class="text-[#302F43] font-semibold text-[13px] max-sm:text-xs">Senha</p>
           <div>
             <div
-              class="flex gap-3 px-2 py-4 border border-primary rounded-lg w-full"
+              class="flex gap-3 px-2 py-4 border border-primary rounded-lg w-full max-sm:py-3 max-sm:gap-2"
               [class.border-red-500]="password?.invalid && password?.touched"
               [class.border-primary]="!(password?.invalid && password?.touched)"
             >
-              <img src="/images/icons/password.svg" alt="Password" />
+              <img src="/images/icons/password.svg" alt="Password" class="max-sm:w-4" />
 
               <input
                 type="password"
                 formControlName="password"
                 placeholder="***********"
-                class="w-full outline-none text-sm text-[#1D1D1B] font-semibold"
+                class="w-full outline-none text-sm text-[#1D1D1B] font-semibold max-sm:text-xs"
               />
             </div>
 
             @if (submitted && password?.errors) {
-              <span class="text-xs text-red-500">
+              <span class="text-xs text-red-500 max-sm:text-[10px]">
                 @if (password?.errors?.['required']) {
                   A senha é obrigatória.
                 }
@@ -80,14 +81,14 @@
           </div>
         </label>
 
-        <a routerLink="/reset-password" class="text-[#302F43] font-semibold text-[13px]"
+        <a routerLink="/reset-password" class="text-[#302F43] font-semibold text-[13px] max-sm:text-xs"
           >Clique aqui, para redefinir sua senha.</a
         >
       </div>
 
       <button
         type="submit"
-        class="w-full py-4 px-2.5 text-xs btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        class="w-full py-4 px-2.5 text-xs btn-primary disabled:opacity-50 disabled:cursor-not-allowed max-sm:py-3"
       >
         Fazer Login
       </button>
