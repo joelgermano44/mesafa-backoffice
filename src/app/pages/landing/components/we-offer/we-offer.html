@@ -1,43 +1,46 @@
-<section class="w-full h-119.5 bg-primary justify-center items-center flex text-white font-inter">
-  <div class="max-w-374.25 w-full h-full flex flex-1 justify-between items-center gap-22">
-    <div class="max-w-128.5 flex flex-col w-full gap-3.75">
-      <h1 class="text-[40px] font-bold leading-13">
+<section class="w-full h-auto min-h-119.5 bg-primary justify-center items-center flex text-white font-inter py-10 max-lg:py-14 max-sm:py-6">
+  <div class="max-w-374.25 w-full h-full flex max-xl:flex-col justify-between items-center gap-22 max-2xl:gap-12 max-xl:gap-10 max-sm:gap-8 max-2xl:px-4">
+    
+    <div class="max-w-128.5 max-xl:max-w-full flex flex-col w-full gap-3.75 ">
+      <h1 class="text-[40px] max-2xl:text-[36px] max-lg:text-[28px] max-sm:text-[22px] font-bold leading-13 max-lg:leading-snug">
         Queremos que você tenha uma vida tranquila ao procurar um serviço.
       </h1>
 
       <div class="flex flex-col gap-2.5">
-        <p class="font-semibold">Descarregue a Aplicação MeSafa</p>
+        <p class="font-semibold max-sm:text-[14px]">Descarregue a Aplicação MeSafa</p>
 
-        <div class="flex gap-2.5">
+        <div class="flex gap-2.5 max-lg:flex-col  max-sm:items-start">
           <a
             routerLink=""
             class="hover:opacity-80 transition-all duration-300 cursor-pointer hover:scale-105"
           >
-            <img src="/images/landing/we-offer/apple-store.svg" alt="Apple Store" />
+            <img src="/images/landing/we-offer/apple-store.svg" alt="Apple Store" class="max-sm:w-36" />
           </a>
 
           <a
             routerLink=""
             class="hover:opacity-80 transition-all duration-300 cursor-pointer hover:scale-105"
           >
-            <img src="/images/landing/we-offer/google-play.svg" alt="Google Play" />
+            <img src="/images/landing/we-offer/google-play.svg" alt="Google Play" class="max-sm:w-36" />
           </a>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col gap-2.5">
-      <h1 class="text-[30px] font-bold">O que lhe oferecemos?</h1>
+    <div class="flex flex-col gap-2.5 w-full max-2xl:gap-8">
+      <h1 class="text-[30px] max-lg:text-[24px] max-sm:text-[20px] font-bold">
+        O que lhe oferecemos?
+      </h1>
 
-      <ul class="grid grid-cols-2 gap-x-24 gap-y-5 max-w-228.75 w-full">
+      <ul class="grid grid-cols-2 max-md:grid-cols-1 gap-x-24 max-2xl:gap-x-12 gap-y-5 max-w-228.75 max-xl:max-w-full w-full">
         @for (item of offerItems; track item.id) {
           <li class="flex gap-5 w-full">
-            <span class="text-[20px] font-semibold"> {{ item.id }}. </span>
+            <span class="text-[20px] max-sm:text-[16px] font-semibold"> {{ item.id }}. </span>
 
             <div class="flex flex-col gap-1.5">
-              <h3 class="text-[20px] font-semibold">{{ item.title }}</h3>
+              <h3 class="text-[20px] max-sm:text-[16px] font-semibold">{{ item.title }}</h3>
 
-              <p class="text-[15px] font-medium text-[#E4E4E4]">
+              <p class="text-[15px] max-sm:text-[13px] font-medium text-[#E4E4E4]">
                 {{ item.description }}
               </p>
             </div>
@@ -45,5 +48,6 @@
         }
       </ul>
     </div>
+
   </div>
 </section>
