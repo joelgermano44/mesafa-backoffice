@@ -1,0 +1,18 @@
+<div class="w-64.5 min-h-50 h-full bg-secondary rounded-md p-5 flex flex-col gap-2.5 justify-between">
+  <div class="flex gap-1.5 flex-col W-full">
+    <div class="flex flex-col gap-2 w.full">
+      <img src="/images/icons/dashboard/home/dash-icon.svg" alt="" class="w-11" />
+
+      <div class="flex flex-col gap-1.25 text-[#1546EB] w-full">
+        <p class="font-barlow text-sm font-semibold">{{ title() }}</p>
+        <p class="font-barlow text-xl font-bold">
+          {{ formattedStats() }}{{ money() ? ' KZ' : '' }}
+        </p>
+      </div>
+    </div>
+
+    <p class="text-[#4B525F] text-[15px] font-semibold">{{ text() }}</p>
+  </div>
+
+  <a routerLink="" class="text-[#4079ED] text-xs"> Ver listagem </a>
+</div>

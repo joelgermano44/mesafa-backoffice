@@ -6,6 +6,7 @@ import { Login } from './pages/login/login';
 import { DashboardLayout } from './layouts/dashboard-layout/dashboard-layout';
 import { guestGuard } from '../core/guards/guest.guard';
 import { authGuard } from '../core/guards/auth.guard';
+import { Home } from './pages/dashboard/home/home';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,12 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardLayout,
     canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: Home,
+      }
+    ]
   },
 
   {

@@ -1,6 +1,4 @@
-<header
-  class="px-8.75 py-3.75 bg-primary flex items-center justify-between font-inter sticky top-0 z-50"
->
+<header class="px-8.75 py-3.75 bg-primary flex items-center justify-between font-inter z-50">
   <a routerLink="/dashboard">
     <img src="/images/logos/logo-white.svg" alt="Logo" class="w-26.75" />
   </a>
@@ -19,9 +17,13 @@
   <button
     class="flex items-center text-primary gap-2 bg-white py-2.25 px-2.5 rounded-lg hover:opacity-80 transition-all duration-300 cursor-pointer hover:scale-105"
   >
-    <img src="/images/icons/dashboard/user.svg" alt="User" class="w-6.25 h-6.25" />
+    @if (admin()?.image) {
+      <img [src]="admin()?.image" alt="User" class="w-6.25 h-6.25" />
+    } @else {
+      <img src="/images/icons/dashboard/user.svg" alt="User" class="w-6.25 h-6.25" />
+    }
 
-    <span class="text-xs font-semibold">Joel Germano</span>
+    <span class="text-xs font-semibold">{{ admin()?.name }}</span>
 
     <img src="/images/icons/dashboard/chevron-down.svg" alt="User" class="w-2 h-1" />
   </button>

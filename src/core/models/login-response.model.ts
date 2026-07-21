@@ -1,6 +1,6 @@
-import { User } from './user.model';
+import { Admin } from './admin.model';
 
 export interface LoginResponse {
   access_token: string;
-  user: User;
+  user: Admin;
 }
