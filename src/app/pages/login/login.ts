@@ -1,8 +1,9 @@
 import { NgClass } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
+import { toast } from 'ngx-sonner';
+import { AuthService } from '../../../core/features/auth/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class Login {
   loginForm: FormGroup;
   submitted = false;
+  loading = signal<boolean>(false);
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -32,12 +34,16 @@ export class Login {
       return;
     }
 
+    this.loading.set(true);
+
     this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: () => {
+        this.loading.set(false);
         this.router.navigate(['/dashboard']);
       },
       error: (error) => {
-        console.error(error);
+        this.loading.set(false);
+        toast.error('Falha ao realizar login. Verifique suas credenciais.');
       },
     });
   }

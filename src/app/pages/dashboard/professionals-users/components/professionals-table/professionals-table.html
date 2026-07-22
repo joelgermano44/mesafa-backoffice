@@ -1,0 +1,176 @@
+<div class="table-container flex flex-col font-inter w-full">
+  <div class="filter-bar flex w-full justify-between items-center mb-5 gap-4">
+    <div class="filters-group flex gap-3.25 items-center">
+      <span class="filter-label font-semibold text-sm">Filtro</span>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Província ></label>
+        <select
+          [ngModel]="selectedProvince()"
+          (ngModelChange)="selectedProvince.set($event); onFilterChange()"
+          class="w-fit outline-none bg-transparent"
+        >
+          @for (prov of availableProvinces(); track prov) {
+            <option [value]="prov" class="text-black">{{ prov }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div
+      class="search-box p-2.5 rounded-lg max-w-54 w-full flex items-center gap-3.75 focus-within:ring-3 focus-within:ring-[#3278FF] focus-within:bg-[#EFEFEF] border-2 border-[#EFEFEF]"
+    >
+      <img src="/images/icons/search.svg" alt="" class="w-4.75 h-4.75" />
+      <input
+        type="text"
+        class="placeholder:text-[#9A9FA5] text-gray-700 w-full outline-none caret-[#2A85FF]"
+        placeholder="Procurar"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchChange($event)"
+      />
+    </div>
+  </div>
+
+  <table class="data-table w-full">
+    <thead class="bg-primary text-[13px] font-semibold text-white">
+      <tr>
+        <th class="px-4 py-3.5 text-left rounded-l-2xl">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/funcionario.svg" alt="" class="w-4 h-4" />
+            <span>Profissional</span>
+          </div>
+        </th>
+
+        <th class="px-4 py-3.5 text-left">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/contacto.svg" alt="" class="w-4 h-4" />
+            <span>Contacto</span>
+          </div>
+        </th>
+        <th class="px-4 py-3.5 text-left">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/departamento.svg" alt="" class="w-4 h-4" />
+            <span>BI</span>
+          </div>
+        </th>
+        <th class="px-4 py-3.5 text-left">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/cargo.svg" alt="" class="w-4 h-4" />
+            <span>Serviços</span>
+          </div>
+        </th>
+        <th class="px-4 py-3.5 text-left">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/cargo.svg" alt="" class="w-4 h-4" />
+            <span>Atendidos</span>
+          </div>
+        </th>
+        <th class="px-4 py-3.5 text-center rounded-r-2xl">
+          <span>Ações</span>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @if (isLoading()) {
+        <tr>
+          <td colspan="7" class="py-8 text-center text-sm text-gray-500">
+            A carregar profissionais...
+          </td>
+        </tr>
+      } @else if (paginatedCollaborators().length === 0) {
+        <tr>
+          <td colspan="7" class="py-8 text-center text-sm text-gray-500">
+            Nenhum profissional encontrado.
+          </td>
+        </tr>
+      } @else {
+        @for (item of paginatedCollaborators(); track item.id) {
+          <tr
+            class="even:bg-[#95B9FF0D] hover:bg-slate-100 transition-colors border border-[#EAECF0]"
+          >
+            <td>
+              <div class="user-cell flex items-center gap-2 p-3.75">
+                <div class="avatar">
+                  <img
+                    [src]="item.image || '/images/icons/dashboard/user.svg'"
+                    [alt]="item.name"
+                    class="w-10 h-10 rounded-full object-cover"
+                  />
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-[13px] font-semibold">{{ item.name }}</span>
+                  <span class="text-xs text-[#898989]">@{{ item.username }}</span>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <div class="contact-cell flex flex-col gap-1">
+                <div class="text-xs font-semibold">{{ item.email }}</div>
+                <div class="sub-text text-xs text-[#898989] font-semibold">{{ item.phone }}</div>
+              </div>
+            </td>
+
+            <td>
+              <span class="text-xs font-semibold">
+                {{ item.bi || 'N/D' }}
+              </span>
+            </td>
+
+            <td>
+              <span class="text-xs font-semibold">
+                {{ item.services ? item.services.length : 0 }} serviço(s)
+              </span>
+            </td>
+
+            <td>
+              <span class="text-xs font-semibold">
+                {{ item.created_at | date: 'dd/MM/yyyy' }}
+              </span>
+            </td>
+
+            <td>
+              <div class="actions flex justify-center gap-2">
+                <button (click)="deleteCollaborator(item.id)" title="Eliminar">
+                  <img src="images/icons/dashboard/tables/eliminar.svg" alt="" class="w-6 h-6" />
+                </button>
+
+                <button (click)="editCollaborator(item)" title="Editar">
+                  <img src="images/icons/dashboard/tables/editar.svg" alt="" class="w-6 h-6" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+
+  <div
+    class="pagination-bar w-full flex justify-between items-center border border-[#EAECF0] rounded-b-lg px-6 py-3"
+  >
+    <button
+      class="btn-page border border-[#D0D5DD] rounded-lg py-2 px-3.5 hover:scale-105 hover:bg-[#D0D5DD]/30 cursor-pointer transition-all duration-200 text-sm text-[#344054] disabled:opacity-50 disabled:hover:scale-100"
+      [disabled]="currentPage() === 1"
+      (click)="previousPage()"
+    >
+      Anterior
+    </button>
+
+    <span class="page-info text-sm text-[#344054]">
+      Página <span class="text-[#1546EB]">{{ currentPage() }}</span> de
+      <span>{{ totalPages() }}</span>
+    </span>
+
+    <button
+      class="btn-page border border-[#D0D5DD] rounded-lg py-2 px-3.5 hover:scale-105 hover:bg-[#D0D5DD]/30 cursor-pointer transition-all duration-200 text-sm text-[#344054] disabled:opacity-50 disabled:hover:scale-100"
+      [disabled]="currentPage() === totalPages() || paginatedCollaborators().length === 0"
+      (click)="nextPage()"
+    >
+      Próximo
+    </button>
+  </div>
+</div>

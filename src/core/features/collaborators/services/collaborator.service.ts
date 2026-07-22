@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { tap } from 'rxjs';
 
-import { API_CONFIG } from '../../../core/config/api.config';
+import { API_CONFIG } from '../../../config/api.config';
 import { Collaborator } from '../models/collaborator.model';
 import { CreateCollaboratorDto } from '../models/create-collaborator.dto';
 import { UpdateCollaboratorDto } from '../models/update-collaborator.dto';

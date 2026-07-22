@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { TitleHeader } from '../../components/title-header/title-header';
 import { Dashcard } from './components/dashcard/dashcard';
-import { AdminService } from '../../../../core/services/admin.service';
+import { AdminService } from '../../../../core/features/administrators/services/admin.service';
 
 @Component({
   selector: 'app-home',

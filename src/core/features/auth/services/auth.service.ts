@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 
 import { tap } from 'rxjs';
 
-import { API_CONFIG } from '../config/api.config';
-import { STORAGE_KEYS } from '../constants/storage.constants';
+import { API_CONFIG } from '../../../config/api.config';
+import { STORAGE_KEYS } from '../../../constants/storage.constants';
 import { LoginRequest } from '../models/login-request.model';
 import { LoginResponse } from '../models/login-response.model';
-import { Admin } from '../models/admin.model';
-import { StorageService } from './storage.service';
-import { AdminService } from './admin.service';
+import { Admin } from '../../administrators/models/admin.model';
+import { StorageService } from '../../collaborators/services/storage.service';
+import { AdminService } from '../../administrators/services/admin.service';
 
 @Injectable({
   providedIn: 'root',

@@ -8,8 +8,9 @@
       @for (subItem of item.items; track subItem) {
         <li class="flex w-full">
           <a
-            routerLink="{{ subItem.route }}"
+            [routerLink]="subItem.route"
             routerLinkActive="bg-primary/10 text-primary"
+            [routerLinkActiveOptions]="{ exact: true }"
             #rla="routerLinkActive"
             class="flex gap-2.5 items-center p-2.5 rounded-lg w-full text-[#8C8C8C] hover:bg-[#F5F5F5] transition-all duration-300 cursor-pointer hover:scale-105"
           >
