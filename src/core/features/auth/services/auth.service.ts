@@ -9,7 +9,7 @@ import { STORAGE_KEYS } from '../../../constants/storage.constants';
 import { LoginRequest } from '../models/login-request.model';
 import { LoginResponse } from '../models/login-response.model';
 import { Admin } from '../../administrators/models/admin.model';
-import { StorageService } from '../../collaborators/services/storage.service';
+import { StorageService } from '../../storage/services/storage.service';
 import { AdminService } from '../../administrators/services/admin.service';
 
 @Injectable({

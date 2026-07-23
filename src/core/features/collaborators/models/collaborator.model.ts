@@ -1,6 +1,6 @@
+import { ProfessionalService } from '../../services/models/professional-with-services.model';
 import { Address } from './address.model';
 import { Professions } from './professions.model';
-import { Services } from './services.model';
 
 export interface Collaborator {
   username: string;
@@ -16,7 +16,7 @@ export interface Collaborator {
   id: number;
   nif: string;
   about_me: string;
-  services: Services[];
+  services: ProfessionalService[];
   address: Address;
   professions: Professions[];
 }

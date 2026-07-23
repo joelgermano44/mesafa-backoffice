@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 import { Admin, CreateAdminDto, DeleteAdminResponse, UpdateAdminDto } from '../models/admin.model';
 import { API_CONFIG } from '../../../config/api.config';
@@ -55,4 +55,8 @@ export class AdminService {
   clear(): void {
     this._admin.set(null);
   }
+
+  /*   createService(data: FormData): Observable<ProfessionalService> {
+    return this.http.post<ProfessionalService>(`${API_CONFIG.baseUrl}/admin/services`, data);
+  } */
 }
