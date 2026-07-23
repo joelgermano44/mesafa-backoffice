@@ -1,0 +1,93 @@
+@if (admin(); as user) {
+  <div class="fixed inset-0 bg-black/40 z-40 transition-opacity" (click)="onClose()"></div>
+
+  <div
+    class="fixed top-0 right-0 h-full w-145 bg-white z-50 shadow-2xl flex flex-col justify-between p-8 font-inter overflow-y-auto border-l border-gray-200"
+  >
+    <div class="flex flex-col gap-11">
+      <div class="flex justify-between items-start">
+        <div class="flex flex-col">
+          <h2 class="text-[25px] font-semibold">Perfil de Administrador</h2>
+          <p class="text-[13px] text-[#737791]">Informações detalhadas do conta.</p>
+        </div>
+        <button
+          (click)="onClose()"
+          class="p-1 rounded-full text-[#464E5F] hover:text-gray-500 bg-gray-100 transition-colors cursor-pointer"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-7">
+        <div class="flex flex-col items-center text-center gap-3.25">
+          <img
+            [src]="user.image || '/images/icons/dashboard/user.svg'"
+            [alt]="user.name"
+            class="w-34 h-34 rounded-full object-cover"
+          />
+
+          <div class="flex flex-col leading-7">
+            <h3 class="text-[25px] font-semibold">{{ user.name }}</h3>
+            <p class="text-xs text-[#6F767E]">@{{ user.username }}</p>
+          </div>
+        </div>
+
+        <div class="flex gap-7 w-full justify-center">
+          <div class="flex flex-col gap-3">
+            <h4 class="text-[15px] font-semibold">Informações Pessoais</h4>
+            <div class="flex gap-1">
+              <span class="text-xs text-[#2D2D2D]">Telefone:</span>
+              <span class="text-xs font-semibold">{{ user.phone || 'N/D' }}</span>
+            </div>
+            <div class="flex gap-1">
+              <span class="text-xs text-[#2D2D2D]">E-mail:</span>
+              <span class="text-xs font-semibold break-all">{{ user.email }}</span>
+            </div>
+            <div class="flex gap-1">
+              <span class="text-xs text-[#2D2D2D]">BI:</span>
+              <span class="text-xs font-semibold">{{ user.bi || 'N/D' }}</span>
+            </div>
+          </div>
+
+          <div class="border border-black h-44"></div>
+
+          <div class="flex flex-col gap-3 border-gray-100 pl-4">
+            <h4 class="text-[15px] font-semibold">Acessos</h4>
+            <div class="flex gap-1">
+              <span class="text-xs text-[#2D2D2D]">Tipo de acesso:</span>
+              <span class="text-xs font-semibold">Administrador</span>
+            </div>
+            <div class="flex gap-1">
+              <span class="text-xs text-[#2D2D2D]">Data de Registo:</span>
+              <span class="text-xs font-semibold">{{ user.created_at | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-3">
+      <button
+        (click)="deleteAdmin(user.id)"
+        class="py-0.75 px-1.25 w-fit rounded-lg border border-[#FCA5A5] text-[#991B1B] bg-[#FEE2E2] hover:bg-red-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+      >
+        <img src="images/icons/dashboard/eliminar-red.svg" class="w-4 h-4" alt="" />
+        Apagar
+      </button>
+
+      <button
+        class="py-0.75 px-1.25 rounded-lg bg-primary/5 border border-primary/20 text-primary hover:bg-primary/10 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+      >
+        <img src="images/icons/dashboard/editar-blue.svg" class="w-4 h-4" alt="" />
+        Editar
+      </button>
+    </div>
+  </div>
+}

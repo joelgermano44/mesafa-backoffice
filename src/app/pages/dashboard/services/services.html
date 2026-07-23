@@ -1,0 +1,128 @@
+<app-title-header
+  title="Serviços"
+  subtitle="Faça a gestão de todos os serviços na plataforma"
+  name="{{ admin()?.name }}"
+></app-title-header>
+
+<div class="w-full font-inter mt-7.25">
+  <div class="flex items-center justify-between gap-4 mb-5">
+    <div class="flex items-center gap-3">
+      <span class="font-semibold text-sm">Filtro</span>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label>Tipo ></label>
+
+        <select
+          [value]="selectedType()"
+          (change)="selectedType.set($any($event.target).value)"
+          class="w-fit outline-none"
+        >
+          <option value="Tudo" class="text-black">Tudo</option>
+          <option value="hub" class="text-black">Hub</option>
+          <option value="outros" class="text-black">Outros</option>
+        </select>
+      </div>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label>Preço ></label>
+        <select
+          [value]="selectedPriceFilter()"
+          (change)="selectedPriceFilter.set($any($event.target).value)"
+          class="w-fit outline-none"
+        >
+          <option value="Tudo" class="text-black">Tudo</option>
+          <option value="menor" class="text-black">Menor Preço</option>
+          <option value="maior" class="text-black">Maior Preço</option>
+        </select>
+      </div>
+    </div>
+
+    <div
+      class="search-box p-2.5 rounded-lg max-w-54 w-full flex items-center gap-3.75 focus-within:ring-3 focus-within:ring-[#3278FF] focus-within:bg-[#EFEFEF] border-2 border-[#EFEFEF]"
+    >
+      <img src="/images/icons/search.svg" alt="" class="w-4.75 h-4.75" />
+      <input
+        type="text"
+        class="placeholder:text-[#9A9FA5] text-gray-700 w-full outline-none caret-[#2A85FF]"
+        placeholder="Procurar"
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  @if (filteredServices().length > 0) {
+    <div class="flex flex-wrap gap-6.25">
+      @for (card of filteredServices(); track card.id) {
+        <div
+          class="bg-[#F9FBFC47] rounded-xl shadow-sm border border-[#F1F1F1] w-53.75 overflow-hidden flex flex-col justify-between p-2.5 hover:scale-105 transition-all duration-300 hover:bg-primary/5"
+        >
+          <div class="w-full flex flex-col gap-2.5">
+            <div class="h-43.5 w-full rounded-sm overflow-hidden mb-3 bg-gray-200">
+              <img
+                [src]="card.imageUrl ? card.imageUrl : '/images/not-found.png'"
+                [alt]="card.title"
+                class="w-full h-full object-cover"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <h3 class="text-sm font-semibold">
+                {{ card.title }}
+              </h3>
+
+              <div class="flex items-center gap-2 px-1 mb-4">
+                <img
+                  [src]="card.authorImage ? card.authorImage : '/images/icons/dashboard/user.svg'"
+                  alt=""
+                  class="w-8 h-8"
+                />
+                <div class="flex flex-col">
+                  <p class="font-semibold text-[10px]">{{ card.authorName }}</p>
+                  @if (card.authorRole) {
+                    <p class="text-[#6F6F6F] text-[10px]">{{ card.authorRole }}</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between border-t border-gray-50">
+            <div class="text-[10px] flex items-center gap-1">
+              @if (card.originalPrice) {
+                <span class="text-[10px] text-[#2B57F3] font-medium block">Preço Final:</span>
+              }
+              <span class="">{{ card.price.toLocaleString('en-US') }} <strong>AOA</strong></span>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <button
+                (click)="onDelete(card.id)"
+                class="rounded transition cursor-pointer hover:scale-105 "
+              >
+                <img src="/images/icons/dashboard/tables/eliminar.svg" alt="" />
+              </button>
+
+              @if (card.isOwner) {
+                <button
+                  (click)="onEdit(card.id)"
+                  class="rounded transition cursor-pointer hover:scale-105 "
+                >
+                  <img src="/images/icons/dashboard/tables/editar.svg" alt="" />
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="text-center py-16 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+      <p class="text-gray-500 font-medium">Nenhum serviço encontrado para o filtro aplicado.</p>
+    </div>
+  }
+</div>

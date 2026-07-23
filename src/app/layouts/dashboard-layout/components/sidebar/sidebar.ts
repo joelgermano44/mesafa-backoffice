@@ -1,6 +1,6 @@
 import { Component, inject, Inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../../../core/services/auth.service';
+import { AuthService } from '../../../../../core/features/auth/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -22,8 +22,8 @@ export class Sidebar {
           activeIcon: '/images/icons/dashboard/sidebar/active/dashboard.svg',
         },
         {
-          label: 'Colaboradores',
-          route: '/dashboard/collaborators',
+          label: 'Admnistradores',
+          route: '/dashboard/administrators',
           icon: '/images/icons/dashboard/sidebar/colaboradores.svg',
           activeIcon: '/images/icons/dashboard/sidebar/active/colaboradores.svg',
         },
@@ -46,19 +46,19 @@ export class Sidebar {
       items: [
         {
           label: 'Publicidades',
-          route: '/dashboard/ads',
+          route: '/dashboard/advertisements',
           icon: '/images/icons/dashboard/sidebar/publicidades.svg',
           activeIcon: '/images/icons/dashboard/sidebar/active/publicidades.svg',
         },
         {
           label: 'Usuários Clientes',
-          route: '/dashboard/clients',
+          route: '/dashboard/clients-users',
           icon: '/images/icons/dashboard/sidebar/clients-users.svg',
           activeIcon: '/images/icons/dashboard/sidebar/active/clients-users.svg',
         },
         {
           label: 'Usuários Profissionais',
-          route: '/dashboard/professionals',
+          route: '/dashboard/professionals-users',
           icon: '/images/icons/dashboard/sidebar/professionals-users.svg',
           activeIcon: '/images/icons/dashboard/sidebar/active/professionals-users.svg',
         },
@@ -66,7 +66,7 @@ export class Sidebar {
     },
   ];
 
-  logout (): void  {
-    this.authservice.logout()
+  logout(): void {
+    this.authservice.logout();
   }
 }

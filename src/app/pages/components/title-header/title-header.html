@@ -1,0 +1,19 @@
+<div class="flex flex-col gap-2.5">
+  <h1 class="text-[#121212] text-[25px] font-semibold">{{ title() }}</h1>
+
+  <p class="text-[#737791] text-[13px]">
+    {{ subtitle() }}
+  </p>
+
+  <ul class="flex gap-1.25 items-center text-xs text-[#8A8A8A]">
+    <li class="flex items-center gap-1.25">
+      <img src="/images/icons/dashboard/title-header/admin.svg" alt="" /> Admin: {{ name() }}
+    </li>
+
+    @if (role()) {
+      <li class="flex items-center gap-1.25">
+        <img src="/images/icons/dashboard/title-header/role.svg" alt="" /> Função: {{ role() }}
+      </li>
+    }
+  </ul>
+</div>

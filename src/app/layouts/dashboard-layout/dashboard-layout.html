@@ -1,7 +1,12 @@
-<app-header> </app-header>
-<div class="flex w-full h-screen relative">
-  <app-sidebar> </app-sidebar>
-  <main class="flex-1 *:overflow-y-auto *::-webkit-scrollbar { display: none; } min-h-screen">
-    <router-outlet> </router-outlet>
-  </main>
+<div class="w-full overflow-y-hidden h-screen font-inter">
+  <app-header> </app-header>
+  <div class="flex w-full h-full relative">
+    <app-sidebar> </app-sidebar>
+
+    <main
+      class="flex-1 *:overflow-y-auto *::-webkit-scrollbar { display: none; } h-full overflow-y-auto px-24.75 py-10"
+    >
+      <router-outlet> </router-outlet>
+    </main>
+  </div>
 </div>

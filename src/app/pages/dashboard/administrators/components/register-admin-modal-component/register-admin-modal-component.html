@@ -1,0 +1,200 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-5 animate-fadeIn font-inter"
+>
+  <div
+    class="bg-white max-w-273 rounded-[20px] p-10 shadow-2xl w-full overflow-hidden relative border border-gray-100"
+  >
+    <button
+      (click)="closeModal()"
+      type="button"
+      class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center transition-all cursor-pointer"
+    >
+      ✕
+    </button>
+
+    <div class="w-full flex-col">
+      <h2 class="text-[25px] font-semibold">Cadastro de Administrador</h2>
+      <p class="text-[15px] text-[#797979] font-medium">
+        Cadastre de maneira eficiente e rápida os administradores
+      </p>
+    </div>
+
+    <form [formGroup]="adminForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div class="flex flex-col items-center justify-center my-2">
+        <label for="avatar-upload" class="relative cursor-pointer group">
+          <div
+            class="w-45 h-45 rounded-full border-2 border-dashed border-gray-300 group-hover:border-emerald-500 overflow-hidden flex items-center justify-center bg-gray-50 transition-all"
+          >
+            @if (imagePreview()) {
+              <img [src]="imagePreview()" alt="Preview" class="w-full h-full object-cover" />
+            } @else {
+              <div class="text-center p-2">
+                <svg
+                  class="w-8 h-8 text-gray-400 mx-auto group-hover:text-emerald-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                  />
+                  <circle cx="12" cy="13" r="3" stroke-width="1.5" />
+                </svg>
+              </div>
+            }
+          </div>
+        </label>
+        <input
+          id="avatar-upload"
+          type="file"
+          (change)="onFileSelected($event)"
+          accept="image/*"
+          class="hidden"
+        />
+      </div>
+
+      <div class="">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-[15px] font-semibold">• Informações Pessoais</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="flex flex-col gap-1">
+            <label class="text-[13px] font-medium">Nome do administrador</label>
+            <div
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+            >
+              <img src="/images/icons/dashboard/form-user.svg" alt="" />
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="Nome do administrador"
+                class="w-full outline-none text-black font-semibold text-[13px]"
+              />
+            </div>
+            @if (adminForm.get('name')?.invalid && submitted) {
+              <span class="text-[10px] text-red-500">Nome é obrigatório</span>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[13px] font-medium">Bilhete de Identidade (BI)</label>
+            <div
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+            >
+              <img src="/images/icons/dashboard/form-user.svg" alt="" />
+              <input
+                type="text"
+                formControlName="bi"
+                placeholder="000000000LA000"
+                class="w-full outline-none"
+              />
+            </div>
+            @if (adminForm.get('bi')?.invalid && submitted) {
+              <span class="text-[10px] text-red-500">BI é obrigatório</span>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[13px] font-medium">E-mail corporativo</label>
+            <div
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+            >
+              <img src="/images/icons/dashboard/form-user.svg" alt="" />
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="waltuxdesigner@job.co.ao"
+                class="w-full outline-none"
+              />
+            </div>
+            @if (adminForm.get('email')?.invalid && submitted) {
+              <span class="text-[10px] text-red-500">E-mail inválido</span>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[13px] font-medium">Telefone</label>
+            <div
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+            >
+              <img src="/images/icons/dashboard/form-user.svg" alt="" />
+              <input
+                type="text"
+                formControlName="phone"
+                placeholder="+244 97843218"
+                class="w-full outline-none"
+              />
+            </div>
+            @if (adminForm.get('phone')?.invalid && adminForm.get('phone')?.touched) {
+              <span class="text-[10px] text-red-500">Telefone inválido</span>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[13px] font-medium">Data de Nascimento</label>
+            <div
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+            >
+              <img src="/images/icons/dashboard/form-user.svg" alt="" />
+              <input
+                type="date"
+                formControlName="birthdate"
+                class="w-full outline-none text-gray-700 cursor-pointer"
+              />
+            </div>
+            @if (adminForm.get('birthdate')?.invalid && submitted) {
+              <span class="text-[10px] text-red-500">Data de nascimento é obrigatória</span>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[13px] font-medium">Senha</label>
+            <div
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+            >
+              <img src="/images/icons/dashboard/form-user.svg" alt="" />
+              <input
+                type="password"
+                formControlName="password"
+                placeholder="••••••••"
+                class="w-full outline-none"
+              />
+            </div>
+            @if (adminForm.get('password')?.invalid && submitted) {
+              <span class="text-[10px] text-red-500">Mínimo de 6 caracteres</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 pt-4">
+        <button
+          type="submit"
+          [disabled]="loading()"
+          class="bg-tertiary hover:bg-tertiary min-w-36 justify-center text-white font-medium text-xs px-2.5 py-3 rounded-lg transition-all duration-300 disabled:opacity-50 cursor-pointer flex items-center gap-2"
+        >
+          @if (loading()) {
+            <div
+              class="w-3.5 h-3.5 border-2 border-t-transparent border-white rounded-full animate-spin"
+            ></div>
+            A processar...
+          } @else {
+            Cadastrar
+          }
+        </button>
+
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="bg-[#B5B5C3] hover:bg-gray-400 text-white font-medium text-xs px-2.5 py-3 rounded-lg transition-all duration-300 cursor-pointer min-w-36 flex items-center justify-center"
+        >
+          Cancelar processo
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
