@@ -24,19 +24,19 @@ export const routes: Routes = [
         component: Landing,
       },
     ],
-    canActivate: [guestGuard],
+    /* canActivate: [guestGuard], */
   },
 
   {
     path: 'login',
     component: Login,
-    canActivate: [guestGuard],
+   /*  canActivate: [guestGuard], */
   },
 
   {
     path: 'dashboard',
     component: DashboardLayout,
-    canActivate: [authGuard],
+   /*  canActivate: [authGuard], */
     children: [
       {
         path: '',

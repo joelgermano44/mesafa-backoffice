@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Collaborator } from '../../../../../../core/features/collaborators/models/collaborator.model';
 import { CollaboratorService } from '../../../../../../core/features/collaborators/services/collaborator.service';
+
 @Component({
   selector: 'app-professionals-table',
   standalone: true,
@@ -11,10 +12,11 @@ import { CollaboratorService } from '../../../../../../core/features/collaborato
   styleUrl: './professionals-table.css',
 })
 export class ProfessionalsTable implements OnInit {
-  private readonly collaboratorService = inject(CollaboratorService);
+  protected readonly collaboratorService = inject(CollaboratorService);
 
-  collaborators = signal<Collaborator[]>([]);
   isLoading = signal<boolean>(true);
+  isDrawerOpen = signal<boolean>(false);
+  activeTab = signal<'estatisticas' | 'servicos' | 'portfolio' | 'habilidades'>('estatisticas');
 
   searchQuery = signal<string>('');
   selectedProfession = signal<string>('Tudo');
@@ -30,10 +32,7 @@ export class ProfessionalsTable implements OnInit {
   loadCollaborators(): void {
     this.isLoading.set(true);
     this.collaboratorService.getAll().subscribe({
-      next: (data) => {
-        this.collaborators.set(data);
-        this.isLoading.set(false);
-      },
+      next: () => this.isLoading.set(false),
       error: (err) => {
         console.error('Erro ao carregar profissionais:', err);
         this.isLoading.set(false);
@@ -43,7 +42,7 @@ export class ProfessionalsTable implements OnInit {
 
   availableProvinces = computed(() => {
     const list: string[] = [];
-    this.collaborators().forEach((item) => {
+    this.collaboratorService.collaborators().forEach((item) => {
       if (item.address?.province && !list.includes(item.address.province)) {
         list.push(item.address.province);
       }
@@ -53,10 +52,9 @@ export class ProfessionalsTable implements OnInit {
 
   filteredCollaborators = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
-    const prof = this.selectedProfession();
     const prov = this.selectedProvince();
 
-    return this.collaborators().filter((item) => {
+    return this.collaboratorService.collaborators().filter((item) => {
       const matchesSearch =
         !query ||
         item.name?.toLowerCase().includes(query) ||
@@ -82,6 +80,15 @@ export class ProfessionalsTable implements OnInit {
     return this.filteredCollaborators().slice(start, end);
   });
 
+  selectCollaborator(collaborator: Collaborator): void {
+    this.collaboratorService.setCurrent(collaborator);
+    this.isDrawerOpen.set(true);
+  }
+
+  closeDrawer(): void {
+    this.isDrawerOpen.set(false);
+  }
+
   nextPage(): void {
     if (this.currentPage() < this.totalPages()) {
       this.currentPage.update((page) => page + 1);
@@ -103,15 +110,19 @@ export class ProfessionalsTable implements OnInit {
     this.currentPage.set(1);
   }
 
-  editCollaborator(collaborator: Collaborator): void {
+  editCollaborator(collaborator: Collaborator, event?: Event): void {
+    event?.stopPropagation();
     console.log('Editar profissional:', collaborator);
   }
 
-  deleteCollaborator(id: number): void {
+  deleteCollaborator(id: number, event?: Event): void {
+    event?.stopPropagation();
     if (confirm('Tem certeza que deseja eliminar este profissional?')) {
       this.collaboratorService.delete(id).subscribe({
         next: () => {
-          this.collaborators.update((list) => list.filter((item) => item.id !== id));
+          if (this.collaboratorService.current()?.id === id) {
+            this.closeDrawer();
+          }
         },
         error: (err) => console.error('Erro ao eliminar:', err),
       });

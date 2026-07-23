@@ -3,3 +3,198 @@
   subtitle="Faça a gestão de todos os prestadores contratados na plataforma."
   name="{{ admin()?.name }}"
 ></app-title-header>
+
+<div class="w-full min-h-screen bg-gray-50 p-6">
+  <div
+    class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100"
+  >
+    <div class="flex items-center gap-4 w-full md:w-auto">
+      <span class="font-semibold text-gray-700 text-sm">Filtro</span>
+
+      <div class="relative">
+        <select
+          [value]="selectedStatus()"
+          (change)="onStatusChange($event)"
+          class="appearance-none bg-white border border-blue-500 text-blue-600 text-sm font-medium rounded-full px-4 py-1.5 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer shadow-sm"
+        >
+          <option value="Tudo">Estado &gt; Tudo</option>
+          <option value="Pendente">Estado &gt; Pendente</option>
+          <option value="Aceito">Estado &gt; Aceito</option>
+          <option value="Rejeitado">Estado &gt; Rejeitado</option>
+        </select>
+        <div
+          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-600"
+        >
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+            <path
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <div class="relative">
+        <select
+          [value]="selectedPriceRange()"
+          (change)="onPriceChange($event)"
+          class="appearance-none bg-white border border-gray-300 text-gray-600 text-sm font-medium rounded-full px-4 py-1.5 pr-8 focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer shadow-sm"
+        >
+          <option value="Tudo">Preço &gt; Tudo</option>
+          <option value="Ate100k">Até 100.000 AOA</option>
+          <option value="Mais100k">Acima de 100.000 AOA</option>
+        </select>
+        <div
+          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"
+        >
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+            <path
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative w-full md:w-72">
+      <div
+        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </div>
+      <input
+        type="text"
+        [value]="searchTerm()"
+        (input)="onSearchChange($event.target.value)"
+        placeholder="Procurar"
+        class="w-full bg-gray-100 border border-blue-400 focus:border-blue-500 rounded-lg pl-9 pr-4 py-1.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 transition"
+      />
+    </div>
+  </div>
+
+  @if (filteredServices().length > 0) {
+    <ng-container>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        @for (item of filteredServices(); track item.id) {
+          <div
+            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between transition hover:shadow-md"
+          >
+            <div>
+              <div class="h-36 w-full overflow-hidden bg-gray-200">
+                <img [src]="item.imageUrl" [alt]="item.title" class="w-full h-full object-cover" />
+              </div>
+
+              <div class="p-3">
+                <h3 class="font-bold text-gray-900 text-sm mb-2 line-clamp-1">{{ item.title }}</h3>
+
+                <div class="flex items-center gap-2 mb-3">
+                  <div
+                    class="w-5 h-5 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center overflow-hidden text-xs font-semibold"
+                  >
+                    <img
+                      [src]="item.providerAvatar ?? item.providerAvatar"
+                      alt="Avatar"
+                      class="w-full h-full object-cover"
+                    />
+                    @if (!item.providerAvatar) {
+                      <span>🌸</span>
+                    }
+                  </div>
+                  <span class="text-xs text-gray-600 font-medium">{{ item.providerName }}</span>
+                </div>
+
+                <div class="text-xs font-bold text-gray-900 mb-3">
+                  {{ item.price }} <span class="font-extrabold">{{ item.currency }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3 pt-0">
+              @if (item.status === 'Pendente') {
+                <div class="flex items-center gap-2">
+                  <button
+                    (click)="acceptService(item.id)"
+                    class="flex-1 inline-flex items-center justify-center gap-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-medium py-1 px-2 rounded-md transition"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Aceitar
+                  </button>
+
+                  <button
+                    (click)="rejectService(item.id)"
+                    class="flex-1 inline-flex items-center justify-center gap-1 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-medium py-1 px-2 rounded-md transition"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                    Rejeitar
+                  </button>
+                </div>
+              }
+
+              @if (item.status === 'Aceito') {
+                <div
+                  class="w-full text-center py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-md border border-emerald-200"
+                >
+                  ✓ Aceito
+                </div>
+              }
+
+              @if (item.status === 'Rejeitado') {
+                <div
+                  class="w-full text-center py-1 bg-red-50 text-red-600 text-xs font-semibold rounded-md border border-red-200"
+                >
+                  ✕ Rejeitado
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </ng-container>
+  }
+
+  @if (filteredServices().length === 0) {
+    <ng-container>
+      <div
+        class="flex flex-col items-center justify-center py-16 bg-white rounded-xl border border-gray-100 shadow-sm text-center"
+      >
+        <svg
+          class="w-12 h-12 text-gray-300 mb-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+        <p class="text-gray-600 font-medium text-base">Nenhum serviço encontrado</p>
+        <p class="text-gray-400 text-xs mt-1">
+          Tente ajustar a sua pesquisa ou os filtros selecionados.
+        </p>
+      </div>
+    </ng-container>
+  }
+</div>
