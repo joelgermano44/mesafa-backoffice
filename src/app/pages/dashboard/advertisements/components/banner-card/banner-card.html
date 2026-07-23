@@ -1,0 +1,59 @@
+<div class="w-full p-2.5 flex-col flex gap-3">
+  <div
+    class="flex items-end pl-5 rounded-xl h-44 w-full hover:scale-105 transition-all duration-200"
+    [style.background]="banner.background"
+  >
+    <div class="my-auto w-full">
+      <div class="flex-col flex gap-2.5 my-auto text-white">
+        <h2 class="text-xl font-bold uppercase">
+          {{ banner.title }}
+        </h2>
+
+        <p class="text-[10px] font-normal">
+          {{ banner.description }}
+        </p>
+      </div>
+
+      <button
+        class="mt-3.25 rounded-lg text-[10px] bg-white hover:scale-105 cursor-pointer transition-all duration-200 flex items-center gap-2 p-2.5 text-sm font-semibold text-primary"
+      >
+        Seja um Prestador
+        <svg
+          width="15"
+          height="12"
+          viewBox="0 0 15 12"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.15503e-08 5.99991C7.55605e-08 5.66362 0.249896 5.3857 0.57412 5.34172L0.664256 5.33566L12.341 5.33619L8.12253 1.13497C7.86256 0.876117 7.86166 0.455534 8.12051 0.195568C8.35582 -0.0407647 8.72481 -0.0629977 8.98526 0.12939L9.05991 0.193545L14.4182 5.52885C14.4525 5.56297 14.4823 5.59989 14.5075 5.63889C14.5147 5.65063 14.5219 5.66264 14.5288 5.67489C14.5351 5.68539 14.5409 5.69629 14.5463 5.70731C14.5538 5.72335 14.5611 5.73992 14.5677 5.75683C14.5731 5.76987 14.5777 5.78255 14.5818 5.79533C14.5867 5.81118 14.5914 5.82806 14.5955 5.84521C14.5986 5.85718 14.601 5.8687 14.6031 5.88027C14.606 5.89748 14.6085 5.91529 14.6103 5.93331C14.6119 5.94705 14.6128 5.96067 14.6133 5.9743C14.6135 5.98257 14.6136 5.99122 14.6136 5.99991L14.6133 6.02564C14.6128 6.03868 14.6119 6.05171 14.6106 6.0647L14.6136 5.99991C14.6136 6.04183 14.6097 6.08284 14.6023 6.1226C14.6006 6.1321 14.5985 6.14185 14.5963 6.15156C14.5916 6.17156 14.5861 6.19081 14.5798 6.20969C14.5767 6.21907 14.5731 6.22909 14.5693 6.23904C14.5615 6.25902 14.5531 6.27808 14.5438 6.29664C14.5395 6.30536 14.5347 6.3145 14.5296 6.32354C14.5213 6.3383 14.5128 6.35232 14.5037 6.36598C14.4974 6.37566 14.4903 6.38572 14.4829 6.39563L14.4772 6.40329C14.4593 6.42667 14.4399 6.44883 14.4191 6.46961L14.4183 6.47023L9.05994 11.8064C8.8 12.0653 8.37942 12.0644 8.12055 11.8045C7.88521 11.5682 7.86453 11.1991 8.05802 10.9394L8.12249 10.8651L12.3392 6.6647L0.664256 6.66417C0.297397 6.66417 6.71756e-08 6.36677 7.15503e-08 5.99991Z"
+            fill="#1546EB"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <img [src]="banner.image" [alt]="banner.title" class="w-37 h-full object-cover rounded-r-xl" />
+  </div>
+
+  <div class="flex items-center gap-4">
+    <div class="actions flex justify-center gap-2">
+      <button
+        (click)="onDelete()"
+        title="Eliminar"
+        class="hover:scale-105 transition-all duration-300 cursor-pointer"
+      >
+        <img src="images/icons/dashboard/tables/eliminar.svg" alt="" class="w-7 h-7" />
+      </button>
+
+      <button title="Editar" class="hover:scale-105 transition-all duration-300 cursor-pointer">
+        <img src="images/icons/dashboard/tables/editar.svg" alt="" class="w-7 h-7" />
+      </button>
+    </div>
+
+    <span class="text-sm font-normal flex items-center text-[10px]">
+      Cliques:
+      {{ banner.clicks }}
+    </span>
+  </div>
+</div>

@@ -13,16 +13,13 @@ import { CollaboratorService } from '../../../../../../core/features/collaborato
 export class ProfessionalsTable implements OnInit {
   private readonly collaboratorService = inject(CollaboratorService);
 
-  // Lista da API e Estado
   collaborators = signal<Collaborator[]>([]);
   isLoading = signal<boolean>(true);
 
-  // Filtros
   searchQuery = signal<string>('');
   selectedProfession = signal<string>('Tudo');
   selectedProvince = signal<string>('Tudo');
 
-  // Paginação
   currentPage = signal<number>(1);
   pageSize = signal<number>(7);
 
@@ -44,7 +41,6 @@ export class ProfessionalsTable implements OnInit {
     });
   }
 
-  // Lista dinâmica de províncias (endereço) para o filtro
   availableProvinces = computed(() => {
     const list: string[] = [];
     this.collaborators().forEach((item) => {
@@ -55,14 +51,12 @@ export class ProfessionalsTable implements OnInit {
     return ['Tudo', ...list.sort()];
   });
 
-  // Filtragem Reativa
   filteredCollaborators = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
     const prof = this.selectedProfession();
     const prov = this.selectedProvince();
 
     return this.collaborators().filter((item) => {
-      // 1. Busca Textual (Nome, Username, Email, BI, Telefone)
       const matchesSearch =
         !query ||
         item.name?.toLowerCase().includes(query) ||
@@ -71,7 +65,6 @@ export class ProfessionalsTable implements OnInit {
         item.bi?.toLowerCase().includes(query) ||
         item.phone?.toLowerCase().includes(query);
 
-      // 3. Filtro por Província
       const matchesProv = prov === 'Tudo' || item.address?.province === prov;
 
       return matchesSearch && matchesProv;

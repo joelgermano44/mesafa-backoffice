@@ -1,0 +1,168 @@
+<div
+  class="fixed inset-0 z-50 flex justify-end font-inter"
+  (keydown.escape)="close.emit()"
+  tabindex="0"
+>
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-[1px]" (click)="close.emit()"></div>
+
+  <aside
+    class="relative h-screen font-inter w-full max-w-[864px] px-7.5 py-5 bg-white shadow-2xl animate-slide-in overflow-y-auto z-10 flex gap-2.5 flex-col justify-between"
+  >
+    <div class="flex flex-col gap-2.5">
+      <div class="sticky top-0 bg-white flex items-center justify-between z-10">
+        <div>
+          <h2 class="font-semibold text-xl">Detalhes do Serviço</h2>
+          <p class="text-[13px] text-[#737791]">Veja detalhatamente como funciona o serviço.</p>
+        </div>
+
+        <button
+          (click)="close.emit()"
+          class="p-1 w-8 h-8 flex items-center justify-center rounded-full text-[#464E5F] hover:text-gray-500 bg-gray-100 transition-colors cursor-pointer"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="flex gap-5">
+        <div class="w-90 h-55 rounded-xl overflow-hidden bg-gray-100 relative">
+          <img
+            [src]="service().image || '/images/not-found.png'"
+            [alt]="service().name"
+            class="w-full h-full object-contain"
+          />
+        </div>
+
+        <div class="flex flex-col gap-5">
+          <div class="flex flex-col">
+            <h3 class="text-xl font-semibold">{{ service().name }}</h3>
+            <p
+              class="bg-[#00000017] px-1.25 py-0.75 font-bold text-xs flex items-center gap-1 w-fit rounded-sm"
+            >
+              <img src="/images/icons/dashboard/flag.svg" alt="" /> {{ service().price }} Kz
+            </p>
+          </div>
+
+          <!-- 
+            <p class="text-xs text-[#2B57F3] font-medium">
+              {{ service().category?.name || 'Sem Categoria' }}
+            </p> 
+          -->
+
+          <div class="flex flex-col gap-2">
+            <p class="text-[13px] font-medium">Profissionais</p>
+
+            @if (service().professionals && service().professionals.length > 0) {
+              <div class="flex flex-wrap gap-4">
+                @for (prof of service().professionals; track prof.id) {
+                  <div class="flex items-center justify-center gap-2">
+                    <div
+                      class="w-7.75 h-7.75 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden"
+                    >
+                      @if (prof.image) {
+                        <img [src]="prof.image" class="w-full h-full object-cover" />
+                      } @else {
+                        {{ prof.name.charAt(0) }}
+                      }
+                    </div>
+                    <span class="text-[13px] font-medium">{{ prof.name }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="flex flex-col gap-2.5">
+            <h1 class="text-[13px] font-medium">Detalhes do Serviço</h1>
+
+            <p class="text-[10px] text-[#818181]">
+              {{ service().description }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col">
+        <h1 class="font-semibold">Amostras deste serviço</h1>
+
+        <ul class="w-full flex flex-wrap gap-2.5 min-h-32 items-center justify-center">
+          @if (!service().images) {
+            @for (images of service().images; track images.id) {
+              <li>
+                <img
+                  [src]="images.image || '/images/not-found.png'"
+                  alt="Iamges do serviços"
+                  class="w-44 h-29.5"
+                />
+              </li>
+            }
+          } @else {
+            <p class="text-sm text-[#8f8f8f]">Nenhuma imagem relacionada à este serviço.</p>
+          }
+        </ul>
+      </div>
+
+      <div class="w-full flex flex-col gap-2.5">
+        <h1 class="font-semibold">Preço do Serviço</h1>
+
+        <div class="bg-[#f9f9f9] rounded-xl w-full px-3.75 py-5 flex flex-col gap-5.5">
+          <div class="flex flex-col w-full gap-5 text-[13px] justify-center items-center">
+            <div class="flex flex-col gap-2 w-full">
+              <p class="flex items-center justify-between w-full">
+                Valor do serviço <span class="font-semibold">{{ service().price }} kz</span>
+              </p>
+              <p class="flex items-center justify-between w-full">
+                Valor do deslocamento
+                <span class="font-semibold">{{ service().travel_price }} kz</span>
+              </p>
+            </div>
+
+            <hr class="w-1/2 border border-gray-200" />
+
+            <p class="flex items-center justify-between w-full text-[15px] font-semibold">
+              Total
+              <span class="font-medium text-base"
+                >{{ service().travel_price + service().price }} kz</span
+              >
+            </p>
+
+            <div class="flex items-center justify-between w-full text-[15px] font-semibold">
+              <p class="text-[13px]">Métodos de Pagamento</p>
+
+              <div class="flex items-center gap-2">
+                <button class="hover:scale-105 transition-all duration-200">
+                  <img src="/images/express.png" alt="" class="object-contain w-12 rounded-lg" />
+                </button>
+                <button class="hover:scale-105 transition-all duration-200">
+                  <img src="/images/multicaixa.png" alt="" class="object-contain w-12 rounded-lg" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mb-12">
+      <button
+        class="py-0.75 px-1.25 w-fit rounded-lg border border-[#FCA5A5] text-[#991B1B] bg-[#FEE2E2] hover:bg-red-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+      >
+        <img src="images/icons/dashboard/eliminar-red.svg" class="w-4 h-4" alt="" />
+        Apagar
+      </button>
+
+      <button
+        class="py-0.75 px-1.25 rounded-lg bg-primary/5 border border-primary/20 text-primary hover:bg-primary/10 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+      >
+        <img src="images/icons/dashboard/editar-blue.svg" class="w-4 h-4" alt="" />
+        Editar
+      </button>
+    </div>
+  </aside>
+</div>
