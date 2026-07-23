@@ -1,112 +1,140 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, of } from 'rxjs';
+
 import { TitleHeader } from '../../components/title-header/title-header';
 import { AdminService } from '../../../../core/features/administrators/services/admin.service';
+import { ServicesService } from '../../../../core/features/services/services/services.service';
+import { CreateServiceModalComponent } from './components/create-service-modal-component/create-service-modal-component';
+import { ProfessionalService } from '../../../../core/features/services/models/service.model';
+import { API_CONFIG } from '../../../../core/config/api.config';
+import { ServiceDetailsDrawer } from "./components/service-details-drawer/service-details-drawer";
 
 @Component({
   selector: 'app-services',
-  imports: [TitleHeader],
+  imports: [TitleHeader, CreateServiceModalComponent, ServiceDetailsDrawer],
   templateUrl: './services.html',
   styleUrl: './services.css',
 })
 export class Services {
   private readonly adminService = inject(AdminService);
+  private readonly servicesService = inject(ServicesService);
+  public selectedService = signal<ProfessionalService | null>(null);
+
+  public readonly api = API_CONFIG;
 
   readonly admin = this.adminService.admin;
 
-  public searchTerm = signal<string>('');
-  public selectedType = signal<string>('Tudo');
-  public selectedPriceFilter = signal<string>('Tudo');
+  public searchTerm = signal('');
+  public selectedType = signal('Tudo');
+  public selectedPriceFilter = signal('Tudo');
 
-  public services = signal([
+  public isModalOpen = signal(false);
+
+  private readonly rawServices = toSignal(
+    this.servicesService.getAll().pipe(
+      catchError((error) => {
+        console.error('Erro ao carregar serviços:', error);
+        return of([]);
+      }),
+    ),
     {
-      id: 1,
-      title: 'Hub de Desenvolvimento',
-      authorImage: '',
-      authorName: 'Pedro Franco',
-      authorRole: 'Carpinteiro',
-      imageUrl: '',
-      price: 100000,
-      originalPrice: 100000,
-      type: 'hub',
-      isOwner: false,
+      initialValue: [],
     },
-    {
-      id: 2,
-      title: 'Hub de Desenvolvimento',
-      authorImage: '',
-      authorName: 'MeSafa',
-      imageUrl: '',
-      price: 100000,
-      type: 'hub',
-      isOwner: true,
-    },
-    {
-      id: 3,
-      title: 'Hub de Desenvolvimento',
-      authorImage: '',
-      authorName: 'Pedro Franco',
-      authorRole: 'Carpinteiro',
-      imageUrl: '',
-      price: 100000,
-      originalPrice: 100000,
-      type: 'hub',
-      isOwner: false,
-    },
-    {
-      id: 4,
-      title: 'Hub de Desenvolvimento',
-      authorImage: '',
-      authorName: 'MeSafa',
-      imageUrl: '',
-      price: 100000,
-      type: 'hub',
-      isOwner: true,
-    },
-    {
-      id: 5,
-      title: 'Hub de Desenvolvimento',
-      authorImage: '',
-      authorName: 'Pedro Franco',
-      authorRole: 'Carpinteiro',
-      imageUrl: '',
-      price: 100000,
-      originalPrice: 100000,
-      type: 'hub',
-      isOwner: false,
-    },
-    {
-      id: 6,
-      title: 'Hub de Desenvolvimento',
-      authorImage: '',
-      authorName: 'Pedro Franco',
-      authorRole: 'Carpinteiro',
-      imageUrl: '',
-      price: 100000,
-      originalPrice: 100000,
-      type: 'hub',
-      isOwner: false,
-    },
-  ]);
+  );
+
+  public services = signal<ProfessionalService[]>([]);
+
+  constructor() {
+    effect(() => {
+      const data = this.rawServices();
+
+      console.log('Serviços recebidos:', data);
+
+      this.services.set(data);
+    });
+  }
+
+  public openModal(): void {
+    this.isModalOpen.set(true);
+  }
+
+  public closeModal(): void {
+    this.isModalOpen.set(false);
+  }
+
+  public reloadServices(): void {
+    this.servicesService.getAll().subscribe({
+      next: (data) => {
+        console.log('Reload:', data);
+        this.services.set(data);
+      },
+      error: (err) => console.error(err),
+    });
+  }
 
   public filteredServices = computed(() => {
     const search = this.searchTerm().toLowerCase().trim();
     const type = this.selectedType();
+    const priceFilter = this.selectedPriceFilter();
 
-    return this.services().filter((service) => {
-      const matchesSearch =
-        service.title.toLowerCase().includes(search) ||
-        service.authorName.toLowerCase().includes(search);
-      const matchesType = type === 'Tudo' || service.type === type;
+    let result = this.services().filter((service) => {
+      const serviceName = service.name.toLowerCase();
+
+      const professionals =
+        service.professionals?.some((professional) =>
+          professional.name.toLowerCase().includes(search),
+        ) ?? false;
+
+      const matchesSearch = serviceName.includes(search) || professionals;
+
+      const matchesType =
+        type === 'Tudo' || service.category?.name?.toLowerCase() === type.toLowerCase();
 
       return matchesSearch && matchesType;
     });
+
+    if (priceFilter === 'menor') {
+      result = [...result].sort((a, b) => a.price - b.price);
+    }
+
+    if (priceFilter === 'maior') {
+      result = [...result].sort((a, b) => b.price - a.price);
+    }
+
+    return result;
   });
 
-  public onDelete(id: number): void {
-    this.services.update((items) => items.filter((item) => item.id !== id));
+  public onDelete(service: any): void {
+    if (!confirm('Tem certeza de que deseja eliminar este serviço?')) {
+      return;
+    }
+
+    const professionalId = service.professionalId ?? service.professional?.id;
+    const serviceId = service.id;
+
+    if (!professionalId) {
+      this.services.update((items) => items.filter((item) => item.id !== serviceId));
+      return;
+    }
+
+    this.servicesService.deleteProfessionalService(professionalId, serviceId).subscribe({
+      next: () => {
+        this.services.update((items) => items.filter((item) => item.id !== serviceId));
+      },
+      error: (err) => console.error(err),
+    });
   }
 
   public onEdit(id: number): void {
-    console.log('Editar item:', id);
+    console.log(id);
+  }
+
+  openDetails(service: ProfessionalService) {
+    this.selectedService.set(service);
+  }
+
+  closeDetails() {
+    this.selectedService.set(null);
   }
 }

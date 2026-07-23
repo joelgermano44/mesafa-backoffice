@@ -3,3 +3,60 @@
   subtitle="Faça a gestão de todas a publicidades dentro da plataforma."
   name="{{ admin()?.name }}"
 ></app-title-header>
+
+<div class="flex flex-col w-full justify-between mt-6">
+  <div class="filter-bar flex w-full justify-between items-center mb-5 gap-4">
+    <div class="filters-group flex gap-3.25 items-center">
+      <span class="filter-label font-semibold text-sm">Filtro</span>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Tipo ></label>
+        <select class="w-fit outline-none bg-transparent" (change)="onTypeChange($event)">
+          <option value="all" class="text-black">Tudo</option>
+          <option value="free" class="text-black">Grátis</option>
+          <option value="premium" class="text-black">Premium</option>
+        </select>
+      </div>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Preço > </label>
+        <select class="w-fit outline-none bg-transparent" (change)="onPriceChange($event)">
+          <option value="all" class="text-black">Tudo</option>
+          <option value="free" class="text-black">Grátis</option>
+          <option value="paid" class="text-black">Pago</option>
+        </select>
+      </div>
+    </div>
+
+    <div
+      class="search-box p-2.5 rounded-lg max-w-54 w-full flex items-center gap-3.75 focus-within:ring-3 focus-within:ring-[#3278FF] focus-within:bg-[#EFEFEF] border-2 border-[#EFEFEF]"
+    >
+      <img src="/images/icons/search.svg" alt="" class="w-4.75 h-4.75" />
+      <input
+        type="text"
+        class="placeholder:text-[#9A9FA5] text-gray-700 w-full outline-none caret-[#2A85FF]"
+        placeholder="Procurar"
+        [value]="search()"
+        (input)="onSearch($event)"
+      />
+    </div>
+  </div>
+
+  @if (filteredBanners().length) {
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      @for (banner of filteredBanners(); track banner.id) {
+        <app-banner-card [banner]="banner"></app-banner-card>
+      }
+    </div>
+  } @else {
+    <div class="flex flex-col items-center justify-center py-20 border rounded-xl">
+      <h2 class="text-lg font-semibold">Nenhum banner encontrado</h2>
+
+      <p class="text-sm text-gray-500 mt-2">Tente alterar os filtros ou realizar outra pesquisa.</p>
+    </div>
+  }
+</div>
