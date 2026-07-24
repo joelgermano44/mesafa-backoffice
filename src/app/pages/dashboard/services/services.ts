@@ -8,7 +8,7 @@ import { ServicesService } from '../../../../core/features/services/services/ser
 import { CreateServiceModalComponent } from './components/create-service-modal-component/create-service-modal-component';
 import { ProfessionalService } from '../../../../core/features/services/models/service.model';
 import { API_CONFIG } from '../../../../core/config/api.config';
-import { ServiceDetailsDrawer } from "./components/service-details-drawer/service-details-drawer";
+import { ServiceDetailsDrawer } from './components/service-details-drawer/service-details-drawer';
 
 @Component({
   selector: 'app-services',
@@ -49,8 +49,6 @@ export class Services {
     effect(() => {
       const data = this.rawServices();
 
-      console.log('Serviços recebidos:', data);
-
       this.services.set(data);
     });
   }
@@ -66,7 +64,6 @@ export class Services {
   public reloadServices(): void {
     this.servicesService.getAll().subscribe({
       next: (data) => {
-        console.log('Reload:', data);
         this.services.set(data);
       },
       error: (err) => console.error(err),

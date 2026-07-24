@@ -4,165 +4,130 @@
   name="{{ admin()?.name }}"
 ></app-title-header>
 
-<div class="w-full min-h-screen bg-gray-50 p-6">
-  <div
-    class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100"
-  >
-    <div class="flex items-center gap-4 w-full md:w-auto">
-      <span class="font-semibold text-gray-700 text-sm">Filtro</span>
+<div class="table-container flex flex-col font-inter w-full mt-8">
+  <div class="ilter-bar flex w-full justify-between items-center mb-8 gap-4">
+    <div class="filters-group flex gap-3.25 items-center">
+      <span class="filter-label font-semibold text-sm">Filtro</span>
 
-      <div class="relative">
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Estado ></label>
         <select
           [value]="selectedStatus()"
           (change)="onStatusChange($event)"
-          class="appearance-none bg-white border border-blue-500 text-blue-600 text-sm font-medium rounded-full px-4 py-1.5 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer shadow-sm"
+          class="w-fit outline-none bg-transparent cursor-pointer"
         >
-          <option value="Tudo">Estado &gt; Tudo</option>
-          <option value="Pendente">Estado &gt; Pendente</option>
-          <option value="Aceito">Estado &gt; Aceito</option>
-          <option value="Rejeitado">Estado &gt; Rejeitado</option>
+          <option value="Tudo" class="text-black">Tudo</option>
+          <option value="Pendente" class="text-black">Pendente</option>
+          <option value="Aceito" class="text-black">Aceito</option>
+          <option value="Rejeitado" class="text-black">Rejeitado</option>
         </select>
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-600"
-        >
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-            <path
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-            />
-          </svg>
-        </div>
       </div>
 
-      <div class="relative">
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Preço ></label>
         <select
           [value]="selectedPriceRange()"
           (change)="onPriceChange($event)"
-          class="appearance-none bg-white border border-gray-300 text-gray-600 text-sm font-medium rounded-full px-4 py-1.5 pr-8 focus:outline-none focus:ring-2 focus:ring-gray-200 cursor-pointer shadow-sm"
+          class="w-fit outline-none bg-transparent cursor-pointer"
         >
-          <option value="Tudo">Preço &gt; Tudo</option>
-          <option value="Ate100k">Até 100.000 AOA</option>
-          <option value="Mais100k">Acima de 100.000 AOA</option>
+          <option value="Tudo" class="text-black">Tudo</option>
+          <option value="Ate100k" class="text-black">Até 100.000 AOA</option>
+          <option value="Mais100k" class="text-black">Acima de 100.000 AOA</option>
         </select>
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"
-        >
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-            <path
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-            />
-          </svg>
-        </div>
       </div>
     </div>
 
-    <div class="relative w-full md:w-72">
-      <div
-        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-      </div>
+    <div
+      class="search-box p-2.5 rounded-lg max-w-54 w-full flex items-center gap-3.75 focus-within:ring-3 focus-within:ring-[#3278FF] focus-within:bg-[#EFEFEF] border-2 border-[#EFEFEF]"
+    >
+      <img src="/images/icons/search.svg" alt="" class="w-4.75 h-4.75" />
       <input
         type="text"
-        [value]="searchTerm()"
-        (input)="onSearchChange($event.target.value)"
+        class="placeholder:text-[#9A9FA5] text-gray-700 w-full outline-none caret-[#2A85FF]"
         placeholder="Procurar"
-        class="w-full bg-gray-100 border border-blue-400 focus:border-blue-500 rounded-lg pl-9 pr-4 py-1.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 transition"
+        [value]="searchTerm()"
+        (input)="onSearchChange($any($event.target).value)"
       />
     </div>
   </div>
 
   @if (filteredServices().length > 0) {
     <ng-container>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div class="flex flex-wrap gap-6.25 font-inter">
         @for (item of filteredServices(); track item.id) {
           <div
-            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between transition hover:shadow-md"
+            (click)="openDrawer(item)"
+            class="bg-[#F9FBFC47] hover:scale-105 transition-all duration-300 hover:bg-primary/5 w-53.5 rounded-[5px] shadow-sm p-2.5 border border-gray-100 overflow-hidden flex flex-col gap-2.5 justify-between cursor-pointer"
           >
-            <div>
-              <div class="h-36 w-full overflow-hidden bg-gray-200">
-                <img [src]="item.imageUrl" [alt]="item.title" class="w-full h-full object-cover" />
-              </div>
+            <div class="h-37 w-full overflow-hidden bg-gray-200">
+              <img
+                [src]="item.service?.image ? item.service?.image : '/images/not-found.png'"
+                [alt]="item.service?.name"
+                class="w-full h-full object-cover rounded-sm"
+              />
+            </div>
 
-              <div class="p-3">
-                <h3 class="font-bold text-gray-900 text-sm mb-2 line-clamp-1">{{ item.title }}</h3>
+            <div class="flex flex-col gap-1">
+              <h3 class="font-semibold text-sm">{{ item.service?.name }}</h3>
 
-                <div class="flex items-center gap-2 mb-3">
-                  <div
-                    class="w-5 h-5 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center overflow-hidden text-xs font-semibold"
-                  >
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-5 h-5 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center overflow-hidden text-xs font-semibold"
+                >
+                  @if (item.client?.image) {
                     <img
-                      [src]="item.providerAvatar ?? item.providerAvatar"
+                      [src]="item.client?.image"
                       alt="Avatar"
                       class="w-full h-full object-cover"
                     />
-                    @if (!item.providerAvatar) {
-                      <span>🌸</span>
-                    }
-                  </div>
-                  <span class="text-xs text-gray-600 font-medium">{{ item.providerName }}</span>
+                  } @else {
+                    <span>🌸</span>
+                  }
                 </div>
-
-                <div class="text-xs font-bold text-gray-900 mb-3">
-                  {{ item.price }} <span class="font-extrabold">{{ item.currency }}</span>
-                </div>
+                <span class="text-[10px] text-black font-medium">{{ item.client?.name }}</span>
               </div>
             </div>
 
-            <div class="p-3 pt-0">
-              @if (item.status === 'Pendente') {
+            <div class="text-[10px] text-black">
+              {{ (item.service?.price || 0).toLocaleString('en-US') }}
+              <span class="font-extrabold">AOA</span>
+            </div>
+            <div>
+              @if (getStatusLabel(item.status) === 'Pendente') {
                 <div class="flex items-center gap-2">
                   <button
-                    (click)="acceptService(item.id)"
-                    class="flex-1 inline-flex items-center justify-center gap-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-medium py-1 px-2 rounded-md transition"
+                    (click)="acceptService(item.id, $event)"
+                    class="hover:scale-105 cursor-pointer text-center py-0.75 px-1.25 bg-[#3BAC2838] text-[#19680C] text-[10px] font-semibold flex items-center justify-center gap-1 border border-[#498E3E] rounded-[4px] transition"
                   >
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2.5"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
                     Aceitar
                   </button>
 
                   <button
-                    (click)="rejectService(item.id)"
-                    class="flex-1 inline-flex items-center justify-center gap-1 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-medium py-1 px-2 rounded-md transition"
+                    (click)="rejectService(item.id, $event)"
+                    class="hover:scale-105 cursor-pointer text-center py-0.75 px-1.25 bg-[#FF2C2C36] text-[#8F0B0B] text-[10px] font-semibold flex items-center justify-center gap-1 border border-[#FF4040] rounded-[4px] transition"
                   >
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2.5"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
                     Rejeitar
                   </button>
                 </div>
               }
 
-              @if (item.status === 'Aceito') {
+              @if (getStatusLabel(item.status) === 'Aceito') {
                 <div
-                  class="w-full text-center py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-md border border-emerald-200"
+                  class="w-full flex items-center justify-center gap-2 text-center py-0.75 px-1.25 bg-[#3BAC2838] text-[#19680C] text-[10px] font-semibold rounded-[3px] border border-[#498E3E]"
                 >
-                  ✓ Aceito
+                  Aceito
                 </div>
               }
 
-              @if (item.status === 'Rejeitado') {
+              @if (getStatusLabel(item.status) === 'Rejeitado') {
                 <div
-                  class="w-full text-center py-1 bg-red-50 text-red-600 text-xs font-semibold rounded-md border border-red-200"
+                  class="w-full flex items-center justify-center gap-2 text-center py-0.75 px-1.25 bg-[#FF2C2C36] text-[#8F0B0B] text-[10px] font-semibold rounded-[3px] border border-[#FF4040]"
                 >
-                  ✕ Rejeitado
+                  Rejeitado
                 </div>
               }
             </div>
@@ -171,30 +136,210 @@
       </div>
     </ng-container>
   }
-
-  @if (filteredServices().length === 0) {
-    <ng-container>
-      <div
-        class="flex flex-col items-center justify-center py-16 bg-white rounded-xl border border-gray-100 shadow-sm text-center"
-      >
-        <svg
-          class="w-12 h-12 text-gray-300 mb-3"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-        <p class="text-gray-600 font-medium text-base">Nenhum serviço encontrado</p>
-        <p class="text-gray-400 text-xs mt-1">
-          Tente ajustar a sua pesquisa ou os filtros selecionados.
-        </p>
-      </div>
-    </ng-container>
-  }
 </div>
+
+@if (selectedService(); as detail) {
+  <div
+    class="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs transition-opacity font-inter"
+  >
+    <div class="absolute inset-0" (click)="closeDrawer()"></div>
+
+    <div
+      class="relative h-screen font-inter w-full max-w-[864px] px-7.5 py-5 bg-white shadow-2xl animate-slide-in overflow-y-auto z-10 flex gap-2.5 flex-col justify-between"
+    >
+      <div class="flex flex-col gap-2.5">
+        <div class="sticky top-0 bg-white flex items-center justify-between z-10">
+          <div>
+            <h2 class="font-semibold text-xl">Detalhes do Contrato de Serviço</h2>
+            <p class="text-[13px] text-[#737791]">Veja detalhatamente contrato do serviço.</p>
+          </div>
+
+          <button
+            (click)="closeDrawer()"
+            class="p-1 w-8 h-8 flex items-center justify-center rounded-full text-[#464E5F] hover:text-gray-500 bg-gray-100 transition-colors cursor-pointer"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex-1 py-4 flex flex-col gap-4">
+          <span
+            class="w-fit text-[10px] font-semibold px-1.25 py-0.75 rounded bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]"
+          >
+            {{ getStatusLabel(detail.status) }}
+          </span>
+
+          <div class="flex gap-5">
+            <img
+              [src]="detail.service?.image ? detail.service?.image : '/images/not-found.png'"
+              [alt]="detail.service?.name"
+              class="w-[389px] h-[279px] object-cover rounded-lg"
+            />
+
+            <div class="flex flex-col gap-5">
+              <div class="flex flex-col gap-1 justify-between">
+                <h3 class="text-xl font-semibold">{{ detail.service?.name }}</h3>
+
+                <span class="text-base font-bold text-gray-900">
+                  <p
+                    class="bg-[#00000017] px-1.25 py-0.75 font-bold text-[15px] flex items-center gap-1 w-fit rounded-sm"
+                  >
+                    <img src="/images/icons/dashboard/flag.svg" alt="" />
+                    {{ (detail.service?.price || 0).toLocaleString('en-US') }} Kza
+                  </p></span
+                >
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <p class="text-xs font-semibold">Quem contrata</p>
+
+                <div class="flex flex-wrap gap-4">
+                  <div class="flex items-center justify-center gap-2">
+                    <div
+                      class="w-7.75 h-7.75 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden"
+                    >
+                      @if (detail.client?.image) {
+                        <img [src]="detail.client?.image" class="w-7.75 h-7.75 object-cover" />
+                      } @else {
+                        {{ detail.client?.name?.charAt(0) }}
+                      }
+                    </div>
+                    <span class="text-[13px] font-medium">{{ detail.client?.name }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <p class="text-xs font-semibold">Detalhes do Serviço</p>
+                <p class="text-[10px] text-[#818181]">
+                  {{
+                    detail.description ||
+                      detail.service?.description ||
+                      'Nenhuma descrição detalhada informada para este serviço.'
+                  }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <h4 class="font-semibold">Amostras deste serviço</h4>
+
+            <div class="flex flex-wrap gap-2">
+              @if (detail.images && detail.images.length > 0) {
+                @for (img of detail.images; track img.id) {
+                  <img [src]="img.path" class="w-[177px] h-[89px] object-cover rounded-lg" />
+                }
+              } @else {
+                <img
+                  [src]="detail.service?.image ? detail.service?.image : '/images/not-found.png'"
+                  class="w-[177px] h-[89px] object-cover rounded-lg"
+                />
+              }
+            </div>
+          </div>
+
+          <div class="w-full flex flex-col gap-2.5">
+            <h1 class="font-semibold">Informações de Pagamento</h1>
+
+            <div class="bg-[#f9f9f9] rounded-xl w-full px-3.75 py-5 flex flex-col gap-5.5">
+              <span>Valor total do serviço</span>
+              <span class="font-semibold"
+                >{{ (detail.service?.price || 0).toLocaleString('en-US') }} AOA</span
+              >
+
+              <div class="flex flex-col gap-2 w-full">
+                <p class="flex items-center justify-between w-full">
+                  Valor do serviço
+                  <span class="font-semibold"
+                    >{{ (detail.service?.price || 0).toLocaleString('en-US') }} kz</span
+                  >
+                </p>
+                <p class="flex items-center justify-between w-full">
+                  Valor do deslocamento
+                  <span class="font-semibold">{{ detail.service?.travel_price || 0 }} kz</span>
+                </p>
+              </div>
+
+              <hr class="w-1/2 border border-gray-200" />
+
+              <p class="flex items-center justify-between w-full text-[15px] font-semibold">
+                Total
+                <span class="font-medium text-base"
+                  >{{ (detail.service?.travel_price || 0) + (detail.service?.price || 0) }} kz</span
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+
+        @if (getStatusLabel(detail.status) === 'Pendente') {
+          <div class="flex items-center gap-2">
+            <button
+              (click)="acceptService(detail.id); closeDrawer()"
+              class="hover:scale-105 cursor-pointer text-center py-2 px-3 bg-[#3BAC2838] text-[#19680C] text-[15px] font-semibold flex items-center justify-center gap-1 border border-[#498E3E] rounded-[4px] transition"
+            >
+              <svg
+                width="10"
+                height="8"
+                viewBox="0 0 10 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3.5775 7.1675C3.3775 7.1675 3.1875 7.0875 3.0475 6.9475L0.2175 4.1175C-0.0725 3.8275 -0.0725 3.3475 0.2175 3.0575C0.5075 2.7675 0.9875 2.7675 1.2775 3.0575L3.5775 5.3575L8.7175 0.2175C9.0075 -0.0725 9.4875 -0.0725 9.7775 0.2175C10.0675 0.5075 10.0675 0.987499 9.7775 1.2775L4.1075 6.9475C3.9675 7.0875 3.7775 7.1675 3.5775 7.1675Z"
+                  fill="#19680C"
+                />
+              </svg>
+
+              Aceitar
+            </button>
+
+            <button
+              (click)="rejectService(detail.id); closeDrawer()"
+              class="hover:scale-105 cursor-pointer text-center py-2 px-3 bg-[#FF2C2C36] text-[#8F0B0B] text-[15px] font-semibold flex items-center justify-center gap-1 border border-[#FF4040] rounded-[4px] transition"
+            >
+              <svg
+                width="8"
+                height="8"
+                viewBox="0 0 8 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.6375 3.5775L6.9375 1.2775C7.2275 0.987499 7.2275 0.5075 6.9375 0.2175C6.6475 -0.0725 6.1675 -0.0725 5.8775 0.2175L3.5775 2.5175L1.2775 0.2175C0.987499 -0.0725 0.5075 -0.0725 0.2175 0.2175C-0.0725 0.5075 -0.0725 0.987499 0.2175 1.2775L2.5175 3.5775L0.2175 5.8775C-0.0725 6.1675 -0.0725 6.6475 0.2175 6.9375C0.3675 7.0875 0.5575 7.1575 0.7475 7.1575C0.9375 7.1575 1.1275 7.0875 1.2775 6.9375L3.5775 4.6375L5.8775 6.9375C6.0275 7.0875 6.2175 7.1575 6.4075 7.1575C6.5975 7.1575 6.7875 7.0875 6.9375 6.9375C7.2275 6.6475 7.2275 6.1675 6.9375 5.8775L4.6375 3.5775Z"
+                  fill="#8F0B0B"
+                />
+              </svg>
+
+              Rejeitar
+            </button>
+          </div>
+        }
+
+        @if (getStatusLabel(detail.status) === 'Aceito') {
+          <div
+            class="w-full text-center py-2 px-3 bg-[#3BAC2838] text-[#19680C] text-[15px] font-semibold rounded-[4px] border border-[#498E3E]"
+          >
+            Serviço Aceito
+          </div>
+        }
+
+        @if (getStatusLabel(detail.status) === 'Rejeitado') {
+          <div
+            class="w-full text-center py-2 px-3 bg-[#FF2C2C36] text-[#8F0B0B] text-[15px] font-semibold rounded-[4px] border border-[#FF4040]"
+          >
+            Serviço Rejeitado
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
