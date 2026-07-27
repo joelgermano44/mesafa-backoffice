@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { TitleHeader } from '../../components/title-header/title-header';
 import { AdminService } from '../../../../core/features/administrators/services/admin.service';
 import { BannerCardComponent } from './components/banner-card/banner-card';
+import { AddAdvertisementModalComponent } from './components/add-advertisement-modal/add-advertisement-modal';
 
 interface Banner {
   id: number;
@@ -16,7 +17,7 @@ interface Banner {
 
 @Component({
   selector: 'app-advertisements',
-  imports: [TitleHeader, BannerCardComponent],
+  imports: [TitleHeader, BannerCardComponent, AddAdvertisementModalComponent],
   templateUrl: './advertisements.html',
   styleUrl: './advertisements.css',
 })
@@ -24,6 +25,8 @@ export class Advertisements {
   private readonly adminService = inject(AdminService);
 
   readonly admin = this.adminService.admin;
+
+  protected readonly isModalOpen = signal(false);
 
   protected readonly search = signal('');
   protected readonly selectedType = signal('all');
@@ -93,6 +96,18 @@ export class Advertisements {
 
     return banners;
   });
+
+  protected openModal(): void {
+    this.isModalOpen.set(true);
+  }
+
+  protected closeModal(): void {
+    this.isModalOpen.set(false);
+  }
+
+  protected handleSaveBanner(data: { link: string; image: File | null }): void {
+    console.log('Novo banner salvo:', data);
+  }
 
   protected onSearch(event: Event) {
     const input = event.target as HTMLInputElement;

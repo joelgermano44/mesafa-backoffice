@@ -5,7 +5,7 @@
 ></app-title-header>
 
 <div class="table-container flex flex-col font-inter w-full mt-8">
-  <div class="ilter-bar flex w-full justify-between items-center mb-8 gap-4">
+  <div class="filter-bar flex w-full justify-between items-center mb-8 gap-4">
     <div class="filters-group flex gap-3.25 items-center">
       <span class="filter-label font-semibold text-sm">Filtro</span>
 
@@ -55,87 +55,83 @@
     </div>
   </div>
 
-  @if (filteredServices().length > 0) {
-    <ng-container>
-      <div class="flex flex-wrap gap-6.25 font-inter">
-        @for (item of filteredServices(); track item.id) {
-          <div
-            (click)="openDrawer(item)"
-            class="bg-[#F9FBFC47] hover:scale-105 transition-all duration-300 hover:bg-primary/5 w-53.5 rounded-[5px] shadow-sm p-2.5 border border-gray-100 overflow-hidden flex flex-col gap-2.5 justify-between cursor-pointer"
-          >
-            <div class="h-37 w-full overflow-hidden bg-gray-200">
+  <div class="flex flex-wrap gap-6.25 font-inter">
+    @for (item of filteredServices(); track item.id) {
+      <div
+        (click)="openDrawer(item)"
+        class="bg-[#F9FBFC47] hover:scale-105 transition-all duration-300 hover:bg-primary/5 w-53.5 rounded-[5px] shadow-sm p-2.5 border border-gray-100 overflow-hidden flex flex-col gap-2.5 justify-between cursor-pointer"
+      >
+        <div class="h-37 w-full overflow-hidden bg-gray-200">
+          <img
+            [src]="item.service?.image ? item.service?.image : '/images/not-found.png'"
+            [alt]="item.service?.name"
+            class="w-full h-full object-cover rounded-sm"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <h3 class="font-semibold text-sm">{{ item.service?.name }}</h3>
+
+          <div class="flex items-center gap-2">
+            <div
+              class="w-5 h-5 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center overflow-hidden text-xs font-semibold"
+            >
               <img
-                [src]="item.service?.image ? item.service?.image : '/images/not-found.png'"
-                [alt]="item.service?.name"
-                class="w-full h-full object-cover rounded-sm"
+                [src]="item.client?.image ? item.client?.image : '/images/icons/dashboard/user.svg'"
+                alt="Avatar"
+                class="w-full h-full object-cover"
               />
             </div>
-
-            <div class="flex flex-col gap-1">
-              <h3 class="font-semibold text-sm">{{ item.service?.name }}</h3>
-
-              <div class="flex items-center gap-2">
-                <div
-                  class="w-5 h-5 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center overflow-hidden text-xs font-semibold"
-                >
-                  @if (item.client?.image) {
-                    <img
-                      [src]="item.client?.image"
-                      alt="Avatar"
-                      class="w-full h-full object-cover"
-                    />
-                  } @else {
-                    <span>🌸</span>
-                  }
-                </div>
-                <span class="text-[10px] text-black font-medium">{{ item.client?.name }}</span>
-              </div>
-            </div>
-
-            <div class="text-[10px] text-black">
-              {{ (item.service?.price || 0).toLocaleString('en-US') }}
-              <span class="font-extrabold">AOA</span>
-            </div>
-            <div>
-              @if (getStatusLabel(item.status) === 'Pendente') {
-                <div class="flex items-center gap-2">
-                  <button
-                    (click)="acceptService(item.id, $event)"
-                    class="hover:scale-105 cursor-pointer text-center py-0.75 px-1.25 bg-[#3BAC2838] text-[#19680C] text-[10px] font-semibold flex items-center justify-center gap-1 border border-[#498E3E] rounded-[4px] transition"
-                  >
-                    Aceitar
-                  </button>
-
-                  <button
-                    (click)="rejectService(item.id, $event)"
-                    class="hover:scale-105 cursor-pointer text-center py-0.75 px-1.25 bg-[#FF2C2C36] text-[#8F0B0B] text-[10px] font-semibold flex items-center justify-center gap-1 border border-[#FF4040] rounded-[4px] transition"
-                  >
-                    Rejeitar
-                  </button>
-                </div>
-              }
-
-              @if (getStatusLabel(item.status) === 'Aceito') {
-                <div
-                  class="w-full flex items-center justify-center gap-2 text-center py-0.75 px-1.25 bg-[#3BAC2838] text-[#19680C] text-[10px] font-semibold rounded-[3px] border border-[#498E3E]"
-                >
-                  Aceito
-                </div>
-              }
-
-              @if (getStatusLabel(item.status) === 'Rejeitado') {
-                <div
-                  class="w-full flex items-center justify-center gap-2 text-center py-0.75 px-1.25 bg-[#FF2C2C36] text-[#8F0B0B] text-[10px] font-semibold rounded-[3px] border border-[#FF4040]"
-                >
-                  Rejeitado
-                </div>
-              }
-            </div>
+            <span class="text-[10px] text-black font-medium">{{ item.client?.name }}</span>
           </div>
-        }
+        </div>
+
+        <div class="text-[10px] text-black">
+          {{ (item.service?.price || 0).toLocaleString('en-US') }}
+          <span class="font-extrabold">AOA</span>
+        </div>
+        <div>
+          @if (getStatusLabel(item.status) === 'Pendente') {
+            <div class="flex items-center gap-2">
+              <button
+                (click)="acceptService(item.id, $event)"
+                class="hover:scale-105 cursor-pointer text-center py-0.75 px-1.25 bg-[#3BAC2838] text-[#19680C] text-[10px] font-semibold flex items-center justify-center gap-1 border border-[#498E3E] rounded-[4px] transition"
+              >
+                Aceitar
+              </button>
+
+              <button
+                (click)="rejectService(item.id, $event)"
+                class="hover:scale-105 cursor-pointer text-center py-0.75 px-1.25 bg-[#FF2C2C36] text-[#8F0B0B] text-[10px] font-semibold flex items-center justify-center gap-1 border border-[#FF4040] rounded-[4px] transition"
+              >
+                Rejeitar
+              </button>
+            </div>
+          }
+
+          @if (getStatusLabel(item.status) === 'Aceito') {
+            <div
+              class="w-full flex items-center justify-center gap-2 text-center py-0.75 px-1.25 bg-[#3BAC2838] text-[#19680C] text-[10px] font-semibold rounded-[3px] border border-[#498E3E]"
+            >
+              Aceito
+            </div>
+          }
+
+          @if (getStatusLabel(item.status) === 'Rejeitado') {
+            <div
+              class="w-full flex items-center justify-center gap-2 text-center py-0.75 px-1.25 bg-[#FF2C2C36] text-[#8F0B0B] text-[10px] font-semibold rounded-[3px] border border-[#FF4040]"
+            >
+              Rejeitado
+            </div>
+          }
+        </div>
       </div>
-    </ng-container>
-  }
+    } @empty {
+      <div class="text-center py-16 bg-gray-50 rounded-xl border border-dashed border-gray-200 w-full">
+        <p class="text-gray-500 font-medium">Nenhum serviço contratado encontrado.</p>
+      </div>
+    }
+  </div>
 </div>
 
 @if (selectedService(); as detail) {

@@ -1,0 +1,26 @@
+<div
+  class="w-full max-w-247 rounded-2xl border-2 bg-white border-[#F8F9FA] shadow-sm font-inter mt-10 mb-20"
+>
+  <div class="mb-6">
+    <h2 class="text-xl font-semibold text-gray-800 tracking-tight">Fluxo de pedidos</h2>
+    <p class="text-xs text-[#737791] font-medium">
+      Saldo projetado com base nos recebimentos e pagamentos
+    </p>
+  </div>
+
+  <div class="relative w-full h-[320px]">
+    <canvas #chartCanvas></canvas>
+  </div>
+
+  <div class="flex items-center gap-6 mt-6 pt-2">
+    <div class="flex items-center gap-2">
+      <span class="w-3.5 h-3.5 bg-[#A0B4F8] rounded-sm inline-block"></span>
+      <span class="text-sm font-semibold">Realizadas</span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <span class="w-3.5 h-3.5 bg-[#8BA5F8] rounded-sm inline-block"></span>
+      <span class="text-sm font-semibold">Canceladas</span>
+    </div>
+  </div>
+</div>

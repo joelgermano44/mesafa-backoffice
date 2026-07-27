@@ -51,13 +51,13 @@ export class Sidebar {
           activeIcon: '/images/icons/dashboard/sidebar/active/publicidades.svg',
         },
         {
-          label: 'Usuários Clientes',
+          label: 'Clientes',
           route: '/dashboard/clients-users',
           icon: '/images/icons/dashboard/sidebar/clients-users.svg',
           activeIcon: '/images/icons/dashboard/sidebar/active/clients-users.svg',
         },
         {
-          label: 'Usuários Profissionais',
+          label: 'Profissionais',
           route: '/dashboard/professionals-users',
           icon: '/images/icons/dashboard/sidebar/professionals-users.svg',
           activeIcon: '/images/icons/dashboard/sidebar/active/professionals-users.svg',

@@ -1,10 +1,10 @@
 <div class="table-container flex flex-col font-inter w-full relative">
-  <div class="filter-bar flex w-full justify-between items-center mb-5 gap-4">
+  <div class="filter-bar flex w-full justify-between items-center mb-5 mt-8 gap-4">
     <div class="filters-group flex gap-3.25 items-center">
       <span class="filter-label font-semibold text-sm">Filtro</span>
 
       <div
-        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#1546EB] focus-within:text-[#1546EB] focus-within:bg-[#1546EB1A]"
       >
         <label class="mr-1">Província ></label>
         <select
@@ -20,7 +20,7 @@
     </div>
 
     <div
-      class="search-box p-2.5 rounded-lg max-w-54 w-full flex items-center gap-3.75 focus-within:ring-3 focus-within:ring-[#3278FF] focus-within:bg-[#EFEFEF] border-2 border-[#EFEFEF]"
+      class="search-box p-2.5 rounded-lg max-w-54 w-full flex items-center gap-3.75 focus-within:ring-3 focus-within:ring-[#1546EB] focus-within:bg-[#EFEFEF] border-2 border-[#EFEFEF]"
     >
       <img src="/images/icons/search.svg" alt="" class="w-4.75 h-4.75" />
       <input
@@ -40,6 +40,13 @@
           <div class="flex items-center gap-2">
             <img src="/images/icons/dashboard/tables/funcionario.svg" alt="" class="w-4 h-4" />
             <span>Profissional</span>
+          </div>
+        </th>
+
+        <th class="px-4 py-3.5 text-left">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/cargo.svg" alt="" class="w-4 h-4" />
+            <span>Profissão</span>
           </div>
         </th>
 
@@ -76,13 +83,13 @@
     <tbody>
       @if (isLoading()) {
         <tr>
-          <td colspan="6" class="py-8 text-center text-sm text-gray-500">
+          <td colspan="7" class="py-8 text-center text-sm text-gray-500">
             A carregar profissionais...
           </td>
         </tr>
       } @else if (paginatedCollaborators().length === 0) {
         <tr>
-          <td colspan="6" class="py-8 text-center text-sm text-gray-500">
+          <td colspan="7" class="py-8 text-center text-sm text-gray-500">
             Nenhum profissional encontrado.
           </td>
         </tr>
@@ -106,6 +113,14 @@
                   <span class="text-xs text-[#898989]">@{{ item.username }}</span>
                 </div>
               </div>
+            </td>
+
+            <td>
+              <span
+                class="text-[10px] font-medium border border-[#D1D5DB] bg-[#F3F4F6] rounded-sm px-1.25 py-0.75"
+              >
+                {{ item.professions && item.professions.length ? item.professions[0].name : 'N/D' }}
+              </span>
             </td>
 
             <td>
@@ -135,12 +150,28 @@
 
             <td>
               <div class="actions flex justify-center gap-2" (click)="$event.stopPropagation()">
-                <button (click)="deleteCollaborator(item.id, $event)" title="Eliminar" class="hover:opacity-70">
-                  <img src="images/icons/dashboard/tables/eliminar.svg" alt="Eliminar" class="w-6 h-6" />
+                <button
+                  (click)="deleteCollaborator(item.id, $event)"
+                  title="Eliminar"
+                  class="hover:opacity-70"
+                >
+                  <img
+                    src="images/icons/dashboard/tables/eliminar.svg"
+                    alt="Eliminar"
+                    class="w-6 h-6"
+                  />
                 </button>
 
-                <button (click)="editCollaborator(item, $event)" title="Editar" class="hover:opacity-70">
-                  <img src="images/icons/dashboard/tables/editar.svg" alt="Editar" class="w-6 h-6" />
+                <button
+                  (click)="editCollaborator(item, $event)"
+                  title="Editar"
+                  class="hover:opacity-70"
+                >
+                  <img
+                    src="images/icons/dashboard/tables/editar.svg"
+                    alt="Editar"
+                    class="w-6 h-6"
+                  />
                 </button>
               </div>
             </td>
@@ -151,7 +182,7 @@
   </table>
 
   <div
-    class="pagination-bar w-full flex justify-between items-center border border-[#EAECF0] rounded-b-lg px-6 py-3 mt-2"
+    class="pagination-bar w-full flex justify-between items-center border border-[#EAECF0] rounded-b-lg px-6 py-3"
   >
     <button
       class="btn-page border border-[#D0D5DD] rounded-lg py-2 px-3.5 hover:scale-105 hover:bg-[#D0D5DD]/30 cursor-pointer transition-all duration-200 text-sm text-[#344054] disabled:opacity-50 disabled:hover:scale-100"
@@ -176,169 +207,736 @@
   </div>
 
   @if (isDrawerOpen() && collaboratorService.current(); as activeUser) {
-    <div
-      class="fixed inset-0 bg-black/40 z-40 transition-opacity"
-      (click)="closeDrawer()"
-    ></div>
+    <div class="fixed inset-0 bg-black/40 z-40 transition-opacity" (click)="closeDrawer()"></div>
 
     <aside
-      class="fixed top-0 right-0 h-full w-full max-w-[540px] bg-white z-50 shadow-2xl flex flex-col justify-between overflow-y-auto transition-transform duration-300 p-6 font-inter"
+      class="fixed top-0 right-0 h-full w-full max-w-216 bg-white z-50 shadow-2xl flex flex-col justify-between overflow-y-auto transition-transform duration-300 p-8 font-inter"
     >
       <div>
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <h2 class="text-xl font-bold text-[#111827]">Detalhes do Profissional</h2>
-            <p class="text-xs text-[#6B7280]">About this section, set all comments in this paragraph.</p>
+        <div class="flex justify-between items-start">
+          <div class="flex flex-col">
+            <h2 class="text-[25px] font-semibold">Detalhe do Profissional</h2>
+            <p class="text-[13px] text-[#737791]">
+              Informações detalhadas da conta do profissional.
+            </p>
           </div>
           <button
             (click)="closeDrawer()"
-            class="text-gray-400 hover:text-gray-600 rounded-full p-1 transition-colors"
+            class="p-1 rounded-full text-[#464E5F] hover:text-gray-500 bg-gray-100 transition-colors cursor-pointer"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
-        <div class="flex items-start gap-4 mb-6">
-          <img
-            [src]="activeUser.image || '/images/icons/dashboard/user.svg'"
-            [alt]="activeUser.name"
-            class="w-20 h-20 rounded-full object-cover border border-gray-100 shadow-sm"
-          />
-          <div class="flex-1">
-            <div class="grid grid-cols-4 text-center border-b pb-3 mb-3 border-gray-100">
-              <div>
-                <span class="block text-sm font-bold text-gray-900">100</span>
-                <span class="text-[10px] text-gray-500">Clientes atendidos</span>
-              </div>
-              <div>
-                <span class="block text-sm font-bold text-gray-900">+5</span>
-                <span class="text-[10px] text-gray-500">Experiência</span>
-              </div>
-              <div>
-                <span class="block text-sm font-bold text-gray-900">10k</span>
-                <span class="text-[10px] text-gray-500">Avaliações</span>
-              </div>
-              <div>
-                <span class="block text-sm font-bold text-gray-900">30,000kz</span>
-                <span class="text-[10px] text-gray-500">Ganhos no total</span>
-              </div>
-            </div>
+        <div class="flex items-start gap-10 mb-6 mt-10 w-full">
+          <div class="flex flex-col">
+            <img
+              [src]="activeUser.image || '/images/icons/dashboard/user.svg'"
+              [alt]="activeUser.name"
+              class="w-23 h-23 rounded-full object-cover"
+            />
+            <div class="flex flex-col gap-1">
+              <h3 class="text-[13px] font-semibold">{{ activeUser.name }}</h3>
+              <p class="flex gap-1 items-center text-[9px] font-medium py-0.75 px-1.25">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 11 11"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2.36041 10.0834C2.1725 10.0834 2.01666 9.92758 2.01666 9.73967V1.2605C2.01666 1.07258 2.1725 0.916748 2.36041 0.916748C2.54833 0.916748 2.70416 1.07258 2.70416 1.2605V9.73967C2.70416 9.92758 2.54833 10.0834 2.36041 10.0834Z"
+                    fill="black"
+                  />
+                  <path
+                    opacity="0.4"
+                    d="M8.25932 5.65121L7.70015 5.09204C7.56723 4.97746 7.48932 4.80787 7.48473 4.61996C7.47557 4.41371 7.55807 4.20746 7.70932 4.05621L8.25932 3.50621C8.73598 3.02954 8.91473 2.57121 8.76348 2.20912C8.61682 1.85162 8.16307 1.65454 7.4939 1.65454H2.36057C2.26432 1.65912 2.1864 1.73704 2.1864 1.83329V7.33329C2.1864 7.42954 2.26432 7.50746 2.36057 7.50746H7.4939C8.1539 7.50746 8.59848 7.30579 8.74973 6.94371C8.90098 6.57704 8.72682 6.12329 8.25932 5.65121Z"
+                    fill="black"
+                  />
+                </svg>
 
-            <div class="flex flex-col gap-0.5">
-              <h3 class="text-base font-bold text-gray-900">{{ activeUser.name }}</h3>
-              <p class="text-xs text-gray-500">{{ activeUser.email }}</p>
-              <p class="text-xs text-gray-500">
-                {{ activeUser.address?.province || 'N/D' }}
-                {{ activeUser.phone ? '• ' + activeUser.phone : '' }}
+                @for (item of activeUser.professions; track item.id) {
+                  <span>{{ item.name ? item.name : 'N/A' }}</span>
+                }
+
+                <img src="/images/icons/dashboard/verified.svg" alt="" class="" />
               </p>
-              <p class="text-xs text-gray-500">BI: {{ activeUser.bi || 'N/D' }}</p>
             </div>
 
             <button
-              class="mt-3 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-xs font-medium rounded-md text-gray-700 transition-colors flex items-center gap-1"
+              (click)="toggleVerifyUser(activeUser)"
+              class="flex items-center text-[10px] font-medium rounded-md transition-colors gap-1 mt-2.25"
             >
-              <svg class="w-3.5 h-3.5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
+              <input type="checkbox" />
+
               Tornar Verificado
             </button>
           </div>
+
+          <div class="flex flex-col gap-1.25">
+            <div class="flex text-center gap-5 border-gray-100">
+              <div class="flex flex-col items-center justify-center">
+                <span class="block text-[15px] font-semibold">
+                  {{ clientsServed() }}
+                </span>
+                <span class="text-[9px]">Clientes atendidos</span>
+              </div>
+
+              <div class="flex flex-col items-center justify-center">
+                <span class="block text-[15px] font-semibold"> +{{ experienceYears() }} </span>
+                <span class="text-[9px]">Experiência</span>
+              </div>
+
+              <div class="flex flex-col items-center justify-center">
+                <span class="block text-[15px] font-semibold">
+                  {{ completedOrders().length }}
+                </span>
+                <span class="text-[9px]">Serviços concluídos</span>
+              </div>
+
+              <div class="flex flex-col items-center justify-center">
+                <span class="block text-[15px] font-semibold">
+                  {{ totalRevenue() | number: '1.0-0' }} kz
+                </span>
+                <span class="text-[9px]">Ganhos no total</span>
+              </div>
+            </div>
+
+            <hr class="border border-[#E4E4E4D4]" />
+
+            <div class="flex flex-col gap-0.5 text-[8px] text-[#3C2D2D]">
+              <p class="">{{ activeUser.email }}</p>
+              <p class="">
+                {{ activeUser.address?.province + ' - ' + activeUser.address?.municiple || 'N/D' }}
+              </p>
+              <p class="">
+                {{ activeUser.phone ? '' + activeUser.phone : '' }}
+              </p>
+              <p class="">BI: {{ activeUser.bi || 'N/D' }}</p>
+            </div>
+          </div>
         </div>
 
-        <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
+        <div class="flex items-center gap-2 pb-3">
           <button
-            (click)="activeTab.set('estatisticas')"
-            [class]="activeTab() === 'estatisticas' ? 'bg-[#3278FF] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5"
+            (click)="setTab('estatisticas')"
+            [class]="
+              activeTab() === 'estatisticas'
+                ? 'bg-[#1546EB] text-white'
+                : 'bg-white text-[#626262] border border-[#D9D9D9] hover:bg-gray-200'
+            "
+            class="text-[11px] flex gap-1 items-center py-1.5 px-1.25 rounded-lg"
           >
+            @if (activeTab() === 'estatisticas') {
+              <svg
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  opacity="0.4"
+                  d="M13.75 5.28117C13.4937 5.28117 13.2812 5.097 13.2812 4.87492V3.79158C13.2812 2.39409 12.2375 1.4895 10.625 1.4895H4.375C2.7625 1.4895 1.71875 2.39409 1.71875 3.79158V4.87492C1.71875 5.097 1.50625 5.28117 1.25 5.28117C0.99375 5.28117 0.78125 5.097 0.78125 4.87492V3.79158C0.78125 1.92825 2.225 0.677002 4.375 0.677002H10.625C12.775 0.677002 14.2188 1.92825 14.2188 3.79158V4.87492C14.2188 5.097 14.0063 5.28117 13.75 5.28117Z"
+                  fill="white"
+                />
+                <path
+                  opacity="0.4"
+                  d="M10.625 12.3229H4.375C2.225 12.3229 0.78125 11.0717 0.78125 9.20833V8.125C0.78125 7.90292 0.99375 7.71875 1.25 7.71875C1.50625 7.71875 1.71875 7.90292 1.71875 8.125V9.20833C1.71875 10.6058 2.7625 11.5104 4.375 11.5104H10.625C12.2375 11.5104 13.2812 10.6058 13.2812 9.20833V8.125C13.2812 7.90292 13.4937 7.71875 13.75 7.71875C14.0063 7.71875 14.2188 7.90292 14.2188 8.125V9.20833C14.2188 11.0717 12.775 12.3229 10.625 12.3229Z"
+                  fill="white"
+                />
+                <path
+                  d="M10.25 4.44712L7.90001 3.34752C7.65001 3.23377 7.35626 3.23377 7.10626 3.34752L4.75626 4.44712C4.58751 4.52837 4.48126 4.68543 4.48126 4.86418C4.48126 5.04293 4.58751 5.20002 4.75626 5.28127L7.10626 6.38087C7.23126 6.44046 7.36876 6.46752 7.50626 6.46752C7.64376 6.46752 7.78126 6.44046 7.90626 6.38087L10.2563 5.28127C10.425 5.20002 10.5313 5.04293 10.5313 4.86418C10.525 4.68543 10.4188 4.52837 10.25 4.44712Z"
+                  fill="white"
+                />
+                <path
+                  d="M6.71252 6.75448L4.52502 5.80656C4.35627 5.73614 4.16252 5.74158 4.00002 5.82825C3.83752 5.91491 3.74377 6.06115 3.74377 6.22365V8.01657C3.74377 8.32532 3.94378 8.607 4.26253 8.74242L6.45003 9.69033C6.52503 9.72283 6.60628 9.73906 6.69378 9.73906C6.79378 9.73906 6.88752 9.71739 6.97502 9.66864C7.13752 9.58198 7.23128 9.43574 7.23128 9.27324V7.48032C7.23128 7.17157 7.03752 6.89531 6.71252 6.75448Z"
+                  fill="white"
+                />
+                <path
+                  d="M10.9938 5.82825C10.8313 5.74158 10.6375 5.73614 10.4688 5.80656L8.28126 6.75448C7.96251 6.89531 7.76251 7.17157 7.76251 7.48032V9.27324C7.76251 9.43574 7.85626 9.58198 8.01876 9.66864C8.10626 9.71739 8.20001 9.73906 8.30001 9.73906C8.38126 9.73906 8.46251 9.72283 8.54376 9.69033L10.7313 8.74242C11.05 8.60158 11.25 8.32532 11.25 8.01657V6.22365C11.25 6.06115 11.1563 5.91491 10.9938 5.82825Z"
+                  fill="white"
+                />
+              </svg>
+            } @else {
+              <svg
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  opacity="0.4"
+                  d="M13.75 5.28117C13.4938 5.28117 13.2812 5.097 13.2812 4.87492V3.79159C13.2812 2.39409 12.2375 1.4895 10.625 1.4895H4.375C2.7625 1.4895 1.71875 2.39409 1.71875 3.79159V4.87492C1.71875 5.097 1.50625 5.28117 1.25 5.28117C0.99375 5.28117 0.78125 5.097 0.78125 4.87492V3.79159C0.78125 1.92825 2.225 0.677002 4.375 0.677002H10.625C12.775 0.677002 14.2188 1.92825 14.2188 3.79159V4.87492C14.2188 5.097 14.0062 5.28117 13.75 5.28117Z"
+                  fill="#626262"
+                />
+                <path
+                  opacity="0.4"
+                  d="M10.625 12.3229H4.375C2.225 12.3229 0.78125 11.0717 0.78125 9.20833V8.125C0.78125 7.90292 0.99375 7.71875 1.25 7.71875C1.50625 7.71875 1.71875 7.90292 1.71875 8.125V9.20833C1.71875 10.6058 2.7625 11.5104 4.375 11.5104H10.625C12.2375 11.5104 13.2812 10.6058 13.2812 9.20833V8.125C13.2812 7.90292 13.4938 7.71875 13.75 7.71875C14.0062 7.71875 14.2188 7.90292 14.2188 8.125V9.20833C14.2188 11.0717 12.775 12.3229 10.625 12.3229Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M10.25 4.44712L7.90001 3.34752C7.65001 3.23377 7.35626 3.23377 7.10626 3.34752L4.75626 4.44712C4.58751 4.52837 4.48126 4.68543 4.48126 4.86418C4.48126 5.04293 4.58751 5.20002 4.75626 5.28127L7.10626 6.38087C7.23126 6.44046 7.36876 6.46752 7.50626 6.46752C7.64376 6.46752 7.78126 6.44046 7.90626 6.38087L10.2563 5.28127C10.425 5.20002 10.5313 5.04293 10.5313 4.86418C10.525 4.68543 10.4188 4.52837 10.25 4.44712Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M6.71252 6.75448L4.52502 5.80656C4.35627 5.73614 4.16252 5.74158 4.00002 5.82825C3.83752 5.91491 3.74377 6.06115 3.74377 6.22365V8.01657C3.74377 8.32532 3.94378 8.607 4.26253 8.74242L6.45003 9.69033C6.52503 9.72283 6.60628 9.73906 6.69378 9.73906C6.79378 9.73906 6.88752 9.71739 6.97502 9.66864C7.13752 9.58198 7.23128 9.43574 7.23128 9.27324V7.48032C7.23128 7.17157 7.03752 6.89531 6.71252 6.75448Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M10.9938 5.82825C10.8313 5.74158 10.6375 5.73614 10.4688 5.80656L8.28126 6.75448C7.96251 6.89531 7.76251 7.17157 7.76251 7.48032V9.27324C7.76251 9.43574 7.85626 9.58198 8.01876 9.66864C8.10626 9.71739 8.20001 9.73906 8.30001 9.73906C8.38126 9.73906 8.46251 9.72283 8.54376 9.69033L10.7313 8.74242C11.05 8.60158 11.25 8.32532 11.25 8.01657V6.22365C11.25 6.06115 11.1563 5.91491 10.9938 5.82825Z"
+                  fill="#626262"
+                />
+              </svg>
+            }
+
             Estatísticas
           </button>
           <button
-            (click)="activeTab.set('servicos')"
-            [class]="activeTab() === 'servicos' ? 'bg-[#3278FF] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5"
+            (click)="setTab('servicos')"
+            [class]="
+              activeTab() === 'servicos'
+                ? 'bg-[#1546EB] text-white'
+                : 'bg-white text-[#626262] border border-[#D9D9D9] hover:bg-gray-200'
+            "
+            class="text-[11px] flex gap-1 items-center py-1.5 px-1.25 rounded-lg"
           >
+            @if (activeTab() === 'servicos') {
+              <svg
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  opacity="0.4"
+                  d="M13.75 5.28117C13.4937 5.28117 13.2812 5.097 13.2812 4.87492V3.79158C13.2812 2.39409 12.2375 1.4895 10.625 1.4895H4.375C2.7625 1.4895 1.71875 2.39409 1.71875 3.79158V4.87492C1.71875 5.097 1.50625 5.28117 1.25 5.28117C0.99375 5.28117 0.78125 5.097 0.78125 4.87492V3.79158C0.78125 1.92825 2.225 0.677002 4.375 0.677002H10.625C12.775 0.677002 14.2188 1.92825 14.2188 3.79158V4.87492C14.2188 5.097 14.0063 5.28117 13.75 5.28117Z"
+                  fill="white"
+                />
+                <path
+                  opacity="0.4"
+                  d="M10.625 12.3229H4.375C2.225 12.3229 0.78125 11.0717 0.78125 9.20833V8.125C0.78125 7.90292 0.99375 7.71875 1.25 7.71875C1.50625 7.71875 1.71875 7.90292 1.71875 8.125V9.20833C1.71875 10.6058 2.7625 11.5104 4.375 11.5104H10.625C12.2375 11.5104 13.2812 10.6058 13.2812 9.20833V8.125C13.2812 7.90292 13.4937 7.71875 13.75 7.71875C14.0063 7.71875 14.2188 7.90292 14.2188 8.125V9.20833C14.2188 11.0717 12.775 12.3229 10.625 12.3229Z"
+                  fill="white"
+                />
+                <path
+                  d="M10.25 4.44712L7.90001 3.34752C7.65001 3.23377 7.35626 3.23377 7.10626 3.34752L4.75626 4.44712C4.58751 4.52837 4.48126 4.68543 4.48126 4.86418C4.48126 5.04293 4.58751 5.20002 4.75626 5.28127L7.10626 6.38087C7.23126 6.44046 7.36876 6.46752 7.50626 6.46752C7.64376 6.46752 7.78126 6.44046 7.90626 6.38087L10.2563 5.28127C10.425 5.20002 10.5313 5.04293 10.5313 4.86418C10.525 4.68543 10.4188 4.52837 10.25 4.44712Z"
+                  fill="white"
+                />
+                <path
+                  d="M6.71252 6.75448L4.52502 5.80656C4.35627 5.73614 4.16252 5.74158 4.00002 5.82825C3.83752 5.91491 3.74377 6.06115 3.74377 6.22365V8.01657C3.74377 8.32532 3.94378 8.607 4.26253 8.74242L6.45003 9.69033C6.52503 9.72283 6.60628 9.73906 6.69378 9.73906C6.79378 9.73906 6.88752 9.71739 6.97502 9.66864C7.13752 9.58198 7.23128 9.43574 7.23128 9.27324V7.48032C7.23128 7.17157 7.03752 6.89531 6.71252 6.75448Z"
+                  fill="white"
+                />
+                <path
+                  d="M10.9938 5.82825C10.8313 5.74158 10.6375 5.73614 10.4688 5.80656L8.28126 6.75448C7.96251 6.89531 7.76251 7.17157 7.76251 7.48032V9.27324C7.76251 9.43574 7.85626 9.58198 8.01876 9.66864C8.10626 9.71739 8.20001 9.73906 8.30001 9.73906C8.38126 9.73906 8.46251 9.72283 8.54376 9.69033L10.7313 8.74242C11.05 8.60158 11.25 8.32532 11.25 8.01657V6.22365C11.25 6.06115 11.1563 5.91491 10.9938 5.82825Z"
+                  fill="white"
+                />
+              </svg>
+            } @else {
+              <svg
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  opacity="0.4"
+                  d="M13.75 5.28117C13.4938 5.28117 13.2812 5.097 13.2812 4.87492V3.79159C13.2812 2.39409 12.2375 1.4895 10.625 1.4895H4.375C2.7625 1.4895 1.71875 2.39409 1.71875 3.79159V4.87492C1.71875 5.097 1.50625 5.28117 1.25 5.28117C0.99375 5.28117 0.78125 5.097 0.78125 4.87492V3.79159C0.78125 1.92825 2.225 0.677002 4.375 0.677002H10.625C12.775 0.677002 14.2188 1.92825 14.2188 3.79159V4.87492C14.2188 5.097 14.0062 5.28117 13.75 5.28117Z"
+                  fill="#626262"
+                />
+                <path
+                  opacity="0.4"
+                  d="M10.625 12.3229H4.375C2.225 12.3229 0.78125 11.0717 0.78125 9.20833V8.125C0.78125 7.90292 0.99375 7.71875 1.25 7.71875C1.50625 7.71875 1.71875 7.90292 1.71875 8.125V9.20833C1.71875 10.6058 2.7625 11.5104 4.375 11.5104H10.625C12.2375 11.5104 13.2812 10.6058 13.2812 9.20833V8.125C13.2812 7.90292 13.4938 7.71875 13.75 7.71875C14.0062 7.71875 14.2188 7.90292 14.2188 8.125V9.20833C14.2188 11.0717 12.775 12.3229 10.625 12.3229Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M10.25 4.44712L7.90001 3.34752C7.65001 3.23377 7.35626 3.23377 7.10626 3.34752L4.75626 4.44712C4.58751 4.52837 4.48126 4.68543 4.48126 4.86418C4.48126 5.04293 4.58751 5.20002 4.75626 5.28127L7.10626 6.38087C7.23126 6.44046 7.36876 6.46752 7.50626 6.46752C7.64376 6.46752 7.78126 6.44046 7.90626 6.38087L10.2563 5.28127C10.425 5.20002 10.5313 5.04293 10.5313 4.86418C10.525 4.68543 10.4188 4.52837 10.25 4.44712Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M6.71252 6.75448L4.52502 5.80656C4.35627 5.73614 4.16252 5.74158 4.00002 5.82825C3.83752 5.91491 3.74377 6.06115 3.74377 6.22365V8.01657C3.74377 8.32532 3.94378 8.607 4.26253 8.74242L6.45003 9.69033C6.52503 9.72283 6.60628 9.73906 6.69378 9.73906C6.79378 9.73906 6.88752 9.71739 6.97502 9.66864C7.13752 9.58198 7.23128 9.43574 7.23128 9.27324V7.48032C7.23128 7.17157 7.03752 6.89531 6.71252 6.75448Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M10.9938 5.82825C10.8313 5.74158 10.6375 5.73614 10.4688 5.80656L8.28126 6.75448C7.96251 6.89531 7.76251 7.17157 7.76251 7.48032V9.27324C7.76251 9.43574 7.85626 9.58198 8.01876 9.66864C8.10626 9.71739 8.20001 9.73906 8.30001 9.73906C8.38126 9.73906 8.46251 9.72283 8.54376 9.69033L10.7313 8.74242C11.05 8.60158 11.25 8.32532 11.25 8.01657V6.22365C11.25 6.06115 11.1563 5.91491 10.9938 5.82825Z"
+                  fill="#626262"
+                />
+              </svg>
+            }
             Serviços ({{ activeUser.services ? activeUser.services.length : 0 }})
           </button>
           <button
-            (click)="activeTab.set('portfolio')"
-            [class]="activeTab() === 'portfolio' ? 'bg-[#3278FF] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5"
+            (click)="setTab('portfolio')"
+            [class]="
+              activeTab() === 'portfolio'
+                ? 'bg-[#1546EB] text-white'
+                : 'bg-white text-[#626262] border border-[#D9D9D9] hover:bg-gray-200'
+            "
+            class="text-[11px] flex gap-1 items-center py-1.5 px-1.25 rounded-lg"
           >
-            Portfólio (10)
+            @if (activeTab() === 'portfolio') {
+              <svg
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  opacity="0.4"
+                  d="M13.75 5.28117C13.4937 5.28117 13.2812 5.097 13.2812 4.87492V3.79158C13.2812 2.39409 12.2375 1.4895 10.625 1.4895H4.375C2.7625 1.4895 1.71875 2.39409 1.71875 3.79158V4.87492C1.71875 5.097 1.50625 5.28117 1.25 5.28117C0.99375 5.28117 0.78125 5.097 0.78125 4.87492V3.79158C0.78125 1.92825 2.225 0.677002 4.375 0.677002H10.625C12.775 0.677002 14.2188 1.92825 14.2188 3.79158V4.87492C14.2188 5.097 14.0063 5.28117 13.75 5.28117Z"
+                  fill="white"
+                />
+                <path
+                  opacity="0.4"
+                  d="M10.625 12.3229H4.375C2.225 12.3229 0.78125 11.0717 0.78125 9.20833V8.125C0.78125 7.90292 0.99375 7.71875 1.25 7.71875C1.50625 7.71875 1.71875 7.90292 1.71875 8.125V9.20833C1.71875 10.6058 2.7625 11.5104 4.375 11.5104H10.625C12.2375 11.5104 13.2812 10.6058 13.2812 9.20833V8.125C13.2812 7.90292 13.4937 7.71875 13.75 7.71875C14.0063 7.71875 14.2188 7.90292 14.2188 8.125V9.20833C14.2188 11.0717 12.775 12.3229 10.625 12.3229Z"
+                  fill="white"
+                />
+                <path
+                  d="M10.25 4.44712L7.90001 3.34752C7.65001 3.23377 7.35626 3.23377 7.10626 3.34752L4.75626 4.44712C4.58751 4.52837 4.48126 4.68543 4.48126 4.86418C4.48126 5.04293 4.58751 5.20002 4.75626 5.28127L7.10626 6.38087C7.23126 6.44046 7.36876 6.46752 7.50626 6.46752C7.64376 6.46752 7.78126 6.44046 7.90626 6.38087L10.2563 5.28127C10.425 5.20002 10.5313 5.04293 10.5313 4.86418C10.525 4.68543 10.4188 4.52837 10.25 4.44712Z"
+                  fill="white"
+                />
+                <path
+                  d="M6.71252 6.75448L4.52502 5.80656C4.35627 5.73614 4.16252 5.74158 4.00002 5.82825C3.83752 5.91491 3.74377 6.06115 3.74377 6.22365V8.01657C3.74377 8.32532 3.94378 8.607 4.26253 8.74242L6.45003 9.69033C6.52503 9.72283 6.60628 9.73906 6.69378 9.73906C6.79378 9.73906 6.88752 9.71739 6.97502 9.66864C7.13752 9.58198 7.23128 9.43574 7.23128 9.27324V7.48032C7.23128 7.17157 7.03752 6.89531 6.71252 6.75448Z"
+                  fill="white"
+                />
+                <path
+                  d="M10.9938 5.82825C10.8313 5.74158 10.6375 5.73614 10.4688 5.80656L8.28126 6.75448C7.96251 6.89531 7.76251 7.17157 7.76251 7.48032V9.27324C7.76251 9.43574 7.85626 9.58198 8.01876 9.66864C8.10626 9.71739 8.20001 9.73906 8.30001 9.73906C8.38126 9.73906 8.46251 9.72283 8.54376 9.69033L10.7313 8.74242C11.05 8.60158 11.25 8.32532 11.25 8.01657V6.22365C11.25 6.06115 11.1563 5.91491 10.9938 5.82825Z"
+                  fill="white"
+                />
+              </svg>
+            } @else {
+              <svg
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  opacity="0.4"
+                  d="M13.75 5.28117C13.4938 5.28117 13.2812 5.097 13.2812 4.87492V3.79159C13.2812 2.39409 12.2375 1.4895 10.625 1.4895H4.375C2.7625 1.4895 1.71875 2.39409 1.71875 3.79159V4.87492C1.71875 5.097 1.50625 5.28117 1.25 5.28117C0.99375 5.28117 0.78125 5.097 0.78125 4.87492V3.79159C0.78125 1.92825 2.225 0.677002 4.375 0.677002H10.625C12.775 0.677002 14.2188 1.92825 14.2188 3.79159V4.87492C14.2188 5.097 14.0062 5.28117 13.75 5.28117Z"
+                  fill="#626262"
+                />
+                <path
+                  opacity="0.4"
+                  d="M10.625 12.3229H4.375C2.225 12.3229 0.78125 11.0717 0.78125 9.20833V8.125C0.78125 7.90292 0.99375 7.71875 1.25 7.71875C1.50625 7.71875 1.71875 7.90292 1.71875 8.125V9.20833C1.71875 10.6058 2.7625 11.5104 4.375 11.5104H10.625C12.2375 11.5104 13.2812 10.6058 13.2812 9.20833V8.125C13.2812 7.90292 13.4938 7.71875 13.75 7.71875C14.0062 7.71875 14.2188 7.90292 14.2188 8.125V9.20833C14.2188 11.0717 12.775 12.3229 10.625 12.3229Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M10.25 4.44712L7.90001 3.34752C7.65001 3.23377 7.35626 3.23377 7.10626 3.34752L4.75626 4.44712C4.58751 4.52837 4.48126 4.68543 4.48126 4.86418C4.48126 5.04293 4.58751 5.20002 4.75626 5.28127L7.10626 6.38087C7.23126 6.44046 7.36876 6.46752 7.50626 6.46752C7.64376 6.46752 7.78126 6.44046 7.90626 6.38087L10.2563 5.28127C10.425 5.20002 10.5313 5.04293 10.5313 4.86418C10.525 4.68543 10.4188 4.52837 10.25 4.44712Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M6.71252 6.75448L4.52502 5.80656C4.35627 5.73614 4.16252 5.74158 4.00002 5.82825C3.83752 5.91491 3.74377 6.06115 3.74377 6.22365V8.01657C3.74377 8.32532 3.94378 8.607 4.26253 8.74242L6.45003 9.69033C6.52503 9.72283 6.60628 9.73906 6.69378 9.73906C6.79378 9.73906 6.88752 9.71739 6.97502 9.66864C7.13752 9.58198 7.23128 9.43574 7.23128 9.27324V7.48032C7.23128 7.17157 7.03752 6.89531 6.71252 6.75448Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M10.9938 5.82825C10.8313 5.74158 10.6375 5.73614 10.4688 5.80656L8.28126 6.75448C7.96251 6.89531 7.76251 7.17157 7.76251 7.48032V9.27324C7.76251 9.43574 7.85626 9.58198 8.01876 9.66864C8.10626 9.71739 8.20001 9.73906 8.30001 9.73906C8.38126 9.73906 8.46251 9.72283 8.54376 9.69033L10.7313 8.74242C11.05 8.60158 11.25 8.32532 11.25 8.01657V6.22365C11.25 6.06115 11.1563 5.91491 10.9938 5.82825Z"
+                  fill="#626262"
+                />
+              </svg>
+            }
+            Portfólio
           </button>
           <button
-            (click)="activeTab.set('habilidades')"
-            [class]="activeTab() === 'habilidades' ? 'bg-[#3278FF] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5"
+            (click)="setTab('habilitacoes')"
+            [class]="
+              activeTab() === 'habilitacoes'
+                ? 'bg-[#1546EB] text-white'
+                : 'bg-white text-[#626262] border border-[#D9D9D9] hover:bg-gray-200'
+            "
+            class="text-[11px] flex gap-1 items-center py-1.5 px-1.25 rounded-lg"
           >
-            Habilidades
+            @if (activeTab() === 'habilitacoes') {
+              <svg
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  opacity="0.4"
+                  d="M13.75 5.28117C13.4937 5.28117 13.2812 5.097 13.2812 4.87492V3.79158C13.2812 2.39409 12.2375 1.4895 10.625 1.4895H4.375C2.7625 1.4895 1.71875 2.39409 1.71875 3.79158V4.87492C1.71875 5.097 1.50625 5.28117 1.25 5.28117C0.99375 5.28117 0.78125 5.097 0.78125 4.87492V3.79158C0.78125 1.92825 2.225 0.677002 4.375 0.677002H10.625C12.775 0.677002 14.2188 1.92825 14.2188 3.79158V4.87492C14.2188 5.097 14.0063 5.28117 13.75 5.28117Z"
+                  fill="white"
+                />
+                <path
+                  opacity="0.4"
+                  d="M10.625 12.3229H4.375C2.225 12.3229 0.78125 11.0717 0.78125 9.20833V8.125C0.78125 7.90292 0.99375 7.71875 1.25 7.71875C1.50625 7.71875 1.71875 7.90292 1.71875 8.125V9.20833C1.71875 10.6058 2.7625 11.5104 4.375 11.5104H10.625C12.2375 11.5104 13.2812 10.6058 13.2812 9.20833V8.125C13.2812 7.90292 13.4937 7.71875 13.75 7.71875C14.0063 7.71875 14.2188 7.90292 14.2188 8.125V9.20833C14.2188 11.0717 12.775 12.3229 10.625 12.3229Z"
+                  fill="white"
+                />
+                <path
+                  d="M10.25 4.44712L7.90001 3.34752C7.65001 3.23377 7.35626 3.23377 7.10626 3.34752L4.75626 4.44712C4.58751 4.52837 4.48126 4.68543 4.48126 4.86418C4.48126 5.04293 4.58751 5.20002 4.75626 5.28127L7.10626 6.38087C7.23126 6.44046 7.36876 6.46752 7.50626 6.46752C7.64376 6.46752 7.78126 6.44046 7.90626 6.38087L10.2563 5.28127C10.425 5.20002 10.5313 5.04293 10.5313 4.86418C10.525 4.68543 10.4188 4.52837 10.25 4.44712Z"
+                  fill="white"
+                />
+                <path
+                  d="M6.71252 6.75448L4.52502 5.80656C4.35627 5.73614 4.16252 5.74158 4.00002 5.82825C3.83752 5.91491 3.74377 6.06115 3.74377 6.22365V8.01657C3.74377 8.32532 3.94378 8.607 4.26253 8.74242L6.45003 9.69033C6.52503 9.72283 6.60628 9.73906 6.69378 9.73906C6.79378 9.73906 6.88752 9.71739 6.97502 9.66864C7.13752 9.58198 7.23128 9.43574 7.23128 9.27324V7.48032C7.23128 7.17157 7.03752 6.89531 6.71252 6.75448Z"
+                  fill="white"
+                />
+                <path
+                  d="M10.9938 5.82825C10.8313 5.74158 10.6375 5.73614 10.4688 5.80656L8.28126 6.75448C7.96251 6.89531 7.76251 7.17157 7.76251 7.48032V9.27324C7.76251 9.43574 7.85626 9.58198 8.01876 9.66864C8.10626 9.71739 8.20001 9.73906 8.30001 9.73906C8.38126 9.73906 8.46251 9.72283 8.54376 9.69033L10.7313 8.74242C11.05 8.60158 11.25 8.32532 11.25 8.01657V6.22365C11.25 6.06115 11.1563 5.91491 10.9938 5.82825Z"
+                  fill="white"
+                />
+              </svg>
+            } @else {
+              <svg
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  opacity="0.4"
+                  d="M13.75 5.28117C13.4938 5.28117 13.2812 5.097 13.2812 4.87492V3.79159C13.2812 2.39409 12.2375 1.4895 10.625 1.4895H4.375C2.7625 1.4895 1.71875 2.39409 1.71875 3.79159V4.87492C1.71875 5.097 1.50625 5.28117 1.25 5.28117C0.99375 5.28117 0.78125 5.097 0.78125 4.87492V3.79159C0.78125 1.92825 2.225 0.677002 4.375 0.677002H10.625C12.775 0.677002 14.2188 1.92825 14.2188 3.79159V4.87492C14.2188 5.097 14.0062 5.28117 13.75 5.28117Z"
+                  fill="#626262"
+                />
+                <path
+                  opacity="0.4"
+                  d="M10.625 12.3229H4.375C2.225 12.3229 0.78125 11.0717 0.78125 9.20833V8.125C0.78125 7.90292 0.99375 7.71875 1.25 7.71875C1.50625 7.71875 1.71875 7.90292 1.71875 8.125V9.20833C1.71875 10.6058 2.7625 11.5104 4.375 11.5104H10.625C12.2375 11.5104 13.2812 10.6058 13.2812 9.20833V8.125C13.2812 7.90292 13.4938 7.71875 13.75 7.71875C14.0062 7.71875 14.2188 7.90292 14.2188 8.125V9.20833C14.2188 11.0717 12.775 12.3229 10.625 12.3229Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M10.25 4.44712L7.90001 3.34752C7.65001 3.23377 7.35626 3.23377 7.10626 3.34752L4.75626 4.44712C4.58751 4.52837 4.48126 4.68543 4.48126 4.86418C4.48126 5.04293 4.58751 5.20002 4.75626 5.28127L7.10626 6.38087C7.23126 6.44046 7.36876 6.46752 7.50626 6.46752C7.64376 6.46752 7.78126 6.44046 7.90626 6.38087L10.2563 5.28127C10.425 5.20002 10.5313 5.04293 10.5313 4.86418C10.525 4.68543 10.4188 4.52837 10.25 4.44712Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M6.71252 6.75448L4.52502 5.80656C4.35627 5.73614 4.16252 5.74158 4.00002 5.82825C3.83752 5.91491 3.74377 6.06115 3.74377 6.22365V8.01657C3.74377 8.32532 3.94378 8.607 4.26253 8.74242L6.45003 9.69033C6.52503 9.72283 6.60628 9.73906 6.69378 9.73906C6.79378 9.73906 6.88752 9.71739 6.97502 9.66864C7.13752 9.58198 7.23128 9.43574 7.23128 9.27324V7.48032C7.23128 7.17157 7.03752 6.89531 6.71252 6.75448Z"
+                  fill="#626262"
+                />
+                <path
+                  d="M10.9938 5.82825C10.8313 5.74158 10.6375 5.73614 10.4688 5.80656L8.28126 6.75448C7.96251 6.89531 7.76251 7.17157 7.76251 7.48032V9.27324C7.76251 9.43574 7.85626 9.58198 8.01876 9.66864C8.10626 9.71739 8.20001 9.73906 8.30001 9.73906C8.38126 9.73906 8.46251 9.72283 8.54376 9.69033L10.7313 8.74242C11.05 8.60158 11.25 8.32532 11.25 8.01657V6.22365C11.25 6.06115 11.1563 5.91491 10.9938 5.82825Z"
+                  fill="#626262"
+                />
+              </svg>
+            }
+            Habilitações
           </button>
         </div>
 
-        <div class="flex justify-between items-center mb-4">
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-semibold text-gray-600">Filtro</span>
-            <select class="border border-gray-200 rounded-lg px-2 py-1 text-xs outline-none bg-white">
-              <option>Data ></option>
-            </select>
-            <select class="border border-gray-200 rounded-lg px-2 py-1 text-xs outline-none bg-white">
-              <option>Estado > Tudo</option>
-            </select>
-          </div>
+        @switch (activeTab()) {
+          @case ('estatisticas') {
+            <div>
+              <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-3">
+                  <span class="filter-label font-semibold text-sm">Filtro</span>
 
-          <button
-            class="bg-[#3278FF] text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-600 transition-colors flex items-center gap-1"
-          >
-            Baixar Relatório
-          </button>
-        </div>
+                  <div
+                    class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#1546EB] focus-within:text-[#1546EB] focus-within:bg-[#1546EB1A]"
+                  >
+                    <label class="mr-1">Data ></label>
 
-        <div class="text-xs font-medium text-gray-600 mb-3">
-          <span class="font-bold text-[#3278FF]">120</span> Clientes atendidos
-          <span class="font-bold text-[#3278FF] ml-2">20,000kz</span> faturados nesse período
-        </div>
+                    <select
+                      [ngModel]="drawerDateFilter()"
+                      (ngModelChange)="drawerDateFilter.set($event); onDrawerFilterChange()"
+                      class="w-fit outline-none"
+                    >
+                      @for (year of availableYears(); track year) {
+                        <option [value]="year" class="text-black">
+                          {{ year }}
+                        </option>
+                      }
+                    </select>
+                  </div>
 
-        <div class="border border-gray-100 rounded-xl overflow-hidden">
-          <table class="w-full text-xs">
-            <thead class="bg-[#3278FF] text-white font-semibold">
-              <tr>
-                <th class="p-2.5 text-left">Cliente</th>
-                <th class="p-2.5 text-left">Serviço</th>
-                <th class="p-2.5 text-left">Valor Pago kz</th>
-                <th class="p-2.5 text-left">Estado</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              <tr class="hover:bg-gray-50 transition-colors">
-                <td class="p-2.5 flex items-center gap-2 font-medium">
-                  <img src="/images/icons/dashboard/user.svg" class="w-6 h-6 rounded-full" />
-                  <span>{{ activeUser.name }}</span>
-                </td>
-                <td class="p-2.5"><span class="bg-blue-50 text-[#3278FF] px-2 py-0.5 rounded-md font-semibold">Carpintaria</span></td>
-                <td class="p-2.5 font-semibold text-gray-700">20,000.00</td>
-                <td class="p-2.5"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md text-[10px] font-semibold">Em Progresso</span></td>
-              </tr>
-              <tr class="hover:bg-gray-50 transition-colors">
-                <td class="p-2.5 flex items-center gap-2 font-medium">
-                  <img src="/images/icons/dashboard/user.svg" class="w-6 h-6 rounded-full" />
-                  <span>{{ activeUser.name }}</span>
-                </td>
-                <td class="p-2.5"><span class="bg-blue-50 text-[#3278FF] px-2 py-0.5 rounded-md font-semibold">Carpintaria</span></td>
-                <td class="p-2.5 font-semibold text-gray-700">20,000.00</td>
-                <td class="p-2.5"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md text-[10px] font-semibold">Entregue</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                  <div
+                    class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#1546EB] focus-within:text-[#1546EB] focus-within:bg-[#1546EB1A]"
+                  >
+                    <label class="mr-1">Estado ></label>
+
+                    <select
+                      [ngModel]="drawerStatusFilter()"
+                      (ngModelChange)="drawerStatusFilter.set($event); onDrawerFilterChange()"
+                      class="w-fit outline-none"
+                    >
+                      @for (status of availableOrderStatuses(); track status) {
+                        <option [value]="status" class="text-black">
+                          {{ status }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  (click)="downloadReport()"
+                  class="bg-[#1546EB] text-white px-3 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-600 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      opacity="0.4"
+                      d="M21.66 10.44L20.68 14.62C19.84 18.23 18.18 19.69 15.06 19.39C14.56 19.35 14.02 19.26 13.44 19.12L11.76 18.72C7.59 17.73 6.3 15.67 7.28 11.49L8.26 7.30001C8.46 6.45001 8.7 5.71001 9 5.10001C10.17 2.68001 12.16 2.03001 15.5 2.82001L17.17 3.21001C21.36 4.19001 22.64 6.26001 21.66 10.44Z"
+                      fill="white"
+                    />
+                    <path
+                      d="M15.06 19.3901C14.44 19.8101 13.66 20.1601 12.71 20.4701L11.13 20.9901C7.16001 22.2701 5.07001 21.2001 3.78001 17.2301L2.50001 13.2801C1.22001 9.3101 2.28001 7.2101 6.25001 5.9301L7.83001 5.4101C8.24001 5.2801 8.63001 5.1701 9.00001 5.1001C8.70001 5.7101 8.46001 6.4501 8.26001 7.3001L7.28001 11.4901C6.30001 15.6701 7.59001 17.7301 11.76 18.7201L13.44 19.1201C14.02 19.2601 14.56 19.3501 15.06 19.3901Z"
+                      fill="white"
+                    />
+                    <path
+                      d="M17.49 10.51C17.43 10.51 17.37 10.5 17.3 10.49L12.45 9.26002C12.05 9.16002 11.81 8.75002 11.91 8.35002C12.01 7.95002 12.42 7.71002 12.82 7.81002L17.67 9.04002C18.07 9.14002 18.31 9.55002 18.21 9.95002C18.13 10.28 17.82 10.51 17.49 10.51Z"
+                      fill="white"
+                    />
+                    <path
+                      d="M14.56 13.8899C14.5 13.8899 14.44 13.8799 14.37 13.8699L11.46 13.1299C11.06 13.0299 10.82 12.6199 10.92 12.2199C11.02 11.8199 11.43 11.5799 11.83 11.6799L14.74 12.4199C15.14 12.5199 15.38 12.9299 15.28 13.3299C15.2 13.6699 14.9 13.8899 14.56 13.8899Z"
+                      fill="white"
+                    />
+                  </svg>
+
+                  Baixar Relatório
+                </button>
+              </div>
+
+              <div class="text-xs font-medium text-gray-600 mb-3">
+                <span class="font-bold text-[#1546EB]">
+                  {{ clientsServed() }}
+                </span>
+                Clientes atendidos
+
+                <span class="font-bold text-[#1546EB] ml-2">
+                  {{ totalRevenue() | number: '1.2-2' }} kz
+                </span>
+                faturados nesse período
+              </div>
+
+              <div class="border border-gray-100 rounded-xl overflow-hidden">
+                <table class="w-full text-[13px]">
+                  <thead class="bg-[#1546EB] text-white font-semibold rounded-2xl">
+                    <tr>
+                      <th class="rounded-l-2xl py-2">
+                        <div class="p-2.5 text-left flex items-center gap-2">
+                          <img src="/images/icons/dashboard/tables/contacto.svg" class="w-4 h-4" />
+                          Cliente
+                        </div>
+                      </th>
+
+                      <th>
+                        <div class="p-2.5 text-left flex items-center gap-2">
+                          <img
+                            src="/images/icons/dashboard/tables/departamento.svg"
+                            class="w-4 h-4"
+                          />
+                          Serviço
+                        </div>
+                      </th>
+
+                      <th>
+                        <div class="p-2.5 text-left flex items-center gap-2">
+                          <img src="/images/icons/dashboard/tables/contacto.svg" class="w-4 h-4" />
+                          Valor Pago kz
+                        </div>
+                      </th>
+
+                      <th class="rounded-r-2xl">
+                        <div class="p-2.5 text-left flex items-center gap-2">
+                          <img src="/images/icons/dashboard/tables/cargo.svg" class="w-4 h-4" />
+                          Estado
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody class="divide-y divide-gray-100">
+                    @if (isOrdersLoading()) {
+                      <tr>
+                        <td colspan="4" class="py-10 text-center text-gray-500">
+                          Carregando estatísticas...
+                        </td>
+                      </tr>
+                    } @else if (filteredDrawerOrders().length === 0) {
+                      <tr>
+                        <td colspan="4" class="py-10 text-center text-gray-500">
+                          Nenhum pedido encontrado.
+                        </td>
+                      </tr>
+                    } @else {
+                      @for (order of filteredDrawerOrders(); track order.id) {
+                        <tr class="hover:bg-gray-50 transition-colors">
+                          <td class="p-4.5 flex items-center gap-2 font-medium">
+                            <img
+                              src="/images/icons/dashboard/user.svg"
+                              class="w-6 h-6 rounded-full"
+                            />
+
+                            <span>
+                              {{ order.client?.name || 'Sem cliente' }}
+                            </span>
+                          </td>
+
+                          <td class="p-2.5">
+                            <span
+                              class="bg-blue-50 text-[#1546EB] px-2 py-0.5 rounded-md font-semibold"
+                            >
+                              {{ order.service?.name }}
+                            </span>
+                          </td>
+
+                          <td class="p-2.5 font-semibold text-gray-700">
+                            {{
+                              (order.first_payment?.amount || 0) +
+                                (order.second_payment?.amount || 0) | number: '1.2-2'
+                            }}
+                          </td>
+
+                          <td class="p-2.5">
+                            <span
+                              class="px-2 py-0.5 rounded-md text-[10px] font-semibold"
+                              [class.bg-amber-100]="
+                                order.status?.toString() === 'PENDING' ||
+                                order.status?.toString() === 'REQUESTED'
+                              "
+                              [class.text-amber-800]="
+                                order.status?.toString() === 'PENDING' ||
+                                order.status?.toString() === 'REQUESTED'
+                              "
+                              [class.bg-blue-100]="order.status?.toString() === 'IN_PROGRESS'"
+                              [class.text-blue-800]="order.status?.toString() === 'IN_PROGRESS'"
+                              [class.bg-emerald-100]="order.status?.toString() === 'COMPLETED'"
+                              [class.text-emerald-800]="order.status?.toString() === 'COMPLETED'"
+                              [class.bg-red-100]="order.status?.toString() === 'CANCELED'"
+                              [class.text-red-800]="order.status?.toString() === 'CANCELED'"
+                            >
+                              {{ order.status }}
+                            </span>
+                          </td>
+                        </tr>
+                      }
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+
+          @case ('servicos') {
+            <div class="py-2">
+              @if (activeUser.services && activeUser.services.length > 0) {
+                <div class="flex flex-wrap gap-2.5">
+                  @for (service of activeUser.services; track service) {
+                    <div
+                      class="bg-[#F9FBFC47] rounded-xl shadow-sm border border-[#F1F1F1] w-53.75 overflow-hidden flex flex-col justify-between p-2.5 hover:scale-105 transition-all duration-300 hover:bg-primary/5"
+                    >
+                      <div class="cursor-pointer w-full flex flex-col gap-2.5">
+                        <div class="h-43.5 w-full rounded-sm overflow-hidden mb-3 bg-gray-200">
+                          <img
+                            [src]="service.image ? service.image : '/images/not-found.png'"
+                            [alt]="service.name"
+                            class="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        <div class="flex flex-col gap-1.5">
+                          <h3 class="text-sm font-semibold">
+                            {{ service.name }}
+                          </h3>
+
+                          <span class="text-[10px] text-[#6F6F6F]">
+                            {{ service.category?.name }}
+                          </span>
+
+                          <div class="flex -space-x-2">
+                            @for (services of activeUser.services.slice(0, 1); track services.id) {
+                              <img
+                                [src]="
+                                  services.image
+                                    ? services.image
+                                    : '/images/icons/dashboard/user.svg'
+                                "
+                                [alt]="services.name"
+                                class="w-8 h-8 rounded-full object-cover"
+                              />
+                            }
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center justify-between border-gray-100 pt-3">
+                        <div class="flex items-center gap-1 text-[10px]">
+                          <span class="text-[#2B57F3] font-medium block"> Preço Final:</span>
+
+                          <span class="font-semibold">
+                            {{ service.price.toLocaleString('en-US') }}
+                            <strong>AOA</strong>
+                          </span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                          <button class="rounded transition cursor-pointer hover:scale-105">
+                            <img src="/images/icons/dashboard/tables/eliminar.svg" alt="" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="text-xs text-gray-500 py-4 text-center">
+                  Nenhum serviço cadastrado para este profissional.
+                </p>
+              }
+            </div>
+          }
+
+          @case ('portfolio') {
+            <div class="py-2">
+              <div class="grid grid-cols-3 gap-5">
+                <div
+                  class="h-24 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-xs text-gray-400"
+                >
+                  Projeto 1
+                </div>
+                <div
+                  class="h-24 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-xs text-gray-400"
+                >
+                  Projeto 2
+                </div>
+                <div
+                  class="h-24 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-xs text-gray-400"
+                >
+                  Projeto 3
+                </div>
+              </div>
+            </div>
+          }
+
+          @case ('habilitacoes') {
+            <div class="py-2">
+              <div class="flex flex-wrap gap-2">
+                <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium"
+                  >Pontualidade</span
+                >
+                <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium"
+                  >Comunicação</span
+                >
+                <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium"
+                  >Trabalho em Equipe</span
+                >
+              </div>
+            </div>
+          }
+        }
       </div>
 
       <div class="pt-4 border-t border-gray-100 mt-6 flex justify-between items-center">
         <button
           (click)="deleteCollaborator(activeUser.id)"
-          class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
+          class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer"
         >
           Apagar Usuário
         </button>

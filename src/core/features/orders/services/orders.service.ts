@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { Order, CreateOrderPayload, DeleteResponse } from '../models/orders.model';
 import { API_CONFIG } from '../../../config/api.config';
 
@@ -15,7 +15,6 @@ export class OrdersService {
   selectedOrder = signal<Order | null>(null);
   loading = signal<boolean>(false);
 
-
   getOrders(): Observable<Order[]> {
     this.loading.set(true);
     return this.http.get<Order[]>(`${this.apiUrl}/orders`).pipe(
@@ -25,11 +24,20 @@ export class OrdersService {
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
-      })
+      }),
     );
   }
 
- 
+  getOrdersByProfessional(professionalId: number | string) {
+    return this.getOrders().pipe(
+      map((orders) =>
+        orders.filter((order) =>
+          order.service?.professionals?.some((professional) => professional.id == professionalId),
+        ),
+      ),
+    );
+  }
+
   getOrdersByClient(clientId: string): Observable<Order[]> {
     this.loading.set(true);
     return this.http.get<Order[]>(`${this.apiUrl}/orders/by-client/${clientId}`).pipe(
@@ -39,11 +47,10 @@ export class OrdersService {
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
-      })
+      }),
     );
   }
 
- 
   getOrderById(id: number): Observable<Order> {
     this.loading.set(true);
     return this.http.get<Order>(`${this.apiUrl}/orders/${id}`).pipe(
@@ -53,11 +60,10 @@ export class OrdersService {
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
-      })
+      }),
     );
   }
 
- 
   createOrder(payload: CreateOrderPayload): Observable<Order> {
     this.loading.set(true);
 
@@ -81,7 +87,7 @@ export class OrdersService {
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
-      })
+      }),
     );
   }
 
@@ -94,7 +100,7 @@ export class OrdersService {
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
-      })
+      }),
     );
   }
 
@@ -107,10 +113,9 @@ export class OrdersService {
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
-      })
+      }),
     );
   }
-
 
   deleteOrder(id: number): Observable<DeleteResponse> {
     this.loading.set(true);
@@ -126,13 +131,13 @@ export class OrdersService {
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
-      })
+      }),
     );
   }
 
   private updateLocalOrder(updatedOrder: Order): void {
     this.orders.update((current) =>
-      current.map((o) => (o.id === updatedOrder.id ? updatedOrder : o))
+      current.map((o) => (o.id === updatedOrder.id ? updatedOrder : o)),
     );
     if (this.selectedOrder()?.id === updatedOrder.id) {
       this.selectedOrder.set(updatedOrder);
