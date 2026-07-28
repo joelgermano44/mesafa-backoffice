@@ -1,17 +1,25 @@
 <div class="w-full bg-white relative h-screen flex flex-col">
   <div class="relative w-full flex justify-center items-center max-lg:flex-col max-lg:gap-6">
-    <img src="/images/login/bg.svg" alt="Login" class="w-full object-cover max-2xl:h-screen" />
+    <a routerLink="/">
+      <img
+        src="/images/login/bg.svg"
+        alt="Login"
+        class="bg-bg-img w-full object-cover max-2xl:h-screen"
+      />
+    </a>
 
-    <img
-      src="/images/logos/logo-white.svg"
-      alt="Login"
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-2xl:top-1/5"
-    />
+    <a routerLink="/">
+      <img
+        src="/images/logos/logo-white.svg"
+        alt="Login"
+        class="bg-logo absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-2xl:top-1/5"
+      />
+    </a>
 
     <form
       [formGroup]="loginForm"
       (ngSubmit)="onSubmit()"
-      class="absolute left-1/2 transform -bottom-110 -translate-x-1/2 -translate-y-1/2 max-w-85 w-full py-10 px-4.75 rounded-lg bg-white min-h-44 border border-[#EAECF0] shadow-black/8 shadow-lg flex flex-col gap-3.25 max-2xl:top-1/2 max-2xl:h-fit"
+      class="login-card absolute left-1/2 transform -bottom-110 -translate-x-1/2 -translate-y-1/2 max-w-85 w-full py-10 px-4.75 rounded-lg bg-white min-h-44 border border-[#EAECF0] shadow-black/8 shadow-lg flex flex-col gap-3.25 max-2xl:top-1/2 max-2xl:h-fit"
     >
       <h1 class="font-semibold text-[#302F43] max-sm:text-sm">Entrar na minha conta</h1>
 

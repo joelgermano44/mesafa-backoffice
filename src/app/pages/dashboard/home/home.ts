@@ -1,4 +1,5 @@
-import { Component, inject, computed, OnInit, signal } from '@angular/core';
+import { Component, inject, computed, OnInit, signal, ElementRef, AfterViewInit } from '@angular/core';
+import { animate, stagger } from 'motion';
 import { TitleHeader } from '../../components/title-header/title-header';
 import { Dashcard } from './components/dashcard/dashcard';
 import { AdminService } from '../../../../core/features/administrators/services/admin.service';
@@ -16,7 +17,8 @@ import { ChartOrdersComponent } from './components/chart-orders/chart-orders';
   styleUrl: './home.css',
   standalone: true,
 })
-export class Home implements OnInit {
+export class Home implements OnInit, AfterViewInit {
+  private readonly el = inject(ElementRef);
   private readonly adminService = inject(AdminService);
   private readonly ordersService = inject(OrdersService);
   private readonly servicesService = inject(ServicesService);
@@ -80,5 +82,40 @@ export class Home implements OnInit {
     this.servicesService.getAll().subscribe({
       next: (services) => this.servicesServiceList.set(services),
     });
+  }
+
+  ngAfterViewInit(): void {
+    const nativeEl = this.el.nativeElement as HTMLElement;
+
+    const header = nativeEl.querySelector('app-title-header');
+    if (header) {
+      animate(
+        header,
+        { opacity: [0, 1], y: [-15, 0] },
+        { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+      );
+    }
+
+    const cards = nativeEl.querySelectorAll('ul > li');
+    if (cards.length > 0) {
+      animate(
+        cards,
+        { opacity: [0, 1], y: [20, 0], scale: [0.96, 1] },
+        {
+          duration: 0.5,
+          delay: stagger(0.08),
+          ease: [0.16, 1, 0.3, 1],
+        }
+      );
+    }
+
+    const chart = nativeEl.querySelector('app-chart-orders');
+    if (chart) {
+      animate(
+        chart,
+        { opacity: [0, 1], y: [25, 0] },
+        { duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }
+      );
+    }
   }
 }

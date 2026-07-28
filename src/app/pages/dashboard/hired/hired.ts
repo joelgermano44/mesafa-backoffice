@@ -1,9 +1,19 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  AfterViewInit,
+  ElementRef,
+  effect,
+} from '@angular/core';
 import { TitleHeader } from '../../components/title-header/title-header';
 import { AdminService } from '../../../../core/features/administrators/services/admin.service';
 import { Order, OrderStatus } from '../../../../core/features/orders/models/orders.model';
 import { OrdersService } from '../../../../core/features/orders/services/orders.service';
 import { toast } from 'ngx-sonner';
+import { animate, stagger } from 'motion';
 
 @Component({
   selector: 'app-hired',
@@ -12,8 +22,9 @@ import { toast } from 'ngx-sonner';
   templateUrl: './hired.html',
   styleUrl: './hired.css',
 })
-export class Hired implements OnInit {
+export class Hired implements OnInit, AfterViewInit {
   private readonly adminService = inject(AdminService);
+  private readonly el = inject(ElementRef);
   readonly admin = this.adminService.admin;
 
   private ordersService = inject(OrdersService);
@@ -30,8 +41,78 @@ export class Hired implements OnInit {
     return this.ordersService.orders().find((o) => o.id === id) || null;
   });
 
+  constructor() {
+    effect(() => {
+      if (this.selectedService()) {
+        setTimeout(() => this.animateDrawer(), 10);
+      }
+    });
+
+    effect(() => {
+      this.filteredServices();
+      setTimeout(() => this.animateCards(), 10);
+    });
+  }
+
   ngOnInit(): void {
     this.ordersService.getOrders().subscribe();
+  }
+
+  ngAfterViewInit(): void {
+    this.animateHeaderAndFilters();
+  }
+
+  private animateHeaderAndFilters(): void {
+    const header = this.el.nativeElement.querySelector('app-title-header');
+    const filterBar = this.el.nativeElement.querySelector('.filter-bar');
+
+    if (header) {
+      animate(
+        header,
+        { opacity: [0, 1], y: [-20, 0] },
+        { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+      );
+    }
+
+    if (filterBar) {
+      animate(
+        filterBar,
+        { opacity: [0, 1], y: [-10, 0] },
+        { duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }
+      );
+    }
+  }
+
+  private animateCards(): void {
+    const cards = this.el.nativeElement.querySelectorAll('.table-container .flex-wrap > div');
+    if (cards && cards.length > 0) {
+      animate(
+        cards,
+        { opacity: [0, 1], y: [20, 0], scale: [0.95, 1] },
+        {
+          duration: 0.35,
+          delay: stagger(0.05),
+          ease: [0.16, 1, 0.3, 1],
+        }
+      );
+    }
+  }
+
+  private animateDrawer(): void {
+    const backdrop = this.el.nativeElement.querySelector('.fixed.inset-0 .absolute.inset-0');
+    const drawerPanel = this.el.nativeElement.querySelector('.fixed.inset-0 .relative.h-screen');
+
+    if (backdrop) {
+      animate(backdrop, { opacity: [0, 1] }, { duration: 0.3 });
+    }
+
+    if (drawerPanel) {
+      animate(
+        drawerPanel,
+        { x: ['100%', '0%'], opacity: [0.8, 1] },
+        { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+      );
+    }
   }
 
   private mapStatusToPortuguese(status: OrderStatus): string {
@@ -96,7 +177,19 @@ export class Hired implements OnInit {
   }
 
   closeDrawer(): void {
-    this.selectedOrderId.set(null);
+    const drawerPanel = this.el.nativeElement.querySelector('.fixed.inset-0 .relative.h-screen');
+    const backdrop = this.el.nativeElement.querySelector('.fixed.inset-0 .absolute.inset-0');
+
+    if (drawerPanel && backdrop) {
+      Promise.all([
+        animate(drawerPanel, { x: ['0%', '100%'] }, { duration: 0.25, ease: [0.16, 1, 0.3, 1] }).finished,
+        animate(backdrop, { opacity: [1, 0] }, { duration: 0.25 }).finished,
+      ]).then(() => {
+        this.selectedOrderId.set(null);
+      });
+    } else {
+      this.selectedOrderId.set(null);
+    }
   }
 
   acceptService(id: number, event?: Event): void {

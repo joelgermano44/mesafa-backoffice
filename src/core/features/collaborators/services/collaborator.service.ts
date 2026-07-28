@@ -13,6 +13,9 @@ import { DeleteResponse } from '../models/delete-collaborator.response.model';
   providedIn: 'root',
 })
 export class CollaboratorService {
+  getCollaborators() {
+    throw new Error('Method not implemented.');
+  }
   private readonly http = inject(HttpClient);
 
   private readonly _collaborators = signal<Collaborator[]>([]);

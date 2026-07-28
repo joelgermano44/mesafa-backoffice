@@ -4,7 +4,7 @@
   </a>
 
   <div
-    class="flex bg-white p-2.5 rounded-lg max-w-77.5 w-full gap-3.75 items-center border border-primary shadow-white/30 shadow-sm shadow-"
+    class="flex bg-white p-2.5 rounded-lg max-w-77.5 w-full gap-3.75 items-center border border-primary shadow-white/30 shadow-sm"
   >
     <img src="/images/icons/search.svg" alt="Search" class="w-4.75 h-4.75" />
     <input
@@ -14,17 +14,51 @@
     />
   </div>
 
-  <button
-    class="flex items-center text-primary gap-2 bg-white py-2.25 px-2.5 rounded-lg hover:opacity-80 transition-all duration-300 cursor-pointer hover:scale-105"
-  >
-    @if (admin()?.image) {
-      <img [src]="admin()?.image" alt="User" class="w-6.25 h-6.25" />
-    } @else {
-      <img src="/images/icons/dashboard/user.svg" alt="User" class="w-6.25 h-6.25" />
+  <div class="relative">
+    <button
+      (click)="toggleDropdown()"
+      type="button"
+      class="flex items-center text-primary gap-2 bg-white py-2.25 px-2.5 rounded-lg hover:opacity-80 transition-all duration-300 cursor-pointer hover:scale-105"
+    >
+      @if (admin()?.image) {
+        <img [src]="admin()?.image" alt="User" class="w-6.25 h-6.25 rounded-full object-cover" />
+      } @else {
+        <img src="/images/icons/dashboard/user.svg" alt="User" class="w-6.25 h-6.25" />
+      }
+
+      <span class="text-xs font-semibold">{{ admin()?.name }}</span>
+
+      <img
+        #chevronIcon
+        src="/images/icons/dashboard/chevron-down.svg"
+        alt="Chevron"
+        class="w-2 h-1 transition-transform duration-200"
+      />
+    </button>
+
+    @if (isDropdownOpen()) {
+      <div
+        #dropdownMenu
+        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1.5 z-50 flex flex-col font-medium text-sm text-gray-700"
+      >
+        <a
+          routerLink="/profile"
+          (click)="isDropdownOpen.set(false)"
+          class="px-4 py-2 hover:bg-gray-100 transition-colors duration-150 flex items-center gap-2"
+        >
+          <span>Perfil</span>
+        </a>
+
+        <hr class="my-1 border-gray-100" />
+
+        <button
+          (click)="logout()"
+          type="button"
+          class="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 transition-colors duration-150 flex items-center gap-2 cursor-pointer"
+        >
+          <span>Sair</span>
+        </button>
+      </div>
     }
-
-    <span class="text-xs font-semibold">{{ admin()?.name }}</span>
-
-    <img src="/images/icons/dashboard/chevron-down.svg" alt="User" class="w-2 h-1" />
-  </button>
+  </div>
 </header>

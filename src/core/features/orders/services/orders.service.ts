@@ -8,6 +8,9 @@ import { API_CONFIG } from '../../../config/api.config';
   providedIn: 'root',
 })
 export class OrdersService {
+  getOrdersByCollaborator(collaboratorId: number) {
+    throw new Error('Method not implemented.');
+  }
   private http = inject(HttpClient);
   private readonly apiUrl = API_CONFIG.baseUrl;
 

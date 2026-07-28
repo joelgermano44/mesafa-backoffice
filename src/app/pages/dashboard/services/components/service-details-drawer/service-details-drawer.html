@@ -33,7 +33,7 @@
       <div class="flex gap-5">
         <div class="w-90 h-55 rounded-xl overflow-hidden bg-gray-100 relative">
           <img
-            [src]="service().image || '/images/not-found.png'"
+            [src]="api.baseUrl + '/' + service().image.path"
             [alt]="service().name"
             class="w-full h-full object-contain"
           />
@@ -49,11 +49,11 @@
             </p>
           </div>
 
-          <!-- 
+          
             <p class="text-xs text-[#2B57F3] font-medium">
               {{ service().category?.name || 'Sem Categoria' }}
             </p> 
-          -->
+          
 
           <div class="flex flex-col gap-2">
             <p class="text-[13px] font-medium">Profissionais</p>
@@ -96,7 +96,7 @@
             @for (images of service().images; track images.id) {
               <li>
                 <img
-                  [src]="images.image || '/images/not-found.png'"
+                  [src]="api.baseUrl + '/' + images.path"
                   alt="Iamges do serviços"
                   class="w-44 h-29.5"
                 />

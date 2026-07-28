@@ -1,4 +1,12 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ElementRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Collaborator } from '../../../../../../core/features/collaborators/models/collaborator.model';
@@ -11,6 +19,7 @@ import {
 } from '../../../../../../core/features/portfolio/models/portfolio.model';
 import { PortfolioService } from '../../../../../../core/features/portfolio/services/portfolio.service';
 import { API_CONFIG } from '../../../../../../core/config/api.config';
+import { animate, stagger } from 'motion';
 
 export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes';
 
@@ -21,11 +30,12 @@ export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes'
   templateUrl: './professionals-table.html',
   styleUrl: './professionals-table.css',
 })
-export class ProfessionalsTable implements OnInit {
+export class ProfessionalsTable implements OnInit, AfterViewInit {
   protected readonly collaboratorService = inject(CollaboratorService);
   protected readonly ordersService = inject(OrdersService);
   protected readonly portfolioService = inject(PortfolioService);
   protected readonly apiUrl = API_CONFIG.baseUrl;
+  protected readonly elementRef = inject(ElementRef);
 
   isLoading = signal<boolean>(true);
   isOrdersLoading = signal<boolean>(false);
@@ -67,6 +77,49 @@ export class ProfessionalsTable implements OnInit {
     return ['Tudo', ...Array.from(years).sort().reverse()];
   });
 
+  ngAfterViewInit() {
+    const root = this.elementRef.nativeElement;
+
+    animate(
+      root.querySelector('.filter-bar'),
+      {
+        opacity: [0, 1],
+        y: [-12, 0],
+      },
+      {
+        duration: 0.4,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    );
+
+    animate(
+      root.querySelectorAll('tbody tr'),
+      {
+        opacity: [0, 1],
+        y: [12, 0],
+      },
+      {
+        delay: stagger(0.05),
+        duration: 0.35,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    );
+
+    animate(
+      '.tab-content',
+      {
+        opacity: [0, 1],
+        y: [8, 0],
+      },
+      {
+        duration: 0.25,
+      },
+    );
+
+    
+  }
+
+  
   searchQuery = signal<string>('');
   selectedProfession = signal<string>('Tudo');
   selectedProvince = signal<string>('Tudo');

@@ -75,9 +75,7 @@
           <div (click)="openDetails(card)" class="cursor-pointer w-full flex flex-col gap-2.5">
             <div class="h-43.5 w-full rounded-sm overflow-hidden mb-3 bg-gray-200">
               <img
-                [src]="
-                  card.image ? api.baseUrl + '/uploads/' + card.image : '/images/not-found.png'
-                "
+                [src]="card.image ? api.baseUrl + '/' + card.image.path : '/images/not-found.png'"
                 [alt]="card.name"
                 class="w-full h-full object-cover"
               />
@@ -97,11 +95,11 @@
                   <img
                     [src]="
                       professional.image
-                        ? api.baseUrl + '/uploads/' + professional.image
+                        ? api.baseUrl + '/uploads/professionals/' + professional.image
                         : '/images/icons/dashboard/user.svg'
                     "
                     [alt]="professional.name"
-                    class="w-8 h-8 rounded-full border-2 border-white object-cover"
+                    class="w-8 h-8 rounded-full object-cover"
                   />
                 }
               </div>

@@ -100,6 +100,8 @@ export interface OrderImage {
 }
 
 export interface Order {
+  total_price: any;
+  price: any;
   id: number;
   client_id: string;
   service_id: number;

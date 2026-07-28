@@ -8,6 +8,9 @@ import { API_CONFIG } from '../../../config/api.config';
   providedIn: 'root',
 })
 export class PortfolioService {
+  getPortfolioByCollaborator(collaboratorId: number) {
+    throw new Error('Method not implemented.');
+  }
   private readonly http = inject(HttpClient);
   private readonly baseUrl = API_CONFIG.baseUrl;
 
