@@ -3,3 +3,339 @@
   subtitle="Faça a gestão de todos os prestadores contratados na plataforma."
   name="{{ admin()?.name }}"
 ></app-title-header>
+
+<div class="table-container flex flex-col font-inter w-full mt-8">
+  <div class="filter-bar flex w-full justify-between items-center mb-8 gap-4">
+    <div class="filters-group flex gap-3.25 items-center">
+      <span class="filter-label font-semibold text-sm">Filtro</span>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Estado ></label>
+        <select
+          [value]="selectedStatus()"
+          (change)="onStatusChange($event)"
+          class="w-fit outline-none bg-transparent cursor-pointer"
+        >
+          <option value="Tudo" class="text-black">Tudo</option>
+          <option value="Pendente" class="text-black">Pendente</option>
+          <option value="Aceito" class="text-black">Aceito</option>
+          <option value="Rejeitado" class="text-black">Rejeitado</option>
+        </select>
+      </div>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Preço ></label>
+        <select
+          [value]="selectedPriceRange()"
+          (change)="onPriceChange($event)"
+          class="w-fit outline-none bg-transparent cursor-pointer"
+        >
+          <option value="Tudo" class="text-black">Tudo</option>
+          <option value="Ate100k" class="text-black">Até 100.000 AOA</option>
+          <option value="Mais100k" class="text-black">Acima de 100.000 AOA</option>
+        </select>
+      </div>
+    </div>
+
+    <div
+      class="search-box p-2.5 rounded-lg max-w-54 w-full flex items-center gap-3.75 focus-within:ring-3 focus-within:ring-[#3278FF] focus-within:bg-[#EFEFEF] border-2 border-[#EFEFEF]"
+    >
+      <img src="/images/icons/search.svg" alt="" class="w-4.75 h-4.75" />
+      <input
+        type="text"
+        class="placeholder:text-[#9A9FA5] text-gray-700 w-full outline-none caret-[#2A85FF]"
+        placeholder="Procurar"
+        [value]="searchTerm()"
+        (input)="onSearchChange($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-6.25 font-inter">
+    @for (item of filteredServices(); track item.id) {
+      <div
+        (click)="openDrawer(item)"
+        class="bg-[#F9FBFC47] hover:scale-105 transition-all duration-300 hover:bg-primary/5 w-53.5 rounded-[5px] shadow-sm p-2.5 border border-gray-100 overflow-hidden flex flex-col gap-2.5 justify-between cursor-pointer"
+      >
+        <div class="h-37 w-full overflow-hidden bg-gray-200">
+          <img
+            [src]="item.service?.image ? item.service?.image : '/images/not-found.png'"
+            [alt]="item.service?.name"
+            class="w-full h-full object-cover rounded-sm"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <h3 class="font-semibold text-sm">{{ item.service?.name }}</h3>
+
+          <div class="flex items-center gap-2">
+            <div
+              class="w-5 h-5 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center overflow-hidden text-xs font-semibold"
+            >
+              <img
+                [src]="item.client?.image ? item.client?.image : '/images/icons/dashboard/user.svg'"
+                alt="Avatar"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <span class="text-[10px] text-black font-medium">{{ item.client?.name }}</span>
+          </div>
+        </div>
+
+        <div class="text-[10px] text-black">
+          {{ (item.service?.price || 0).toLocaleString('en-US') }}
+          <span class="font-extrabold">AOA</span>
+        </div>
+        <div>
+          @if (getStatusLabel(item.status) === 'Pendente') {
+            <div class="flex items-center gap-2">
+              <button
+                (click)="acceptService(item.id, $event)"
+                class="hover:scale-105 cursor-pointer text-center py-0.75 px-1.25 bg-[#3BAC2838] text-[#19680C] text-[10px] font-semibold flex items-center justify-center gap-1 border border-[#498E3E] rounded-[4px] transition"
+              >
+                Aceitar
+              </button>
+
+              <button
+                (click)="rejectService(item.id, $event)"
+                class="hover:scale-105 cursor-pointer text-center py-0.75 px-1.25 bg-[#FF2C2C36] text-[#8F0B0B] text-[10px] font-semibold flex items-center justify-center gap-1 border border-[#FF4040] rounded-[4px] transition"
+              >
+                Rejeitar
+              </button>
+            </div>
+          }
+
+          @if (getStatusLabel(item.status) === 'Aceito') {
+            <div
+              class="w-full flex items-center justify-center gap-2 text-center py-0.75 px-1.25 bg-[#3BAC2838] text-[#19680C] text-[10px] font-semibold rounded-[3px] border border-[#498E3E]"
+            >
+              Aceito
+            </div>
+          }
+
+          @if (getStatusLabel(item.status) === 'Rejeitado') {
+            <div
+              class="w-full flex items-center justify-center gap-2 text-center py-0.75 px-1.25 bg-[#FF2C2C36] text-[#8F0B0B] text-[10px] font-semibold rounded-[3px] border border-[#FF4040]"
+            >
+              Rejeitado
+            </div>
+          }
+        </div>
+      </div>
+    } @empty {
+      <div class="text-center py-16 bg-gray-50 rounded-xl border border-dashed border-gray-200 w-full">
+        <p class="text-gray-500 font-medium">Nenhum serviço contratado encontrado.</p>
+      </div>
+    }
+  </div>
+</div>
+
+@if (selectedService(); as detail) {
+  <div
+    class="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs transition-opacity font-inter"
+  >
+    <div class="absolute inset-0" (click)="closeDrawer()"></div>
+
+    <div
+      class="relative h-screen font-inter w-full max-w-[864px] px-7.5 py-5 bg-white shadow-2xl animate-slide-in overflow-y-auto z-10 flex gap-2.5 flex-col justify-between"
+    >
+      <div class="flex flex-col gap-2.5">
+        <div class="sticky top-0 bg-white flex items-center justify-between z-10">
+          <div>
+            <h2 class="font-semibold text-xl">Detalhes do Contrato de Serviço</h2>
+            <p class="text-[13px] text-[#737791]">Veja detalhatamente contrato do serviço.</p>
+          </div>
+
+          <button
+            (click)="closeDrawer()"
+            class="p-1 w-8 h-8 flex items-center justify-center rounded-full text-[#464E5F] hover:text-gray-500 bg-gray-100 transition-colors cursor-pointer"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex-1 py-4 flex flex-col gap-4">
+          <span
+            class="w-fit text-[10px] font-semibold px-1.25 py-0.75 rounded bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]"
+          >
+            {{ getStatusLabel(detail.status) }}
+          </span>
+
+          <div class="flex gap-5">
+            <img
+              [src]="detail.service?.image ? detail.service?.image : '/images/not-found.png'"
+              [alt]="detail.service?.name"
+              class="w-[389px] h-[279px] object-cover rounded-lg"
+            />
+
+            <div class="flex flex-col gap-5">
+              <div class="flex flex-col gap-1 justify-between">
+                <h3 class="text-xl font-semibold">{{ detail.service?.name }}</h3>
+
+                <span class="text-base font-bold text-gray-900">
+                  <p
+                    class="bg-[#00000017] px-1.25 py-0.75 font-bold text-[15px] flex items-center gap-1 w-fit rounded-sm"
+                  >
+                    <img src="/images/icons/dashboard/flag.svg" alt="" />
+                    {{ (detail.service?.price || 0).toLocaleString('en-US') }} Kza
+                  </p></span
+                >
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <p class="text-xs font-semibold">Quem contrata</p>
+
+                <div class="flex flex-wrap gap-4">
+                  <div class="flex items-center justify-center gap-2">
+                    <div
+                      class="w-7.75 h-7.75 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden"
+                    >
+                      @if (detail.client?.image) {
+                        <img [src]="detail.client?.image" class="w-7.75 h-7.75 object-cover" />
+                      } @else {
+                        {{ detail.client?.name?.charAt(0) }}
+                      }
+                    </div>
+                    <span class="text-[13px] font-medium">{{ detail.client?.name }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <p class="text-xs font-semibold">Detalhes do Serviço</p>
+                <p class="text-[10px] text-[#818181]">
+                  {{
+                    detail.description ||
+                      detail.service?.description ||
+                      'Nenhuma descrição detalhada informada para este serviço.'
+                  }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <h4 class="font-semibold">Amostras deste serviço</h4>
+
+            <div class="flex flex-wrap gap-2">
+              @if (detail.images && detail.images.length > 0) {
+                @for (img of detail.images; track img.id) {
+                  <img [src]="img.path" class="w-[177px] h-[89px] object-cover rounded-lg" />
+                }
+              } @else {
+                <img
+                  [src]="detail.service?.image ? detail.service?.image : '/images/not-found.png'"
+                  class="w-[177px] h-[89px] object-cover rounded-lg"
+                />
+              }
+            </div>
+          </div>
+
+          <div class="w-full flex flex-col gap-2.5">
+            <h1 class="font-semibold">Informações de Pagamento</h1>
+
+            <div class="bg-[#f9f9f9] rounded-xl w-full px-3.75 py-5 flex flex-col gap-5.5">
+              <span>Valor total do serviço</span>
+              <span class="font-semibold"
+                >{{ (detail.service?.price || 0).toLocaleString('en-US') }} AOA</span
+              >
+
+              <div class="flex flex-col gap-2 w-full">
+                <p class="flex items-center justify-between w-full">
+                  Valor do serviço
+                  <span class="font-semibold"
+                    >{{ (detail.service?.price || 0).toLocaleString('en-US') }} kz</span
+                  >
+                </p>
+                <p class="flex items-center justify-between w-full">
+                  Valor do deslocamento
+                  <span class="font-semibold">{{ detail.service?.travel_price || 0 }} kz</span>
+                </p>
+              </div>
+
+              <hr class="w-1/2 border border-gray-200" />
+
+              <p class="flex items-center justify-between w-full text-[15px] font-semibold">
+                Total
+                <span class="font-medium text-base"
+                  >{{ (detail.service?.travel_price || 0) + (detail.service?.price || 0) }} kz</span
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+
+        @if (getStatusLabel(detail.status) === 'Pendente') {
+          <div class="flex items-center gap-2">
+            <button
+              (click)="acceptService(detail.id); closeDrawer()"
+              class="hover:scale-105 cursor-pointer text-center py-2 px-3 bg-[#3BAC2838] text-[#19680C] text-[15px] font-semibold flex items-center justify-center gap-1 border border-[#498E3E] rounded-[4px] transition"
+            >
+              <svg
+                width="10"
+                height="8"
+                viewBox="0 0 10 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3.5775 7.1675C3.3775 7.1675 3.1875 7.0875 3.0475 6.9475L0.2175 4.1175C-0.0725 3.8275 -0.0725 3.3475 0.2175 3.0575C0.5075 2.7675 0.9875 2.7675 1.2775 3.0575L3.5775 5.3575L8.7175 0.2175C9.0075 -0.0725 9.4875 -0.0725 9.7775 0.2175C10.0675 0.5075 10.0675 0.987499 9.7775 1.2775L4.1075 6.9475C3.9675 7.0875 3.7775 7.1675 3.5775 7.1675Z"
+                  fill="#19680C"
+                />
+              </svg>
+
+              Aceitar
+            </button>
+
+            <button
+              (click)="rejectService(detail.id); closeDrawer()"
+              class="hover:scale-105 cursor-pointer text-center py-2 px-3 bg-[#FF2C2C36] text-[#8F0B0B] text-[15px] font-semibold flex items-center justify-center gap-1 border border-[#FF4040] rounded-[4px] transition"
+            >
+              <svg
+                width="8"
+                height="8"
+                viewBox="0 0 8 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.6375 3.5775L6.9375 1.2775C7.2275 0.987499 7.2275 0.5075 6.9375 0.2175C6.6475 -0.0725 6.1675 -0.0725 5.8775 0.2175L3.5775 2.5175L1.2775 0.2175C0.987499 -0.0725 0.5075 -0.0725 0.2175 0.2175C-0.0725 0.5075 -0.0725 0.987499 0.2175 1.2775L2.5175 3.5775L0.2175 5.8775C-0.0725 6.1675 -0.0725 6.6475 0.2175 6.9375C0.3675 7.0875 0.5575 7.1575 0.7475 7.1575C0.9375 7.1575 1.1275 7.0875 1.2775 6.9375L3.5775 4.6375L5.8775 6.9375C6.0275 7.0875 6.2175 7.1575 6.4075 7.1575C6.5975 7.1575 6.7875 7.0875 6.9375 6.9375C7.2275 6.6475 7.2275 6.1675 6.9375 5.8775L4.6375 3.5775Z"
+                  fill="#8F0B0B"
+                />
+              </svg>
+
+              Rejeitar
+            </button>
+          </div>
+        }
+
+        @if (getStatusLabel(detail.status) === 'Aceito') {
+          <div
+            class="w-full text-center py-2 px-3 bg-[#3BAC2838] text-[#19680C] text-[15px] font-semibold rounded-[4px] border border-[#498E3E]"
+          >
+            Serviço Aceito
+          </div>
+        }
+
+        @if (getStatusLabel(detail.status) === 'Rejeitado') {
+          <div
+            class="w-full text-center py-2 px-3 bg-[#FF2C2C36] text-[#8F0B0B] text-[15px] font-semibold rounded-[4px] border border-[#FF4040]"
+          >
+            Serviço Rejeitado
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

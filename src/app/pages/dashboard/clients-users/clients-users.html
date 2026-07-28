@@ -1,5 +1,339 @@
-<app-title-header
-  title="Usuários Clientes"
-  subtitle="Veja a informação de todos os clientes cadastrados no app."
-  name="{{ admin()?.name }}"
-></app-title-header>
+<div class="bg-white sticky -top-10 z-20 flex flex-col gap-8 pt-8">
+  <app-title-header
+    title="Usuários Clientes"
+    subtitle="Veja a informação de todos os clientes cadastrados no app."
+    name="{{ admin()?.name }}"
+  ></app-title-header>
+
+  <div class="filter-bar flex w-full justify-between items-center mb-5 gap-4 flex-wrap">
+    <div class="filters-group flex gap-3.25 items-center flex-wrap">
+      <span class="filter-label font-semibold text-sm">Filtro</span>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Serviço ></label>
+        <select (change)="onServiceTypeFilterChange($event)" class="w-fit outline-none">
+          <option value="ALL" class="text-black">Tudo</option>
+          <option value="MANUTENCAO" class="text-black">Manutenção</option>
+          <option value="INSTALACAO" class="text-black">Instalação</option>
+        </select>
+      </div>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Status ></label>
+        <select (change)="onStatusFilterChange($event)" class="w-fit outline-none">
+          <option value="ALL" class="text-black">Todos</option>
+          <option value="WITH_PENDING" class="text-black">Com Pendentes</option>
+          <option value="NO_PENDING" class="text-black">Sem Pendentes</option>
+          <option value="WITH_SERVICES" class="text-black">Com Serviços</option>
+        </select>
+      </div>
+
+      <div
+        class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
+      >
+        <label class="mr-1">Província ></label>
+        <select (change)="onProvinceFilterChange($event)" class="w-fit outline-none">
+          <option value="ALL" class="text-black">Todas</option>
+          @for (prov of availableProvinces(); track prov) {
+            <option [value]="prov" class="text-black">{{ prov }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div
+      class="search-box p-2.5 rounded-lg max-w-54 w-full flex items-center gap-3.75 focus-within:ring-3 focus-within:ring-[#3278FF] focus-within:bg-[#EFEFEF] border-2 border-[#EFEFEF]"
+    >
+      <img src="/images/icons/search.svg" alt="" class="w-4.75 h-4.75" />
+      <input
+        type="text"
+        class="placeholder:text-[#9A9FA5] text-gray-700 w-full outline-none caret-[#2A85FF]"
+        placeholder="Procurar"
+        (input)="onSearchChange($event)"
+      />
+    </div>
+  </div>
+</div>
+
+<div class="table-container flex flex-col font-inter w-full">
+  <table class="data-table w-full">
+    <thead class="bg-primary text-[13px] font-semibold text-white sticky top-48">
+      <tr>
+        <th class="px-4 py-3.5 text-left rounded-l-2xl">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/funcionario.svg" alt="" class="w-4 h-4" />
+            <span>Usuário</span>
+          </div>
+        </th>
+
+        <th class="px-4 py-3.5 text-left">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/contacto.svg" alt="" class="w-4 h-4" />
+            <span>Contacto</span>
+          </div>
+        </th>
+
+        <th class="px-4 py-3.5 text-left">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/cargo.svg" alt="" class="w-4 h-4" />
+            <span>Localização</span>
+          </div>
+        </th>
+
+        <th class="px-4 py-3.5 text-left">
+          <div class="flex items-center gap-2">
+            <img src="/images/icons/dashboard/tables/departamento.svg" alt="" class="w-4 h-4" />
+            <span>BI</span>
+          </div>
+        </th>
+
+        <th class="px-4 py-3.5 text-center">
+          <div class="flex items-center justify-center gap-2">
+            <img src="/images/icons/dashboard/tables/nivel-acesso.svg" alt="" class="w-4 h-4" />
+            <span>Serviços Solicitados</span>
+          </div>
+        </th>
+
+        <th class="px-4 py-3.5 text-center">
+          <div class="flex items-center justify-center gap-2">
+            <img src="/images/icons/dashboard/tables/acesso.svg" alt="" class="w-4 h-4" />
+            <span>Solicitações Pendentes</span>
+          </div>
+        </th>
+
+        <th class="px-4 py-3.5 text-center rounded-r-2xl">
+          <span>Ação</span>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+      @if (clientService.isLoading() || ordersService.loading()) {
+        <tr>
+          <td colspan="7" class="py-8 text-center text-sm text-gray-500">A carregar dados...</td>
+        </tr>
+      } @else if (clientsWithOrders().length === 0) {
+        <tr>
+          <td colspan="7" class="py-8 text-center text-sm text-gray-500">
+            Nenhum cliente encontrado nessa página vá para a próxima (se possível).
+          </td>
+        </tr>
+      }
+
+      @for (item of clientsWithOrders(); track item.id) {
+        <tr (click)="onSelectRow(item)" class="hover:bg-slate-50 transition-colors cursor-pointer">
+          <td>
+            <div class="user-cell flex items-center gap-2 p-3.75">
+              <div class="avatar">
+                <img
+                  [src]="item.image || '/images/icons/dashboard/user.svg'"
+                  class="w-10 h-10 rounded-full object-cover"
+                />
+              </div>
+
+              <div class="flex flex-col">
+                <span class="text-[13px] font-semibold">
+                  {{ item.name }}
+                </span>
+                <span class="text-xs text-[#898989]">@{{ item.username }}</span>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div class="contact-cell flex flex-col gap-1">
+              <div class="text-xs font-semibold">{{ item.email }}</div>
+              <div class="sub-text text-xs text-[#898989] font-semibold">{{ item.phone }}</div>
+            </div>
+          </td>
+
+          <td>
+            <div class="contact-cell flex flex-col gap-1">
+              <div class="text-xs font-semibold">{{ item.address?.province || '-' }}</div>
+              <div class="sub-text text-xs text-[#898989] font-semibold">
+                {{ item.address?.municiple || '-' }}
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <span class="text-xs font-semibold">
+              {{ item.bi }}
+            </span>
+          </td>
+
+          <td class="text-center">
+            <span
+              class="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"
+            >
+              {{ item.requestedServicesCount }}
+            </span>
+          </td>
+
+          <td class="text-center">
+            <span
+              class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
+              [class]="
+                (item.pendingRequestsCount || 0) > 0
+                  ? 'bg-amber-50 text-amber-700'
+                  : 'bg-slate-100 text-slate-500'
+              "
+            >
+              {{ item.pendingRequestsCount }}
+            </span>
+          </td>
+
+          <td class="py-3.5 px-4">
+            <div class="actions flex justify-center gap-2">
+              <button (click)="onDelete(item.id, $event)">
+                <img src="images/icons/dashboard/tables/eliminar.svg" alt="" class="w-6 h-6" />
+              </button>
+
+              <button (click)="onEdit(item, $event)">
+                <img src="images/icons/dashboard/tables/editar.svg" alt="" class="w-6 h-6" />
+              </button>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<div
+  class="pagination-bar w-full bg-white flex justify-between items-center border border-[#EAECF0] rounded-b-lg px-6 py-3"
+>
+  <button
+    (click)="onPreviousPage()"
+    [disabled]="clientService.currentPage() === 1"
+    class="btn-page border border-[#D0D5DD] rounded-lg py-2 px-3.5 hover:scale-105 hover:bg-[#D0D5DD]/30 cursor-pointer transition-all duration-200 text-sm text-[#344054] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+  >
+    Anterior
+  </button>
+
+  <span class="page-info text-sm text-[#344054]">
+    Página <span class="text-[#1546EB]">{{ clientService.currentPage() }}</span> de
+    <span>{{ clientService.totalPages() }}</span>
+  </span>
+
+  <button
+    (click)="onNextPage()"
+    [disabled]="clientService.currentPage() === clientService.totalPages()"
+    class="btn-page border border-[#D0D5DD] rounded-lg py-2 px-3.5 hover:scale-105 hover:bg-[#D0D5DD]/30 cursor-pointer transition-all duration-200 text-sm text-[#344054] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+  >
+    Próximo
+  </button>
+</div>
+
+@if (clientService.selectedClient()) {
+  <aside
+    class="fixed top-0 right-0 h-full w-145 bg-white z-50 shadow-2xl flex flex-col justify-between p-8 font-inter overflow-y-auto border-l border-gray-200"
+  >
+    <div class="flex flex-col gap-11">
+      <div class="flex justify-between items-start">
+        <div class="flex flex-col">
+          <h2 class="text-[25px] font-semibold">Perfil do Cliente</h2>
+          <p class="text-[13px] text-[#737791]">Informações detalhadas da conta.</p>
+        </div>
+        <button
+          (click)="onCloseDrawer()"
+          class="p-1 rounded-full text-[#464E5F] hover:text-gray-500 bg-gray-100 transition-colors cursor-pointer"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-7">
+        <div class="flex flex-col items-center text-center gap-3.25">
+          <img
+            [src]="clientService.selectedClient()?.image || '/images/icons/dashboard/user.svg'"
+            [alt]="clientService.selectedClient()?.name"
+            class="w-34 h-34 rounded-full object-cover"
+          />
+
+          <div class="flex flex-col leading-7">
+            <h3 class="text-[25px] font-semibold">{{ clientService.selectedClient()?.name }}</h3>
+            <p class="text-xs text-[#6F767E]">@{{ clientService.selectedClient()?.username }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-7 w-full justify-center">
+        <div class="flex flex-col gap-3">
+          <h4 class="text-[15px] font-semibold">Informações Pessoais</h4>
+          <div class="flex gap-1">
+            <span class="text-xs text-[#2D2D2D]">Telefone:</span>
+            <span class="text-xs font-semibold">{{
+              clientService.selectedClient()?.phone || 'N/D'
+            }}</span>
+          </div>
+          <div class="flex gap-1">
+            <span class="text-xs text-[#2D2D2D]">E-mail:</span>
+            <span class="text-xs font-semibold break-all">{{
+              clientService.selectedClient()?.email
+            }}</span>
+          </div>
+          <div class="flex gap-1">
+            <span class="text-xs text-[#2D2D2D]">BI:</span>
+            <span class="text-xs font-semibold">{{
+              clientService.selectedClient()?.bi || 'N/D'
+            }}</span>
+          </div>
+        </div>
+
+        <div class="border border-black h-44"></div>
+
+        <div class="flex flex-col gap-3 border-gray-100 pl-4">
+          <h4 class="text-[15px] font-semibold">Pedidos</h4>
+          <div class="flex gap-1">
+            <span class="text-xs text-[#2D2D2D]">Serviços Solicitados:</span>
+            <span class="text-xs font-semibold">{{
+              clientService.selectedClient()?.requestedServicesCount
+            }}</span>
+          </div>
+          <div class="flex gap-1">
+            <span class="text-xs text-[#2D2D2D]">Pedidos de Pendentes:</span>
+            <span class="text-xs font-semibold">{{
+              clientService.selectedClient()?.pendingRequestsCount
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (clientService.selectedClient(); as client) {
+      <div class="flex gap-3">
+        <button
+          (click)="onDelete(client.id, $event)"
+          class="py-0.75 px-1.25 w-fit rounded-lg border border-[#FCA5A5] text-[#991B1B] bg-[#FEE2E2] hover:bg-red-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          <img src="images/icons/dashboard/eliminar-red.svg" class="w-4 h-4" alt="" />
+          Apagar
+        </button>
+
+        <button
+          (click)="onEdit(client, $event)"
+          class="py-0.75 px-1.25 rounded-lg bg-primary/5 border border-primary/20 text-primary hover:bg-primary/10 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          <img src="images/icons/dashboard/editar-blue.svg" class="w-4 h-4" alt="" />
+          Editar
+        </button>
+      </div>
+    }
+  </aside>
+}
+
+@if (clientService.selectedClient()) {
+  <div (click)="onCloseDrawer()" class="fixed inset-0 bg-slate-900/20 z-40 backdrop-blur-xs"></div>
+}

@@ -1,8 +1,8 @@
 <app-admin-details-drawer
-    [admin]="selectedAdmin()"
-    (closeDrawer)="closeDrawer()"
-    (adminDeleted)="onAdminDeletedFromDrawer($event)"
-  />
+  [admin]="selectedAdmin()"
+  (closeDrawer)="closeDrawer()"
+  (adminDeleted)="onAdminDeletedFromDrawer($event)"
+/>
 
 <div class="table-container flex flex-col font-inter w-full">
   <div class="filter-bar flex w-full justify-between items-center mb-5 gap-4">
@@ -64,24 +64,28 @@
             <span>Administrador</span>
           </div>
         </th>
+
         <th class="px-4 py-3.5 text-left">
           <div class="flex items-center gap-2">
             <img src="/images/icons/dashboard/tables/contacto.svg" alt="" class="w-4 h-4" />
             <span>Contacto</span>
           </div>
         </th>
+
         <th class="px-4 py-3.5 text-left">
           <div class="flex items-center gap-2">
             <img src="/images/icons/dashboard/tables/nivel-acesso.svg" alt="" class="w-4 h-4" />
             <span>Nº de BI</span>
           </div>
         </th>
+
         <th class="px-4 py-3.5 text-left">
           <div class="flex items-center gap-2">
             <img src="/images/icons/dashboard/tables/cargo.svg" alt="" class="w-4 h-4" />
             <span>Data de Registo</span>
           </div>
         </th>
+        
         <th class="px-4 py-3.5 text-center rounded-r-2xl">
           <span>Ação</span>
         </th>
