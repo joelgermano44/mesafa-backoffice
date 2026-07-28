@@ -5,6 +5,12 @@ import { Collaborator } from '../../../../../../core/features/collaborators/mode
 import { CollaboratorService } from '../../../../../../core/features/collaborators/services/collaborator.service';
 import { OrdersService } from '../../../../../../core/features/orders/services/orders.service';
 import { Order } from '../../../../../../core/features/orders/models/orders.model';
+import {
+  Portfolio,
+  PortfolioImage,
+} from '../../../../../../core/features/portfolio/models/portfolio.model';
+import { PortfolioService } from '../../../../../../core/features/portfolio/services/portfolio.service';
+import { API_CONFIG } from '../../../../../../core/config/api.config';
 
 export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes';
 
@@ -17,13 +23,20 @@ export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes'
 })
 export class ProfessionalsTable implements OnInit {
   protected readonly collaboratorService = inject(CollaboratorService);
-
   protected readonly ordersService = inject(OrdersService);
+  protected readonly portfolioService = inject(PortfolioService);
+  protected readonly apiUrl = API_CONFIG.baseUrl;
 
   isLoading = signal<boolean>(true);
   isOrdersLoading = signal<boolean>(false);
+  isPortfolioLoading = signal<boolean>(false);
+
   isDrawerOpen = signal<boolean>(false);
   activeTab = signal<TabType>('estatisticas');
+
+  portfolios = signal<Portfolio[]>([]);
+  selectedAlbum = signal<Portfolio | null>(null);
+  selectedModalImage = signal<PortfolioImage | null>(null);
 
   drawerStatusFilter = signal<string>('Tudo');
   drawerDateFilter = signal<string>('Tudo');
@@ -122,6 +135,68 @@ export class ProfessionalsTable implements OnInit {
     return this.completedOrders().length;
   });
 
+  formattedProfessions = computed(() => {
+    const collaborator = this.collaboratorService.current();
+
+    const names = collaborator?.professions
+      ?.map((p) => p.name)
+      .filter((name): name is string => Boolean(name));
+
+    if (!names || names.length === 0) return 'N/A';
+
+    const formatter = new Intl.ListFormat('pt', { style: 'long', type: 'conjunction' });
+    return formatter.format(names);
+  });
+
+  selectCollaborator(collaborator: Collaborator): void {
+    this.collaboratorService.setCurrent(collaborator);
+    this.isDrawerOpen.set(true);
+    this.loadCollaboratorOrders(collaborator.id);
+    this.loadCollaboratorPortfolio(collaborator.id);
+  }
+
+  loadCollaboratorPortfolio(professionalId: number | string): void {
+    this.isPortfolioLoading.set(true);
+    this.portfolioService.getProfessionalPortfolio(professionalId).subscribe({
+      next: (data) => {
+        this.portfolios.set(data || []);
+        this.isPortfolioLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar portfólio do profissional:', err);
+        this.portfolios.set([]);
+        this.isPortfolioLoading.set(false);
+      },
+    });
+  }
+
+  getImageUrl(path?: string): string {
+    if (!path) return '';
+
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
+    const base = this.apiUrl.endsWith('/') ? this.apiUrl.slice(0, -1) : this.apiUrl;
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+
+    return `${base}${cleanPath}`;
+  }
+
+  openAlbumModal(album: Portfolio): void {
+    this.selectedAlbum.set(album);
+    if (album.images && album.images.length > 0) {
+      this.selectedModalImage.set(album.images[0]);
+    } else if (album.cover) {
+      this.selectedModalImage.set(album.cover);
+    }
+  }
+
+  closeAlbumModal(): void {
+    this.selectedAlbum.set(null);
+    this.selectedModalImage.set(null);
+  }
+
   loadCollaboratorOrders(collaboratorId: number | string): void {
     this.isOrdersLoading.set(true);
 
@@ -196,13 +271,6 @@ export class ProfessionalsTable implements OnInit {
     const end = start + this.pageSize();
     return this.filteredCollaborators().slice(start, end);
   });
-
-  selectCollaborator(collaborator: Collaborator): void {
-    this.collaboratorService.setCurrent(collaborator);
-    this.loadCollaboratorOrders(collaborator.id);
-    this.activeTab.set('estatisticas');
-    this.isDrawerOpen.set(true);
-  }
 
   closeDrawer(): void {
     this.isDrawerOpen.set(false);

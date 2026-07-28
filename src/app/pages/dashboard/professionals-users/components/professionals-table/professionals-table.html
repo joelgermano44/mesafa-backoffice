@@ -213,7 +213,7 @@
       class="fixed top-0 right-0 h-full w-full max-w-216 bg-white z-50 shadow-2xl flex flex-col justify-between overflow-y-auto transition-transform duration-300 p-8 font-inter"
     >
       <div>
-        <div class="flex justify-between items-start">
+        <div class="flex justify-between items-start bg-white sticky top-0">
           <div class="flex flex-col">
             <h2 class="text-[25px] font-semibold">Detalhe do Profissional</h2>
             <p class="text-[13px] text-[#737791]">
@@ -235,13 +235,18 @@
           </button>
         </div>
 
-        <div class="flex items-start gap-10 mb-6 mt-10 w-full">
+        <div class="flex items-start gap-10 mb-6 mt-10 w-full sticky top-20 bg-white z-20 pb-2">
           <div class="flex flex-col">
             <img
-              [src]="activeUser.image || '/images/icons/dashboard/user.svg'"
+              [src]="
+                activeUser.image
+                  ? getImageUrl(activeUser.image)
+                  : '/images/icons/dashboard/user.svg'
+              "
               [alt]="activeUser.name"
               class="w-23 h-23 rounded-full object-cover"
             />
+
             <div class="flex flex-col gap-1">
               <h3 class="text-[13px] font-semibold">{{ activeUser.name }}</h3>
               <p class="flex gap-1 items-center text-[9px] font-medium py-0.75 px-1.25">
@@ -263,9 +268,7 @@
                   />
                 </svg>
 
-                @for (item of activeUser.professions; track item.id) {
-                  <span>{{ item.name ? item.name : 'N/A' }}</span>
-                }
+                <span>{{ formattedProfessions() }}</span>
 
                 <img src="/images/icons/dashboard/verified.svg" alt="" class="" />
               </p>
@@ -895,52 +898,186 @@
 
           @case ('portfolio') {
             <div class="py-2">
-              <div class="grid grid-cols-3 gap-5">
-                <div
-                  class="h-24 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-xs text-gray-400"
-                >
-                  Projeto 1
+              @if (isPortfolioLoading()) {
+                <div class="py-12 text-center text-sm text-gray-500">A carregar portfólio...</div>
+              } @else if (portfolios().length === 0) {
+                <p class="text-xs text-gray-500 py-8 text-center">
+                  Nenhum álbum ou projeto no portfólio deste profissional.
+                </p>
+              } @else {
+                <div class="grid grid-cols-3 gap-5">
+                  @for (item of portfolios(); track item.id) {
+                    <div
+                      (click)="openAlbumModal(item)"
+                      class="group relative h-36 bg-gray-100 rounded-xl overflow-hidden border border-gray-200 cursor-pointer shadow-sm hover:shadow-md transition-all"
+                    >
+                      @if (item.cover?.path) {
+                        <img
+                          [src]="getImageUrl(item.cover.path)"
+                          [alt]="item.name"
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      } @else if (item.images && item.images.length > 0) {
+                        <img
+                          [src]="getImageUrl(item.images[0].path)"
+                          [alt]="item.name"
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      } @else {
+                        <div
+                          class="w-full h-full flex items-center justify-center text-gray-400 text-xs"
+                        >
+                          Sem capa
+                        </div>
+                      }
+
+                      <div
+                        class="absolute w-full h-full top-0 text-[9px] text-[#1546EB] bg-black/20 p-3 flex flex-col justify-between"
+                      >
+                        <span
+                          class="font-semibold flex items-center bg-[#ffffffcb] w-fit py-0.75 px-1.25 rounded-sm"
+                        >
+                          <svg
+                            width="15"
+                            height="15"
+                            viewBox="0 0 15 15"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M3.21875 13.75C2.9625 13.75 2.75 13.5375 2.75 13.2812V1.71875C2.75 1.4625 2.9625 1.25 3.21875 1.25C3.475 1.25 3.6875 1.4625 3.6875 1.71875V13.2812C3.6875 13.5375 3.475 13.75 3.21875 13.75Z"
+                              fill="#1546EB"
+                            />
+                            <path
+                              opacity="0.4"
+                              d="M11.2625 7.7061L10.5 6.9436C10.3187 6.78735 10.2125 6.5561 10.2062 6.29985C10.1937 6.0186 10.3062 5.73735 10.5125 5.5311L11.2625 4.7811C11.9125 4.1311 12.1562 3.5061 11.95 3.01235C11.75 2.52485 11.1312 2.2561 10.2187 2.2561H3.2187C3.08745 2.26235 2.9812 2.3686 2.9812 2.49985V9.99985C2.9812 10.1311 3.08745 10.2374 3.2187 10.2374H10.2187C11.1187 10.2374 11.725 9.96235 11.9312 9.4686C12.1375 8.9686 11.9 8.34985 11.2625 7.7061Z"
+                              fill="#1546EB"
+                            />
+                          </svg>
+
+                          {{ (item.images?.length || 0) + (item.cover ? 1 : 0) }} foto(s)
+                        </span>
+
+                        <span
+                          class="font-semibold flex items-center bg-[#ffffffcb] w-fit py-0.75 px-1.25 rounded-sm"
+                          ><svg
+                            width="15"
+                            height="15"
+                            viewBox="0 0 15 15"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M3.21875 13.75C2.9625 13.75 2.75 13.5375 2.75 13.2812V1.71875C2.75 1.4625 2.9625 1.25 3.21875 1.25C3.475 1.25 3.6875 1.4625 3.6875 1.71875V13.2812C3.6875 13.5375 3.475 13.75 3.21875 13.75Z"
+                              fill="#1546EB"
+                            />
+                            <path
+                              opacity="0.4"
+                              d="M11.2625 7.7061L10.5 6.9436C10.3187 6.78735 10.2125 6.5561 10.2062 6.29985C10.1937 6.0186 10.3062 5.73735 10.5125 5.5311L11.2625 4.7811C11.9125 4.1311 12.1562 3.5061 11.95 3.01235C11.75 2.52485 11.1312 2.2561 10.2187 2.2561H3.2187C3.08745 2.26235 2.9812 2.3686 2.9812 2.49985V9.99985C2.9812 10.1311 3.08745 10.2374 3.2187 10.2374H10.2187C11.1187 10.2374 11.725 9.96235 11.9312 9.4686C12.1375 8.9686 11.9 8.34985 11.2625 7.7061Z"
+                              fill="#1546EB"
+                            />
+                          </svg>
+                          {{ item.name }}</span
+                        >
+                      </div>
+                    </div>
+                  }
                 </div>
-                <div
-                  class="h-24 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-xs text-gray-400"
-                >
-                  Projeto 2
-                </div>
-                <div
-                  class="h-24 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-xs text-gray-400"
-                >
-                  Projeto 3
-                </div>
-              </div>
+              }
             </div>
           }
 
           @case ('habilitacoes') {
             <div class="py-2">
-              <div class="flex flex-wrap gap-2">
-                <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium"
-                  >Pontualidade</span
-                >
-                <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium"
-                  >Comunicação</span
-                >
-                <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium"
-                  >Trabalho em Equipe</span
-                >
-              </div>
+              <p class="text-xs text-gray-500 py-8 text-center">
+                Ainda não existem dados de habilitações para este profissional.
+              </p>
             </div>
           }
         }
       </div>
 
-      <div class="pt-4 border-t border-gray-100 mt-6 flex justify-between items-center">
+      <div class="flex gap-3">
         <button
           (click)="deleteCollaborator(activeUser.id)"
-          class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+          class="py-0.75 px-1.25 w-fit rounded-lg border border-[#FCA5A5] text-[#991B1B] bg-[#FEE2E2] hover:bg-red-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
         >
-          Apagar Usuário
+          <img src="images/icons/dashboard/eliminar-red.svg" class="w-4 h-4" alt="" />
+          Apagar
+        </button>
+
+        <button
+          class="py-0.75 px-1.25 rounded-lg bg-primary/5 border border-primary/20 text-primary hover:bg-primary/10 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          <img src="images/icons/dashboard/editar-blue.svg" class="w-4 h-4" alt="" />
+          Editar
         </button>
       </div>
     </aside>
   }
 </div>
+
+@if (selectedAlbum(); as album) {
+  <div
+    class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+    (click)="closeAlbumModal()"
+  >
+    <div
+      class="bg-white rounded-2xl max-w-3xl w-full p-6 flex flex-col gap-4 max-h-[90vh] overflow-hidden shadow-2xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex justify-between items-center border-b pb-3">
+        <div>
+          <h3 class="text-base font-semibold text-gray-900">{{ album.name }}</h3>
+          <p class="text-xs text-gray-500">
+            {{ (album.images?.length || 0) + (album.cover ? 1 : 0) }} foto(s) disponível(eis)
+          </p>
+        </div>
+        <button
+          (click)="closeAlbumModal()"
+          class="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      @if (selectedModalImage(); as currentImg) {
+        <div
+          class="w-full h-80 bg-gray-900 rounded-xl overflow-hidden flex items-center justify-center"
+        >
+          <img
+            [src]="getImageUrl(currentImg.path)"
+            [alt]="album.name"
+            class="max-h-full max-w-full object-contain"
+          />
+        </div>
+      }
+
+      <div class="flex gap-2 overflow-x-auto pb-2">
+        @if (album.cover) {
+          <img
+            [src]="getImageUrl(album.cover.path)"
+            (click)="selectedModalImage.set(album.cover)"
+            [class.ring-2]="selectedModalImage()?.id === album.cover.id"
+            class="w-16 h-16 rounded-lg object-cover cursor-pointer ring-[#1546EB] opacity-80 hover:opacity-100 transition-all flex-shrink-0"
+          />
+        }
+        @for (img of album.images; track img.id) {
+          <img
+            [src]="getImageUrl(img.path)"
+            (click)="selectedModalImage.set(img)"
+            [class.ring-2]="selectedModalImage()?.id === img.id"
+            class="w-16 h-16 rounded-lg object-cover cursor-pointer ring-[#1546EB] opacity-80 hover:opacity-100 transition-all flex-shrink-0"
+          />
+        }
+      </div>
+    </div>
+  </div>
+}

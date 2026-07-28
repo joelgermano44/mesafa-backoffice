@@ -12,7 +12,7 @@ export class PortfolioService {
   private readonly baseUrl = API_CONFIG.baseUrl;
 
   getProfessionalPortfolio(professionalId: number | string): Observable<Portfolio[]> {
-    return this.http.get<Portfolio[]>(`${this.baseUrl}/professional/${professionalId}/portfolio`);
+    return this.http.get<Portfolio[]>(`${this.baseUrl}/professionals/${professionalId}/portfolio`);
   }
 
   getPortfolioById(
