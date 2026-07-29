@@ -149,6 +149,7 @@
 
     <div class="flex gap-3">
       <button
+        (click)="openDeleteModal()"
         class="py-0.75 px-1.25 w-fit rounded-lg border border-[#FCA5A5] text-[#991B1B] bg-[#FEE2E2] hover:bg-red-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
       >
         <img src="images/icons/dashboard/eliminar-red.svg" class="w-4 h-4" alt="" />
@@ -164,3 +165,18 @@
     </div>
   </aside>
 </div>
+
+<app-confirm-dialog-component
+  [isOpen]="isConfirmOpen()"
+  [isLoading]="isDeleting()"
+  title="Eliminar Serviço"
+  [message]="
+    'Tem certeza de que deseja eliminar o serviço ' +
+    service().name +
+    '? Esta ação não pode ser desfeita.'
+  "
+  confirmText="Eliminar"
+  cancelText="Cancelar"
+  (confirm)="confirmDelete()"
+  (cancel)="closeDeleteModal()"
+/>

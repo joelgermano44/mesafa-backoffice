@@ -146,5 +146,19 @@
 }
 
 @if (selectedService(); as service) {
-  <app-service-details-drawer [service]="service" (close)="closeDetails()" />
+  <app-service-details-drawer
+    [service]="service"
+    (close)="selectedService.set(null)"
+  ></app-service-details-drawer>
 }
+
+<app-confirm-dialog-component
+  [isOpen]="isConfirmOpen()"
+  [isLoading]="isDeleting()"
+  title="Eliminar Serviço"
+  message="Tem certeza de que deseja eliminar este serviço? Esta ação não pode ser desfeita."
+  confirmText="Eliminar"
+  cancelText="Cancelar"
+  (confirm)="confirmDelete()"
+  (cancel)="cancelDelete()"
+/>
