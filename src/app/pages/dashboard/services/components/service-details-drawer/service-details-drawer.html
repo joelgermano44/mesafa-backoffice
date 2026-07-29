@@ -1,39 +1,39 @@
 <div
-  class="fixed inset-0 z-50 flex justify-end font-inter"
+  class="fixed inset-0 z-50 flex justify-end font-inter h-full"
   (keydown.escape)="close.emit()"
   tabindex="0"
 >
-  <div class="absolute inset-0 bg-black/40 backdrop-blur-[1px]" (click)="close.emit()"></div>
+  <div class="absolute inset-0 h-full bg-black/40 backdrop-blur-[1px]" (click)="close.emit()"></div>
 
   <aside
-    class="relative h-screen font-inter w-full max-w-[864px] px-7.5 py-5 bg-white shadow-2xl animate-slide-in overflow-y-auto z-10 flex gap-2.5 flex-col justify-between"
+    class="relative h-full font-inter w-full max-w-[864px] px-7.5 py-5 bg-white shadow-2xl animate-slide-in z-10 flex gap-2.5 flex-col justify-between"
   >
-    <div class="flex flex-col gap-2.5">
-      <div class="sticky top-0 bg-white flex items-center justify-between z-10">
-        <div>
-          <h2 class="font-semibold text-xl">Detalhes do Serviço</h2>
-          <p class="text-[13px] text-[#737791]">Veja detalhatamente como funciona o serviço.</p>
-        </div>
-
-        <button
-          (click)="close.emit()"
-          class="p-1 w-8 h-8 flex items-center justify-center rounded-full text-[#464E5F] hover:text-gray-500 bg-gray-100 transition-colors cursor-pointer"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+    <div class="flex items-center justify-between z-10">
+      <div>
+        <h2 class="font-semibold text-xl">Detalhes do Serviço</h2>
+        <p class="text-[13px] text-[#737791]">Veja detalhatamente como funciona o serviço.</p>
       </div>
 
+      <button
+        (click)="close.emit()"
+        class="p-1 w-8 h-8 flex items-center justify-center rounded-full text-[#464E5F] hover:text-gray-500 bg-gray-100 transition-colors cursor-pointer"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-2.5 h-full">
       <div class="flex gap-5">
         <div class="w-90 h-55 rounded-xl overflow-hidden bg-gray-100 relative">
           <img
-            [src]="service().image || '/images/not-found.png'"
+            [src]="api.baseUrl + '/' + service().image.path"
             [alt]="service().name"
             class="w-full h-full object-contain"
           />
@@ -49,11 +49,9 @@
             </p>
           </div>
 
-          <!-- 
-            <p class="text-xs text-[#2B57F3] font-medium">
-              {{ service().category?.name || 'Sem Categoria' }}
-            </p> 
-          -->
+          <p class="text-xs text-[#2B57F3] font-medium">
+            {{ service().category?.name || 'Sem Categoria' }}
+          </p>
 
           <div class="flex flex-col gap-2">
             <p class="text-[13px] font-medium">Profissionais</p>
@@ -88,17 +86,17 @@
         </div>
       </div>
 
-      <div class="flex flex-col">
+      <div class="flex flex-col gap-1.25">
         <h1 class="font-semibold">Amostras deste serviço</h1>
 
-        <ul class="w-full flex flex-wrap gap-2.5 min-h-32 items-center justify-center">
-          @if (!service().images) {
+        <ul class="w-full flex flex-wrap gap-2.5 min-h-32 items-center">
+          @if (service().images) {
             @for (images of service().images; track images.id) {
               <li>
                 <img
-                  [src]="images.image || '/images/not-found.png'"
+                  [src]="api.baseUrl + '/' + images.path"
                   alt="Iamges do serviços"
-                  class="w-44 h-29.5"
+                  class="w-44 h-29.5 hover:shadow shadow-black/10 rounded-lg object-cover"
                 />
               </li>
             }
@@ -149,7 +147,7 @@
       </div>
     </div>
 
-    <div class="flex gap-3 mb-12">
+    <div class="flex gap-3">
       <button
         class="py-0.75 px-1.25 w-fit rounded-lg border border-[#FCA5A5] text-[#991B1B] bg-[#FEE2E2] hover:bg-red-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
       >

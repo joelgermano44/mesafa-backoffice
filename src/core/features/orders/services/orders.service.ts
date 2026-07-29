@@ -8,6 +8,9 @@ import { API_CONFIG } from '../../../config/api.config';
   providedIn: 'root',
 })
 export class OrdersService {
+  getOrdersByCollaborator(collaboratorId: number) {
+    throw new Error('Method not implemented.');
+  }
   private http = inject(HttpClient);
   private readonly apiUrl = API_CONFIG.baseUrl;
 
@@ -94,6 +97,19 @@ export class OrdersService {
   acceptOrder(orderId: number): Observable<Order> {
     this.loading.set(true);
     return this.http.patch<Order>(`${this.apiUrl}/orders/${orderId}/accept`, {}).pipe(
+      tap({
+        next: (updatedOrder) => {
+          this.updateLocalOrder(updatedOrder);
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false),
+      }),
+    );
+  }
+
+  cancelOrder(orderId: number): Observable<Order> {
+    this.loading.set(true);
+    return this.http.patch<Order>(`${this.apiUrl}/orders/${orderId}/cancel`, {}).pipe(
       tap({
         next: (updatedOrder) => {
           this.updateLocalOrder(updatedOrder);

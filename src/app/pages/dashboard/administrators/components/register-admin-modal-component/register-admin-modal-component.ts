@@ -1,6 +1,16 @@
-import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Output,
+  inject,
+  signal,
+  AfterViewInit,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { animate } from 'motion';
 import { toast } from 'ngx-sonner';
 import { AdminService } from '../../../../../../core/features/administrators/services/admin.service';
 
@@ -10,13 +20,15 @@ import { AdminService } from '../../../../../../core/features/administrators/ser
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register-admin-modal-component.html',
 })
-export class RegisterAdminModalComponent {
+export class RegisterAdminModalComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
   private adminService = inject(AdminService);
+  private elementRef = inject(ElementRef);
+  serverError: string | null = null;
 
   @Output() close = new EventEmitter<void>();
   @Output() success = new EventEmitter<void>();
-  
+
   loading = signal<boolean>(false);
   submitted = false;
 
@@ -32,6 +44,23 @@ export class RegisterAdminModalComponent {
     image: [null],
   });
 
+  ngAfterViewInit(): void {
+    const overlay = this.elementRef.nativeElement.querySelector('.fixed.inset-0');
+    const container = this.elementRef.nativeElement.querySelector('.bg-white');
+
+    if (overlay) {
+      animate(overlay, { opacity: [0, 1] }, { duration: 0.25, ease: 'easeOut' });
+    }
+
+    if (container) {
+      animate(
+        container,
+        { opacity: [0, 1], scale: [0.92, 1], y: [15, 0] },
+        { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+      );
+    }
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -43,7 +72,20 @@ export class RegisterAdminModalComponent {
   }
 
   closeModal(): void {
-    this.close.emit();
+    const overlay = this.elementRef.nativeElement.querySelector('.fixed.inset-0');
+    const container = this.elementRef.nativeElement.querySelector('.bg-white');
+
+    if (overlay && container) {
+      Promise.all([
+        animate(container, { opacity: [1, 0], scale: [1, 0.95] }, { duration: 0.2, ease: 'easeIn' })
+          .finished,
+        animate(overlay, { opacity: [1, 0] }, { duration: 0.2, ease: 'easeIn' }).finished,
+      ]).then(() => {
+        this.close.emit();
+      });
+    } else {
+      this.close.emit();
+    }
   }
 
   onSubmit(): void {
@@ -66,8 +108,23 @@ export class RegisterAdminModalComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        toast.error(err?.error?.message || 'Erro ao cadastrar administrador.');
-      }
+        const apiError = err?.error;
+
+        if (apiError && apiError.field && apiError.error) {
+          const control = this.adminForm.get(apiError.field);
+
+          if (control) {
+            control.setErrors({ serverError: apiError.error });
+            control.markAsTouched();
+          } else {
+            this.serverError = apiError.error;
+          }
+        } else {
+          this.serverError = 'Ocorreu um erro inesperado. Tente novamente.';
+        }
+
+        toast.error(this.serverError || 'Ocorreu um erro ao cadastrar administrador.');
+      },
     });
   }
 }

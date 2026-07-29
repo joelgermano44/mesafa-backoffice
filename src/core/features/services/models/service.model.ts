@@ -3,7 +3,15 @@ import { Collaborator } from '../../collaborators/models/collaborator.model';
 
 export interface ServiceImage {
   id: number;
-  image: string;
+  filename: string;
+  path: string;
+  mimetype: string;
+  type: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deleted_at: Date;
+  item_id: number;
+  item_type: string;
 }
 
 export interface ProfessionalService {
@@ -16,7 +24,7 @@ export interface ProfessionalService {
   travel_price: number;
   is_paid_by_installments: boolean;
 
-  image: string | null;
+  image: ServiceImage;
   images: ServiceImage[];
 
   created_at: string;

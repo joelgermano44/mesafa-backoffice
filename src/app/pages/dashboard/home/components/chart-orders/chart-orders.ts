@@ -24,8 +24,18 @@ export class ChartOrdersComponent implements AfterViewInit {
   private ordersService = inject(OrdersService);
 
   private readonly monthsNames = [
-    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
   ];
 
   public chartData: ChartData[] = this.monthsNames.map((mes) => ({
@@ -63,7 +73,7 @@ export class ChartOrdersComponent implements AfterViewInit {
       const indiceMes = dataCriacao.getMonth();
 
       if (indiceMes >= 0 && indiceMes < 12) {
-        if (order.status === 'COMPLETED') {
+        if (order.status === 'ACCEPTED') {
           this.chartData[indiceMes].realizadas++;
         } else if (order.status === 'CANCELED' || order.status === 'REJECTED') {
           this.chartData[indiceMes].canceladas++;
@@ -83,7 +93,7 @@ export class ChartOrdersComponent implements AfterViewInit {
     const labels = this.chartData.map((d) => d.mes);
     const realizadasData = this.chartData.map((d) => d.realizadas);
     const canceladasData = this.chartData.map((d) => d.canceladas);
-    
+
     const maxVal = Math.max(...realizadasData, ...canceladasData, 10);
     const yMax = Math.ceil(maxVal / 10) * 10;
 

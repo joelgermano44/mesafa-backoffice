@@ -48,6 +48,20 @@ export class ServicesService {
     );
   }
 
+  createService(data: FormData): Observable<ProfessionalService> {
+    return this.http.post<ProfessionalService>(`${API_CONFIG.baseUrl}/admin/services`, data);
+  }
+
+  createProfessionalService(
+    professionalId: number,
+    data: FormData,
+  ): Observable<ProfessionalService> {
+    return this.http.post<ProfessionalService>(
+      `${API_CONFIG.baseUrl}/professionals/${professionalId}/service`,
+      data,
+    );
+  }
+
   subscribeProfessionalService(
     professionalId: number,
     data: SubscribeServicesRequest,
@@ -73,5 +87,9 @@ export class ServicesService {
     return this.http.delete<void>(
       `${API_CONFIG.baseUrl}/professionals/${professionalId}/service/${serviceId}`,
     );
+  }
+
+  deleteService(serviceId: number) {
+    return this.http.delete<void>(`${API_CONFIG.baseUrl}/admin/services/${serviceId}`);
   }
 }

@@ -1,6 +1,17 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  AfterViewInit,
+  ElementRef,
+  viewChildren,
+  viewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
+import { animate, hover, stagger } from 'motion';
 
 import { TitleHeader } from '../../components/title-header/title-header';
 import { AdminService } from '../../../../core/features/administrators/services/admin.service';
@@ -9,6 +20,7 @@ import { CreateServiceModalComponent } from './components/create-service-modal-c
 import { ProfessionalService } from '../../../../core/features/services/models/service.model';
 import { API_CONFIG } from '../../../../core/config/api.config';
 import { ServiceDetailsDrawer } from './components/service-details-drawer/service-details-drawer';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-services',
@@ -16,13 +28,13 @@ import { ServiceDetailsDrawer } from './components/service-details-drawer/servic
   templateUrl: './services.html',
   styleUrl: './services.css',
 })
-export class Services {
+export class Services implements AfterViewInit {
   private readonly adminService = inject(AdminService);
   private readonly servicesService = inject(ServicesService);
+  private readonly el = inject(ElementRef);
+
   public selectedService = signal<ProfessionalService | null>(null);
-
   public readonly api = API_CONFIG;
-
   readonly admin = this.adminService.admin;
 
   public searchTerm = signal('');
@@ -48,9 +60,30 @@ export class Services {
   constructor() {
     effect(() => {
       const data = this.rawServices();
-
       this.services.set(data);
+
+      setTimeout(() => this.animateCards(), 50);
     });
+  }
+
+  ngAfterViewInit(): void {
+    const header = this.el.nativeElement.querySelector('.sticky');
+    if (header) {
+      animate(header, { opacity: [0, 1], y: [-20, 0] }, { duration: 0.5, ease: [0.16, 1, 0.3, 1] });
+    }
+
+    this.animateCards();
+  }
+
+  private animateCards(): void {
+    const cards = this.el.nativeElement.querySelectorAll('.flex-wrap > div');
+    if (cards.length > 0) {
+      animate(
+        cards,
+        { opacity: [0, 1], y: [20, 0], scale: [0.95, 1] },
+        { delay: stagger(0.05), duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+      );
+    }
   }
 
   public openModal(): void {
@@ -102,7 +135,7 @@ export class Services {
     return result;
   });
 
-  public onDelete(service: any): void {
+  public deleteProfessionalService(service: any): void {
     if (!confirm('Tem certeza de que deseja eliminar este serviço?')) {
       return;
     }
@@ -120,6 +153,22 @@ export class Services {
         this.services.update((items) => items.filter((item) => item.id !== serviceId));
       },
       error: (err) => console.error(err),
+    });
+  }
+
+  public onDelete(serviceId: number): void {
+    if (!confirm('Tem certeza de que deseja eliminar este serviço?')) {
+      return;
+    }
+
+    this.servicesService.deleteService(serviceId).subscribe({
+      next: () => {
+        this.services.update((items) => items.filter((item) => item.id !== serviceId));
+        toast.success('Serviço removido com sucesso');
+      },
+      error: (err) => {
+        console.error(err);
+      },
     });
   }
 

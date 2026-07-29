@@ -1,9 +1,9 @@
-<div class="w-full p-2.5 flex-col flex gap-3">
+<div class="w-full p-2.5 flex-col flex gap-3 bg-[#F9FBFC] rounded-sm max-w-90">
   <div
-    class="flex items-end pl-5 rounded-xl h-44 w-full hover:scale-105 transition-all duration-200"
+    class="flex items-end pl-5 rounded-xl h-44 w-full hover:scale-105 transition-all duration-200 gsp-1"
     [style.background]="banner.background"
   >
-    <div class="my-auto w-full">
+    <div class="my-auto max-w-46.5 w.full">
       <div class="flex-col flex gap-2.5 my-auto text-white">
         <h2 class="text-xl font-bold uppercase">
           {{ banner.title }}
@@ -33,7 +33,7 @@
       </button>
     </div>
 
-    <img [src]="banner.image" [alt]="banner.title" class="w-37 h-full object-cover rounded-r-xl" />
+    <img [src]="banner.image ? banner.image : '/images/not-found.png' " [alt]="banner.title" class="w-37 h-full object-cover rounded-r-xl" />
   </div>
 
   <div class="flex items-center gap-4">

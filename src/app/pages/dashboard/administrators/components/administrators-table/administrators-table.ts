@@ -1,6 +1,7 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnInit, computed, inject, signal, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { animate, stagger } from 'motion';
 import { Admin } from '../../../../../../core/features/administrators/models/admin.model';
 import { AdminService } from '../../../../../../core/features/administrators/services/admin.service';
 import { AdminDetailsDrawerComponent } from '../admin-details-drawer-component/admin-details-drawer-component';
@@ -12,8 +13,9 @@ import { AdminDetailsDrawerComponent } from '../admin-details-drawer-component/a
   templateUrl: './administrators-table.html',
   styleUrl: './administrators-table.css',
 })
-export class AdministratorsTable implements OnInit {
+export class AdministratorsTable implements OnInit, AfterViewInit {
   private readonly adminService = inject(AdminService);
+  private readonly elementRef = inject(ElementRef);
 
   admins = signal<Admin[]>([]);
   isLoading = signal<boolean>(true);
@@ -31,18 +33,34 @@ export class AdministratorsTable implements OnInit {
     this.loadAdmins();
   }
 
+  ngAfterViewInit(): void {
+    this.animateTableRows();
+  }
+
   loadAdmins(): void {
     this.isLoading.set(true);
     this.adminService.getAll().subscribe({
       next: (data) => {
         this.admins.set(data);
         this.isLoading.set(false);
+        setTimeout(() => this.animateTableRows(), 50);
       },
       error: (err) => {
         console.error('Erro ao carregar administradores:', err);
         this.isLoading.set(false);
       },
     });
+  }
+
+  private animateTableRows(): void {
+    const rows = this.elementRef.nativeElement.querySelectorAll('tbody tr');
+    if (rows.length > 0) {
+      animate(
+        rows,
+        { opacity: [0, 1], y: [10, 0] },
+        { duration: 0.35, delay: stagger(0.04), ease: [0.16, 1, 0.3, 1] }
+      );
+    }
   }
 
   selectAdmin(admin: Admin): void {
@@ -115,22 +133,26 @@ export class AdministratorsTable implements OnInit {
   nextPage(): void {
     if (this.currentPage() < this.totalPages()) {
       this.currentPage.update((page) => page + 1);
+      setTimeout(() => this.animateTableRows(), 50);
     }
   }
 
   previousPage(): void {
     if (this.currentPage() > 1) {
       this.currentPage.update((page) => page - 1);
+      setTimeout(() => this.animateTableRows(), 50);
     }
   }
 
   onSearchChange(value: string): void {
     this.searchQuery.set(value);
     this.currentPage.set(1);
+    setTimeout(() => this.animateTableRows(), 50);
   }
 
   onFilterChange(): void {
     this.currentPage.set(1);
+    setTimeout(() => this.animateTableRows(), 50);
   }
 
   editAdmin(admin: Admin): void {

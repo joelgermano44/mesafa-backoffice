@@ -1,4 +1,12 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ElementRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Collaborator } from '../../../../../../core/features/collaborators/models/collaborator.model';
@@ -11,6 +19,10 @@ import {
 } from '../../../../../../core/features/portfolio/models/portfolio.model';
 import { PortfolioService } from '../../../../../../core/features/portfolio/services/portfolio.service';
 import { API_CONFIG } from '../../../../../../core/config/api.config';
+import { animate, stagger } from 'motion';
+import { ServicesService } from '../../../../../../core/features/services/services/services.service';
+import { ProfessionalService } from '../../../../../../core/features/services/models/professional-with-services.model';
+import { toast } from 'ngx-sonner';
 
 export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes';
 
@@ -21,11 +33,15 @@ export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes'
   templateUrl: './professionals-table.html',
   styleUrl: './professionals-table.css',
 })
-export class ProfessionalsTable implements OnInit {
+export class ProfessionalsTable implements OnInit, AfterViewInit {
+  protected readonly serviceServices = inject(ServicesService);
   protected readonly collaboratorService = inject(CollaboratorService);
   protected readonly ordersService = inject(OrdersService);
   protected readonly portfolioService = inject(PortfolioService);
   protected readonly apiUrl = API_CONFIG.baseUrl;
+  protected readonly elementRef = inject(ElementRef);
+
+  public services = signal<ProfessionalService[]>([]);
 
   isLoading = signal<boolean>(true);
   isOrdersLoading = signal<boolean>(false);
@@ -67,6 +83,46 @@ export class ProfessionalsTable implements OnInit {
     return ['Tudo', ...Array.from(years).sort().reverse()];
   });
 
+  ngAfterViewInit() {
+    const root = this.elementRef.nativeElement;
+
+    animate(
+      root.querySelector('.filter-bar'),
+      {
+        opacity: [0, 1],
+        y: [-12, 0],
+      },
+      {
+        duration: 0.4,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    );
+
+    animate(
+      root.querySelectorAll('tbody tr'),
+      {
+        opacity: [0, 1],
+        y: [12, 0],
+      },
+      {
+        delay: stagger(0.05),
+        duration: 0.35,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    );
+
+    animate(
+      '.tab-content',
+      {
+        opacity: [0, 1],
+        y: [8, 0],
+      },
+      {
+        duration: 0.25,
+      },
+    );
+  }
+
   searchQuery = signal<string>('');
   selectedProfession = signal<string>('Tudo');
   selectedProvince = signal<string>('Tudo');
@@ -98,7 +154,7 @@ export class ProfessionalsTable implements OnInit {
 
   completedOrders = computed(() =>
     this.collaboratorOrders().filter(
-      (order) => order.status === 'COMPLETED' || order.status === 'REQUESTED',
+      (order) => order.status === 'ACCEPTED' || order.status === 'REQUESTED',
     ),
   );
 
@@ -153,6 +209,19 @@ export class ProfessionalsTable implements OnInit {
     this.isDrawerOpen.set(true);
     this.loadCollaboratorOrders(collaborator.id);
     this.loadCollaboratorPortfolio(collaborator.id);
+    this.loadCollaboratorServices(collaborator.id);
+  }
+
+  loadCollaboratorServices(professionalId: number | string): void {
+    this.serviceServices.getByProfessional(Number(professionalId)).subscribe({
+      next: (services) => {
+        this.services.set(services);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar serviços do colaborador:', err);
+        this.services.set([]);
+      },
+    });
   }
 
   loadCollaboratorPortfolio(professionalId: number | string): void {
@@ -328,5 +397,37 @@ export class ProfessionalsTable implements OnInit {
         error: (err) => console.error('Erro ao eliminar:', err),
       });
     }
+  }
+
+  public onDelete(service: any): void {
+    if (!confirm('Tem certeza de que deseja eliminar este serviço?')) {
+      return;
+    }
+
+    const serviceId = service.id;
+    const currentCollaborator = this.collaboratorService.current();
+    const professionalId =
+      service.professionalId ?? service.professional?.id ?? currentCollaborator?.id;
+
+    if (!professionalId || !serviceId) {
+      toast.error('Não foi possível identificar o profissional ou o serviço.');
+      return;
+    }
+
+    this.serviceServices
+      .deleteProfessionalService(Number(professionalId), Number(serviceId))
+      .subscribe({
+        next: () => {
+          this.services.update((items) => items.filter((item) => item.id !== serviceId));
+
+          this.loadCollaborators();
+
+          toast.success('Serviço removido com sucesso.');
+        },
+        error: (err) => {
+          console.error('Erro ao eliminar serviço na API:', err);
+          toast.error('Erro ao eliminar o serviço. Tente novamente.');
+        },
+      });
   }
 }
