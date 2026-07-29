@@ -20,6 +20,9 @@ import {
 import { PortfolioService } from '../../../../../../core/features/portfolio/services/portfolio.service';
 import { API_CONFIG } from '../../../../../../core/config/api.config';
 import { animate, stagger } from 'motion';
+import { ServicesService } from '../../../../../../core/features/services/services/services.service';
+import { ProfessionalService } from '../../../../../../core/features/services/models/professional-with-services.model';
+import { toast } from 'ngx-sonner';
 
 export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes';
 
@@ -31,11 +34,14 @@ export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes'
   styleUrl: './professionals-table.css',
 })
 export class ProfessionalsTable implements OnInit, AfterViewInit {
+  protected readonly serviceServices = inject(ServicesService);
   protected readonly collaboratorService = inject(CollaboratorService);
   protected readonly ordersService = inject(OrdersService);
   protected readonly portfolioService = inject(PortfolioService);
   protected readonly apiUrl = API_CONFIG.baseUrl;
   protected readonly elementRef = inject(ElementRef);
+
+  public services = signal<ProfessionalService[]>([]);
 
   isLoading = signal<boolean>(true);
   isOrdersLoading = signal<boolean>(false);
@@ -115,11 +121,8 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
         duration: 0.25,
       },
     );
-
-    
   }
 
-  
   searchQuery = signal<string>('');
   selectedProfession = signal<string>('Tudo');
   selectedProvince = signal<string>('Tudo');
@@ -151,7 +154,7 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
 
   completedOrders = computed(() =>
     this.collaboratorOrders().filter(
-      (order) => order.status === 'COMPLETED' || order.status === 'REQUESTED',
+      (order) => order.status === 'ACCEPTED' || order.status === 'REQUESTED',
     ),
   );
 
@@ -206,6 +209,19 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
     this.isDrawerOpen.set(true);
     this.loadCollaboratorOrders(collaborator.id);
     this.loadCollaboratorPortfolio(collaborator.id);
+    this.loadCollaboratorServices(collaborator.id);
+  }
+
+  loadCollaboratorServices(professionalId: number | string): void {
+    this.serviceServices.getByProfessional(Number(professionalId)).subscribe({
+      next: (services) => {
+        this.services.set(services);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar serviços do colaborador:', err);
+        this.services.set([]);
+      },
+    });
   }
 
   loadCollaboratorPortfolio(professionalId: number | string): void {
@@ -381,5 +397,37 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
         error: (err) => console.error('Erro ao eliminar:', err),
       });
     }
+  }
+
+  public onDelete(service: any): void {
+    if (!confirm('Tem certeza de que deseja eliminar este serviço?')) {
+      return;
+    }
+
+    const serviceId = service.id;
+    const currentCollaborator = this.collaboratorService.current();
+    const professionalId =
+      service.professionalId ?? service.professional?.id ?? currentCollaborator?.id;
+
+    if (!professionalId || !serviceId) {
+      toast.error('Não foi possível identificar o profissional ou o serviço.');
+      return;
+    }
+
+    this.serviceServices
+      .deleteProfessionalService(Number(professionalId), Number(serviceId))
+      .subscribe({
+        next: () => {
+          this.services.update((items) => items.filter((item) => item.id !== serviceId));
+
+          this.loadCollaborators();
+
+          toast.success('Serviço removido com sucesso.');
+        },
+        error: (err) => {
+          console.error('Erro ao eliminar serviço na API:', err);
+          toast.error('Erro ao eliminar o serviço. Tente novamente.');
+        },
+      });
   }
 }

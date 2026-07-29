@@ -67,18 +67,14 @@ export class Hired implements OnInit, AfterViewInit {
     const filterBar = this.el.nativeElement.querySelector('.filter-bar');
 
     if (header) {
-      animate(
-        header,
-        { opacity: [0, 1], y: [-20, 0] },
-        { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
-      );
+      animate(header, { opacity: [0, 1], y: [-20, 0] }, { duration: 0.5, ease: [0.16, 1, 0.3, 1] });
     }
 
     if (filterBar) {
       animate(
         filterBar,
         { opacity: [0, 1], y: [-10, 0] },
-        { duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }
+        { duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] },
       );
     }
   }
@@ -93,7 +89,7 @@ export class Hired implements OnInit, AfterViewInit {
           duration: 0.35,
           delay: stagger(0.05),
           ease: [0.16, 1, 0.3, 1],
-        }
+        },
       );
     }
   }
@@ -110,21 +106,21 @@ export class Hired implements OnInit, AfterViewInit {
       animate(
         drawerPanel,
         { x: ['100%', '0%'], opacity: [0.8, 1] },
-        { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+        { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
       );
     }
   }
 
   private mapStatusToPortuguese(status: OrderStatus): string {
     switch (status) {
-      case 'PENDING':
-      case 'REQUESTED':
-        return 'Pendente';
-      case 'COMPLETED':
+      case 'ACCEPTED':
         return 'Aceito';
       case 'REJECTED':
-      case 'CANCELED':
         return 'Rejeitado';
+      case 'CANCELED':
+        return 'Cancelado';
+      case 'IN_PROGRESS':
+      case 'REQUESTED':
       default:
         return 'Pendente';
     }
@@ -182,7 +178,8 @@ export class Hired implements OnInit, AfterViewInit {
 
     if (drawerPanel && backdrop) {
       Promise.all([
-        animate(drawerPanel, { x: ['0%', '100%'] }, { duration: 0.25, ease: [0.16, 1, 0.3, 1] }).finished,
+        animate(drawerPanel, { x: ['0%', '100%'] }, { duration: 0.25, ease: [0.16, 1, 0.3, 1] })
+          .finished,
         animate(backdrop, { opacity: [1, 0] }, { duration: 0.25 }).finished,
       ]).then(() => {
         this.selectedOrderId.set(null);
@@ -206,6 +203,20 @@ export class Hired implements OnInit, AfterViewInit {
     this.ordersService.rejectOrder(id).subscribe({
       next: () => {
         toast.error('Contrato rejeitado');
+      },
+    });
+  }
+
+  completeService(id: number, event?: Event): void {
+    event?.stopPropagation();
+    toast.success('Serviço marcado como concluído com sucesso');
+  }
+
+  cancelService(id: number, event?: Event): void {
+    event?.stopPropagation();
+    this.ordersService.cancelOrder(id).subscribe({
+      next: () => {
+        toast.error('Pedido cancelado');
       },
     });
   }

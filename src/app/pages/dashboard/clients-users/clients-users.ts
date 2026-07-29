@@ -53,7 +53,7 @@ export class ClientsUsers {
 
         const requestedServicesCount = filteredOrders.length;
         const pendingRequestsCount = filteredOrders.filter(
-          (o) => o.status === 'PENDING' || o.status === 'REQUESTED',
+          (o) => o.status === 'IN_PROGRESS' || o.status === 'REQUESTED',
         ).length;
 
         return {

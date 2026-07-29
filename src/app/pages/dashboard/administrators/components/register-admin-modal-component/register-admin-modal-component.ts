@@ -1,4 +1,13 @@
-import { Component, ElementRef, EventEmitter, Output, inject, signal, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Output,
+  inject,
+  signal,
+  AfterViewInit,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { animate } from 'motion';
@@ -15,10 +24,11 @@ export class RegisterAdminModalComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
   private adminService = inject(AdminService);
   private elementRef = inject(ElementRef);
+  serverError: string | null = null;
 
   @Output() close = new EventEmitter<void>();
   @Output() success = new EventEmitter<void>();
-  
+
   loading = signal<boolean>(false);
   submitted = false;
 
@@ -46,7 +56,7 @@ export class RegisterAdminModalComponent implements AfterViewInit {
       animate(
         container,
         { opacity: [0, 1], scale: [0.92, 1], y: [15, 0] },
-        { duration: 0.35, ease: [0.16, 1, 0.3, 1] }
+        { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
       );
     }
   }
@@ -67,7 +77,8 @@ export class RegisterAdminModalComponent implements AfterViewInit {
 
     if (overlay && container) {
       Promise.all([
-        animate(container, { opacity: [1, 0], scale: [1, 0.95] }, { duration: 0.2, ease: 'easeIn' }).finished,
+        animate(container, { opacity: [1, 0], scale: [1, 0.95] }, { duration: 0.2, ease: 'easeIn' })
+          .finished,
         animate(overlay, { opacity: [1, 0] }, { duration: 0.2, ease: 'easeIn' }).finished,
       ]).then(() => {
         this.close.emit();
@@ -97,8 +108,23 @@ export class RegisterAdminModalComponent implements AfterViewInit {
       },
       error: (err) => {
         this.loading.set(false);
-        toast.error(err?.error?.message || 'Erro ao cadastrar administrador.');
-      }
+        const apiError = err?.error;
+
+        if (apiError && apiError.field && apiError.error) {
+          const control = this.adminForm.get(apiError.field);
+
+          if (control) {
+            control.setErrors({ serverError: apiError.error });
+            control.markAsTouched();
+          } else {
+            this.serverError = apiError.error;
+          }
+        } else {
+          this.serverError = 'Ocorreu um erro inesperado. Tente novamente.';
+        }
+
+        toast.error(this.serverError || 'Ocorreu um erro ao cadastrar administrador.');
+      },
     });
   }
 }

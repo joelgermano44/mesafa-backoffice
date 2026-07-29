@@ -88,4 +88,8 @@ export class ServicesService {
       `${API_CONFIG.baseUrl}/professionals/${professionalId}/service/${serviceId}`,
     );
   }
+
+  deleteService(serviceId: number) {
+    return this.http.delete<void>(`${API_CONFIG.baseUrl}/admin/services/${serviceId}`);
+  }
 }

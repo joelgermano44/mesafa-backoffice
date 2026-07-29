@@ -20,6 +20,7 @@ import { CreateServiceModalComponent } from './components/create-service-modal-c
 import { ProfessionalService } from '../../../../core/features/services/models/service.model';
 import { API_CONFIG } from '../../../../core/config/api.config';
 import { ServiceDetailsDrawer } from './components/service-details-drawer/service-details-drawer';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-services',
@@ -68,11 +69,7 @@ export class Services implements AfterViewInit {
   ngAfterViewInit(): void {
     const header = this.el.nativeElement.querySelector('.sticky');
     if (header) {
-      animate(
-        header,
-        { opacity: [0, 1], y: [-20, 0] },
-        { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
-      );
+      animate(header, { opacity: [0, 1], y: [-20, 0] }, { duration: 0.5, ease: [0.16, 1, 0.3, 1] });
     }
 
     this.animateCards();
@@ -84,7 +81,7 @@ export class Services implements AfterViewInit {
       animate(
         cards,
         { opacity: [0, 1], y: [20, 0], scale: [0.95, 1] },
-        { delay: stagger(0.05), duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+        { delay: stagger(0.05), duration: 0.4, ease: [0.16, 1, 0.3, 1] },
       );
     }
   }
@@ -138,7 +135,7 @@ export class Services implements AfterViewInit {
     return result;
   });
 
-  public onDelete(service: any): void {
+  public deleteProfessionalService(service: any): void {
     if (!confirm('Tem certeza de que deseja eliminar este serviço?')) {
       return;
     }
@@ -156,6 +153,22 @@ export class Services implements AfterViewInit {
         this.services.update((items) => items.filter((item) => item.id !== serviceId));
       },
       error: (err) => console.error(err),
+    });
+  }
+
+  public onDelete(serviceId: number): void {
+    if (!confirm('Tem certeza de que deseja eliminar este serviço?')) {
+      return;
+    }
+
+    this.servicesService.deleteService(serviceId).subscribe({
+      next: () => {
+        this.services.update((items) => items.filter((item) => item.id !== serviceId));
+        toast.success('Serviço removido com sucesso');
+      },
+      error: (err) => {
+        console.error(err);
+      },
     });
   }
 

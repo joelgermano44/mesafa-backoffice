@@ -75,8 +75,10 @@
                 class="w-full outline-none text-black font-semibold text-[13px]"
               />
             </div>
-            @if (adminForm.get('name')?.invalid && submitted) {
-              <span class="text-[10px] text-red-500">Nome é obrigatório</span>
+            @if (adminForm.get('name')?.hasError('serverError')) {
+              <span class="text-[10px] text-red-500">
+                {{ adminForm.get('name')?.getError('serverError') }}
+              </span>
             }
           </div>
 
@@ -93,8 +95,10 @@
                 class="w-full outline-none"
               />
             </div>
-            @if (adminForm.get('bi')?.invalid && submitted) {
-              <span class="text-[10px] text-red-500">BI é obrigatório</span>
+            @if (adminForm.get('bi')?.hasError('serverError')) {
+              <span class="text-[10px] text-red-500">
+                {{ adminForm.get('bi')?.getError('serverError') }}
+              </span>
             }
           </div>
 
@@ -111,8 +115,10 @@
                 class="w-full outline-none"
               />
             </div>
-            @if (adminForm.get('email')?.invalid && submitted) {
-              <span class="text-[10px] text-red-500">E-mail inválido</span>
+            @if (adminForm.get('email')?.hasError('serverError')) {
+              <span class="text-[10px] text-red-500">
+                {{ adminForm.get('email')?.getError('serverError') }}
+              </span>
             }
           </div>
 
@@ -129,8 +135,10 @@
                 class="w-full outline-none"
               />
             </div>
-            @if (adminForm.get('phone')?.invalid && adminForm.get('phone')?.touched) {
-              <span class="text-[10px] text-red-500">Telefone inválido</span>
+            @if (adminForm.get('phone')?.hasError('serverError')) {
+              <span class="text-[10px] text-red-500">
+                {{ adminForm.get('phone')?.getError('serverError') }}
+              </span>
             }
           </div>
 
@@ -146,8 +154,10 @@
                 class="w-full outline-none text-gray-700 cursor-pointer"
               />
             </div>
-            @if (adminForm.get('birthdate')?.invalid && submitted) {
-              <span class="text-[10px] text-red-500">Data de nascimento é obrigatória</span>
+            @if (adminForm.get('birthdate')?.hasError('serverError')) {
+              <span class="text-[10px] text-red-500">
+                {{ adminForm.get('birthdate')?.getError('serverError') }}
+              </span>
             }
           </div>
 
@@ -164,8 +174,10 @@
                 class="w-full outline-none"
               />
             </div>
-            @if (adminForm.get('password')?.invalid && submitted) {
-              <span class="text-[10px] text-red-500">Mínimo de 6 caracteres</span>
+            @if (adminForm.get('password')?.hasError('serverError')) {
+              <span class="text-[10px] text-red-500">
+                {{ adminForm.get('password')?.getError('serverError') }}
+              </span>
             }
           </div>
         </div>

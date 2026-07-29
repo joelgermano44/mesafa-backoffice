@@ -107,6 +107,19 @@ export class OrdersService {
     );
   }
 
+  cancelOrder(orderId: number): Observable<Order> {
+    this.loading.set(true);
+    return this.http.patch<Order>(`${this.apiUrl}/orders/${orderId}/cancel`, {}).pipe(
+      tap({
+        next: (updatedOrder) => {
+          this.updateLocalOrder(updatedOrder);
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false),
+      }),
+    );
+  }
+
   rejectOrder(orderId: number): Observable<Order> {
     this.loading.set(true);
     return this.http.patch<Order>(`${this.apiUrl}/orders/${orderId}/reject`, {}).pipe(

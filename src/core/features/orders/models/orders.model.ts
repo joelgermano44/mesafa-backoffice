@@ -1,4 +1,4 @@
-export type OrderStatus = 'REQUESTED' | 'PENDING' | 'REJECTED' | 'CANCELED' | 'COMPLETED';
+export type OrderStatus = 'REQUESTED' | 'IN_PROGRESS' | 'REJECTED' | 'CANCELED' | 'ACCEPTED';
 
 export interface LatLng {
   id: number;

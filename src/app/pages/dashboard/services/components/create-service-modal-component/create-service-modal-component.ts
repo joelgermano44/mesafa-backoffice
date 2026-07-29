@@ -1,4 +1,12 @@
-import { Component, inject, OnInit, output, signal, AfterViewInit, ElementRef } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  output,
+  signal,
+  AfterViewInit,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { animate } from 'motion';
@@ -29,11 +37,13 @@ export class CreateServiceModalComponent implements OnInit, AfterViewInit {
   public isSubmitting = signal<boolean>(false);
   public availableServices = signal<ProfessionalService[]>([]);
   public categories = signal<Category[]>([]);
-  public selectedMediaPreview = signal<string | null>(null);
+
+  // Previews de mídia
+  public coverPreview = signal<string | null>(null);
+  public galleryPreviews = signal<string[]>([]);
 
   public collaborators = this.collaboratorService.collaborators;
 
-  // Form ajustado aos requisitos exatos do Backend
   public createForm = this.fb.group({
     name: ['', [Validators.required]],
     categoryId: [null as number | null, [Validators.required]],
@@ -41,7 +51,8 @@ export class CreateServiceModalComponent implements OnInit, AfterViewInit {
     travelPrice: [null as number | null, [Validators.required, Validators.min(0)]],
     isPaidByInstallments: [false, [Validators.required]],
     description: ['', [Validators.required]],
-    media: [null as File | null]
+    coverImage: [null as File | null],
+    galleryImages: [[] as File[]],
   });
 
   public associateForm = this.fb.group({
@@ -84,7 +95,7 @@ export class CreateServiceModalComponent implements OnInit, AfterViewInit {
       animate(
         modalCard,
         { opacity: [0, 1], scale: [0.9, 1], y: [20, 0] },
-        { duration: 0.35, ease: [0.16, 1, 0.3, 1] }
+        { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
       );
     }
   }
@@ -93,18 +104,47 @@ export class CreateServiceModalComponent implements OnInit, AfterViewInit {
     this.activeTab.set(tab);
   }
 
-  public onFileSelected(event: Event): void {
+  // Seleção da Imagem de Capa
+  public onCoverSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      this.createForm.patchValue({ media: file });
+      this.createForm.patchValue({ coverImage: file });
 
       const reader = new FileReader();
       reader.onload = () => {
-        this.selectedMediaPreview.set(reader.result as string);
+        this.coverPreview.set(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  // Seleção Múltipla de Imagens Adicionais (Galeria)
+  public onGallerySelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const filesArray = Array.from(input.files);
+
+      const currentFiles = this.createForm.get('galleryImages')?.value || [];
+      const updatedFiles = [...currentFiles, ...filesArray];
+      this.createForm.patchValue({ galleryImages: updatedFiles });
+
+      filesArray.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.galleryPreviews.update((prev) => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  }
+
+  public removeGalleryImage(index: number): void {
+    const currentFiles = this.createForm.get('galleryImages')?.value || [];
+    const updatedFiles = currentFiles.filter((_, i) => i !== index);
+    this.createForm.patchValue({ galleryImages: updatedFiles });
+
+    this.galleryPreviews.update((prev) => prev.filter((_, i) => i !== index));
   }
 
   public onClose(): void {
@@ -129,9 +169,15 @@ export class CreateServiceModalComponent implements OnInit, AfterViewInit {
     formData.append('travel_price', String(formVal.travelPrice));
     formData.append('is_paid_by_installments', String(Boolean(formVal.isPaidByInstallments)));
     formData.append('description', formVal.description || '');
-    
-    if (formVal.media) {
-      formData.append('image', formVal.media);
+
+    if (formVal.coverImage) {
+      formData.append('image', formVal.coverImage);
+    }
+
+    if (formVal.galleryImages && formVal.galleryImages.length > 0) {
+      formVal.galleryImages.forEach((file) => {
+        formData.append('images', file);
+      });
     }
 
     this.servicesService.createService(formData).subscribe({
