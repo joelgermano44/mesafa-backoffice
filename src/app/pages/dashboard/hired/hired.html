@@ -1,11 +1,13 @@
 <div class="flex flex-col gap-4 h-full font-inter">
-  <app-title-header
-    title="Contratados"
-    subtitle="Faça a gestão de todos os prestadores contratados na plataforma."
-    name="{{ admin()?.name }}"
-  ></app-title-header>
+  <div class="px-10">
+    <app-title-header
+      title="Contratos"
+      subtitle="Faça a gestão de todos os contratos e pedidos na plataforma."
+      name="{{ admin()?.name }}"
+    ></app-title-header>
+  </div>
 
-  <div class="filter-bar flex w-full justify-between items-center gap-4">
+  <div class="filter-bar flex w-full justify-between items-center gap-4 px-10">
     <div class="filters-group flex gap-3.25 items-center">
       <span class="filter-label font-semibold text-sm">Filtro</span>
 
@@ -56,7 +58,7 @@
     </div>
   </div>
 
-  <div class="table-container flex flex-col w-full h-full overflow-y-auto overflow-x-hidden pb-4">
+  <div class="table-container flex flex-col w-full h-full overflow-y-auto overflow-x-hidden pb-4 px-10">
     <div class="flex flex-wrap gap-6.25 font-inter">
       @for (item of filteredServices(); track item.id) {
         <div
@@ -246,39 +248,15 @@
             </div>
           </div>
 
-          <div class="flex flex-col gap-2">
-            <h4 class="font-semibold">Amostras deste serviço</h4>
-
-            <div class="flex flex-wrap gap-2">
-              @if (detail.images && detail.images.length > 0) {
-                @for (img of detail.images; track img.id) {
-                  <img
-                    [src]="apiUrl + '/' + img.path"
-                    class="w-[177px] h-[89px] object-cover rounded-lg"
-                  />
-                }
-              } @else {
-                <img
-                  [src]="
-                    detail.service?.image
-                      ? apiUrl + '/' + detail.service?.image
-                      : '/images/not-found.png'
-                  "
-                  class="w-[177px] h-[89px] object-cover rounded-lg"
-                />
-              }
-            </div>
-          </div>
-
           <div class="w-full flex flex-col gap-2.5">
             <h1 class="font-semibold">Informações de Pagamento</h1>
 
             <div class="bg-[#f9f9f9] rounded-xl w-full px-3.75 py-5 flex flex-col gap-5.5">
               <div class="flex w-full justify-between">
                 <span>Valor total do serviço</span>
-                <span class="font-semibold">{{
-                  (detail.service?.price || 0).toLocaleString('pt-PT')
-                }}</span>
+                <span class="font-semibold"
+                  >{{ (detail.service?.price || 0).toLocaleString('pt-PT') }} Kz</span
+                >
               </div>
 
               <div class="flex flex-col gap-2 w-full">
@@ -294,7 +272,7 @@
                 </p>
               </div>
 
-              <hr class="w-1/2 border border-gray-200" />
+              <hr class="w-1/2 border border-gray-200 mx-auto" />
 
               <p class="flex items-center justify-between w-full text-[15px] font-semibold">
                 Total

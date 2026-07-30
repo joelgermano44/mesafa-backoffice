@@ -1,4 +1,4 @@
-<div class="bg-white sticky -top-10 z-20 flex flex-col gap-8 pt-8">
+<div class="bg-white flex flex-col gap-8 px-10">
   <app-title-header
     title="Usuários Clientes"
     subtitle="Veja a informação de todos os clientes cadastrados no app."
@@ -59,9 +59,9 @@
   </div>
 </div>
 
-<div class="table-container flex flex-col font-inter w-full">
+<div class="table-container flex flex-col font-inter w-full px-10">
   <table class="data-table w-full">
-    <thead class="bg-primary text-[13px] font-semibold text-white sticky top-48">
+    <thead class="bg-primary text-[13px] font-semibold text-white">
       <tr>
         <th class="px-4 py-3.5 text-left rounded-l-2xl">
           <div class="flex items-center gap-2">
@@ -193,11 +193,11 @@
           <td class="py-3.5 px-4">
             <div class="actions flex justify-center gap-2">
               <button (click)="onDelete(item.id, $event)">
-                <img src="images/icons/dashboard/tables/eliminar.svg" alt="" class="w-6 h-6" />
+                <img src="images/icons/dashboard/tables/eliminar.svg" alt="" class="w-6 h-6 hover:scale-105 cursor-pointer" />
               </button>
 
               <button (click)="onEdit(item, $event)">
-                <img src="images/icons/dashboard/tables/editar.svg" alt="" class="w-6 h-6" />
+                <img src="images/icons/dashboard/tables/editar.svg" alt="" class="w-6 h-6 hover:scale-105 cursor-pointer" />
               </button>
             </div>
           </td>
@@ -340,3 +340,13 @@
 @if (clientService.selectedClient()) {
   <div (click)="onCloseDrawer()" class="fixed inset-0 bg-slate-900/20 z-40 backdrop-blur-xs"></div>
 }
+
+<app-confirm-dialog-component
+  [isOpen]="isConfirmOpen()"
+  [title]="confirmConfig().title"
+  [message]="confirmConfig().message"
+  [confirmText]="confirmConfig().confirmText"
+  [isLoading]="isLoading()"
+  (confirm)="onConfirmModal()"
+  (cancel)="onCancelModal()"
+></app-confirm-dialog-component>

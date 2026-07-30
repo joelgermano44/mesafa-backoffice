@@ -1,11 +1,4 @@
-import {
-  Component,
-  computed,
-  inject,
-  signal,
-  AfterViewInit,
-  ElementRef,
-} from '@angular/core';
+import { Component, computed, inject, signal, AfterViewInit, ElementRef } from '@angular/core';
 import { animate, stagger } from 'motion';
 import { TitleHeader } from '../../components/title-header/title-header';
 import { AdminService } from '../../../../core/features/administrators/services/admin.service';
@@ -42,12 +35,12 @@ export class Advertisements implements AfterViewInit {
   protected readonly selectedPrice = signal('all');
 
   protected readonly banners = signal<Banner[]>([
-    {
+    /*  {
       id: 1,
-      title: 'BANNER PUBLI',
+      title: 'BANNER',
       description:
         'Lorem Ipsum is simply dummy text of the printing Ipsum has been.',
-      image: '/images/dashboard/banner-1.png',
+      image: '',
       background: '#2A85FF',
       type: 'free',
       price: 0,
@@ -55,26 +48,26 @@ export class Advertisements implements AfterViewInit {
     },
     {
       id: 2,
-      title: 'BANNER PUBLI',
+      title: 'BANNER',
       description:
         'Lorem Ipsum is simply dummy text of the printing Ipsum has been.',
-      image: '/images/dashboard/banner-2.png',
+      image: '',
       background: '#8E59FF',
-      type: 'premium',
+      type: 'free',
       price: 15000,
       clicks: 3450,
     },
     {
       id: 3,
-      title: 'BANNER PUBLI',
+      title: 'BANNER',
       description:
         'Lorem Ipsum is simply dummy text of the printing Ipsum has been.',
-      image: '/images/dashboard/banner-3.png',
+      image: '',
       background: '#FF6A55',
       type: 'premium',
       price: 25000,
       clicks: 890,
-    },
+    }, */
   ]);
 
   protected readonly filteredBanners = computed(() => {
@@ -88,7 +81,7 @@ export class Advertisements implements AfterViewInit {
       banners = banners.filter(
         (banner) =>
           banner.title.toLowerCase().includes(search) ||
-          banner.description.toLowerCase().includes(search)
+          banner.description.toLowerCase().includes(search),
       );
     }
 
@@ -117,18 +110,14 @@ export class Advertisements implements AfterViewInit {
     const cards = nativeEl.querySelectorAll('app-banner-card');
 
     if (header) {
-      animate(
-        header,
-        { opacity: [0, 1], y: [-20, 0] },
-        { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
-      );
+      animate(header, { opacity: [0, 1], y: [-20, 0] }, { duration: 0.5, ease: [0.16, 1, 0.3, 1] });
     }
 
     if (filterBar) {
       animate(
         filterBar,
         { opacity: [0, 1], y: [-10, 0] },
-        { duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }
+        { duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] },
       );
     }
 
@@ -136,7 +125,7 @@ export class Advertisements implements AfterViewInit {
       animate(
         cards,
         { opacity: [0, 1], y: [20, 0], scale: [0.95, 1] },
-        { duration: 0.4, delay: stagger(0.08), ease: [0.16, 1, 0.3, 1] }
+        { duration: 0.4, delay: stagger(0.08), ease: [0.16, 1, 0.3, 1] },
       );
     }
   }

@@ -1,12 +1,14 @@
 <div class="flex flex-col h-full gap-4">
-  <app-title-header
-    title="Dashboard"
-    subtitle="Veja o resumo de todas as informações da plataforma"
-    name="{{ admin()?.name }}"
-  ></app-title-header>
+  <div class="px-10">
+    <app-title-header
+      title="Dashboard"
+      subtitle="Veja o resumo de todas as informações da plataforma"
+      name="{{ admin()?.name }}"
+    ></app-title-header>
+  </div>
 
-  <div class="flex flex-col h-full overflow-y-auto overflow-x-hidden">
-    <ul class="mt-7.75 flex w-full gap-4.5">
+  <div class="flex flex-col h-full overflow-y-auto overflow-x-hidden px-10">
+    <ul class="flex w-full gap-4.5">
       @for (item of dashItems(); track item.title) {
         <li class="w-full">
           <app-dashcard

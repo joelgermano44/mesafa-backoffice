@@ -42,7 +42,6 @@ export class ClientService {
 
   readonly filters = signal({
     searchTerm: '',
-   
   });
 
   readonly currentPage = signal<number>(1);
@@ -61,8 +60,7 @@ export class ClientService {
         client.phone?.includes(searchTerm) ||
         client.bi?.toLowerCase().includes(searchTerm.toLowerCase());
 
-     
-      return matchesSearch
+      return matchesSearch;
     });
   });
 
@@ -136,7 +134,7 @@ export class ClientService {
     this.selectedClient.set(null);
   }
 
-  deleteClient(id: string): void {
+  deleteClient(id: string) {
     this.http.delete<void>(`${this.endpoint}/${id}`).subscribe(() => {
       this.clients.update((prev) => prev.filter((c) => c.id !== id));
       if (this.selectedClient()?.id === id) {

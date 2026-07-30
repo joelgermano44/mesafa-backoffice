@@ -53,6 +53,7 @@ export interface Service {
   travel_price: number;
   description: string;
   image?: ServiceImage;
+  images?: ServiceImage[];
   professionals?: Professional[];
   category?: Category;
   created_at: string;

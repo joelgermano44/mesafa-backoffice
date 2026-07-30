@@ -855,20 +855,19 @@
                             {{ service.name }}
                           </h3>
 
-                          <span class="text-[10px] text-[#6F6F6F]">
-                            {{ service.category?.name }}
-                          </span>
-
                           <div class="flex -space-x-2">
-                            @for (services of activeUser.services.slice(0, 1); track services.id) {
+                            @for (
+                              professional of service.professionals.slice(0, 3);
+                              track professional.id
+                            ) {
                               <img
                                 [src]="
-                                  services.image
-                                    ? services.image
+                                  professional.image
+                                    ? apiUrl + '/uploads/professionals/' + professional.image
                                     : '/images/icons/dashboard/user.svg'
                                 "
-                                [alt]="services.name"
-                                class="w-8 h-8 rounded-full object-cover"
+                                [alt]="professional.name"
+                                class="w-4.25 h-4.25 rounded-full object-cover"
                               />
                             }
                           </div>
@@ -1083,10 +1082,21 @@
             [src]="getImageUrl(img.path)"
             (click)="selectedModalImage.set(img)"
             [class.ring-2]="selectedModalImage()?.id === img.id"
-            class="w-16 h-16 rounded-lg object-cover cursor-pointer ring-[#1546EB] opacity-80 hover:opacity-100 transition-all flex-shrink-0"
+            class="w-16 h-16 rounded-lg object-cover cursor-pointer ring-[#1546EB] opacity-80 hover:opacity-100 transition-all shrink-0"
           />
         }
       </div>
     </div>
   </div>
 }
+
+<app-confirm-dialog-component
+  [isOpen]="confirmDialogState().isOpen"
+  [title]="confirmDialogState().title"
+  [message]="confirmDialogState().message"
+  [confirmText]="confirmDialogState().confirmText || 'Eliminar'"
+  [cancelText]="confirmDialogState().cancelText || 'Cancelar'"
+  [isLoading]="confirmDialogState().isLoading"
+  (confirm)="onConfirmDialogAction()"
+  (cancel)="closeConfirmDialog()"
+></app-confirm-dialog-component>

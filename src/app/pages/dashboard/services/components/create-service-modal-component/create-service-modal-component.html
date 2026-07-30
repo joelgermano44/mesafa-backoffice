@@ -65,7 +65,12 @@
               <div class="flex flex-col gap-1">
                 <label class="text-[13px] font-medium">Nome do Serviço</label>
                 <div
-                  class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+                  class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+                  [ngClass]="
+                    isControlInvalid(createForm, 'name')
+                      ? 'border-red-500 focus-within:ring-red-500 focus-within:ring-2'
+                      : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
+                  "
                 >
                   <img src="/images/icons/dashboard/form-user.svg" alt="" />
                   <input
@@ -75,12 +80,22 @@
                     class="w-full text-xs bg-transparent outline-none text-gray-700"
                   />
                 </div>
+                @if (hasError(createForm, 'name', 'required')) {
+                  <span class="text-[11px] text-red-500 mt-0.5">O nome do serviço é obrigatório.</span>
+                } @else if (hasError(createForm, 'name', 'minlength')) {
+                  <span class="text-[11px] text-red-500 mt-0.5">O nome deve ter no mínimo 3 caracteres.</span>
+                }
               </div>
 
               <div class="flex flex-col gap-1">
                 <label class="text-[13px] font-medium">Categoria</label>
                 <div
-                  class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+                  class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+                  [ngClass]="
+                    isControlInvalid(createForm, 'categoryId')
+                      ? 'border-red-500 focus-within:ring-red-500 focus-within:ring-2'
+                      : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
+                  "
                 >
                   <img src="/images/icons/dashboard/form-user.svg" alt="" />
                   <select
@@ -95,12 +110,20 @@
                     }
                   </select>
                 </div>
+                @if (hasError(createForm, 'categoryId', 'required')) {
+                  <span class="text-[11px] text-red-500 mt-0.5">Selecione uma categoria.</span>
+                }
               </div>
 
               <div class="flex flex-col gap-1">
                 <label class="text-[13px] font-medium">Preço do Serviço</label>
                 <div
-                  class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+                  class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+                  [ngClass]="
+                    isControlInvalid(createForm, 'price')
+                      ? 'border-red-500 focus-within:ring-red-500 focus-within:ring-2'
+                      : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
+                  "
                 >
                   <img src="/images/icons/dashboard/form-user.svg" alt="" />
                   <input
@@ -110,12 +133,22 @@
                     class="w-full text-xs bg-transparent outline-none text-gray-700"
                   />
                 </div>
+                @if (hasError(createForm, 'price', 'required')) {
+                  <span class="text-[11px] text-red-500 mt-0.5">O preço é obrigatório.</span>
+                } @else if (hasError(createForm, 'price', 'min')) {
+                  <span class="text-[11px] text-red-500 mt-0.5">O preço não pode ser negativo.</span>
+                }
               </div>
 
               <div class="flex flex-col gap-1">
                 <label class="text-[13px] font-medium">Taxa de Deslocação</label>
                 <div
-                  class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+                  class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+                  [ngClass]="
+                    isControlInvalid(createForm, 'travelPrice')
+                      ? 'border-red-500 focus-within:ring-red-500 focus-within:ring-2'
+                      : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
+                  "
                 >
                   <img src="/images/icons/dashboard/form-user.svg" alt="" />
                   <input
@@ -125,6 +158,11 @@
                     class="w-full text-xs bg-transparent outline-none text-gray-700"
                   />
                 </div>
+                @if (hasError(createForm, 'travelPrice', 'required')) {
+                  <span class="text-[11px] text-red-500 mt-0.5">A taxa de deslocação é obrigatória.</span>
+                } @else if (hasError(createForm, 'travelPrice', 'min')) {
+                  <span class="text-[11px] text-red-500 mt-0.5">A taxa não pode ser negativa.</span>
+                }
               </div>
             </div>
 
@@ -146,8 +184,18 @@
                 formControlName="description"
                 rows="5"
                 placeholder="Descrição detalhada do serviço..."
-                class="w-full bg-[#F4F4F4] border border-gray-200 focus:bg-white focus:ring-2 focus:ring-tertiary rounded-2xl p-3 text-xs outline-none text-gray-700 resize-none"
+                class="w-full bg-[#F4F4F4] border focus:bg-white rounded-2xl p-3 text-xs outline-none text-gray-700 resize-none transition-all"
+                [ngClass]="
+                  isControlInvalid(createForm, 'description')
+                    ? 'border-red-500 focus:ring-red-500 focus:ring-2'
+                    : 'border-gray-200 focus:ring-2 focus:ring-tertiary'
+                "
               ></textarea>
+              @if (hasError(createForm, 'description', 'required')) {
+                <span class="text-[11px] text-red-500 mt-0.5">A descrição é obrigatória.</span>
+              } @else if (hasError(createForm, 'description', 'minlength')) {
+                <span class="text-[11px] text-red-500 mt-0.5">A descrição deve conter no mínimo 10 caracteres.</span>
+              }
             </div>
           </div>
 
@@ -265,7 +313,12 @@
         <div class="flex flex-col gap-1">
           <label class="text-[13px] font-medium">Profissional</label>
           <div
-            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+            class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+            [ngClass]="
+              isControlInvalid(associateForm, 'professionalId')
+                ? 'border-red-500 focus-within:ring-red-500 focus-within:ring-2'
+                : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
+            "
           >
             <img src="/images/icons/dashboard/form-user.svg" alt="" />
             <select formControlName="professionalId" class="w-full outline-none bg-transparent">
@@ -277,18 +330,20 @@
               }
             </select>
           </div>
-          @if (
-            associateForm.get('professionalId')?.touched &&
-            associateForm.get('professionalId')?.invalid
-          ) {
-            <span class="text-xs text-red-500 mt-1 block">O profissional é obrigatório.</span>
+          @if (hasError(associateForm, 'professionalId', 'required')) {
+            <span class="text-xs text-red-500 mt-1 block">Por favor, selecione um profissional.</span>
           }
         </div>
 
         <div class="flex flex-col gap-1">
           <label class="text-[13px] font-medium">Serviço</label>
           <div
-            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+            class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+            [ngClass]="
+              isControlInvalid(associateForm, 'serviceId')
+                ? 'border-red-500 focus-within:ring-red-500 focus-within:ring-2'
+                : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
+            "
           >
             <img src="/images/icons/dashboard/form-user.svg" alt="" />
             <select formControlName="serviceId" class="w-full outline-none bg-transparent">
@@ -300,8 +355,8 @@
               }
             </select>
           </div>
-          @if (associateForm.get('serviceId')?.touched && associateForm.get('serviceId')?.invalid) {
-            <span class="text-xs text-red-500 mt-1 block">O serviço é obrigatório.</span>
+          @if (hasError(associateForm, 'serviceId', 'required')) {
+            <span class="text-xs text-red-500 mt-1 block">Por favor, selecione um serviço.</span>
           }
         </div>
 

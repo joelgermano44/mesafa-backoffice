@@ -93,7 +93,6 @@ export class RegisterAdminModalComponent implements AfterViewInit {
 
     if (this.adminForm.invalid) {
       this.adminForm.markAllAsTouched();
-      toast.error('Preencha todos os campos obrigatórios corretamente.');
       return;
     }
 

@@ -4,7 +4,7 @@ export interface ClientAddress {
 }
 
 export interface Client {
-  id: string | number;
+  id: string;
   name: string;
   username: string;
   email: string;

@@ -34,7 +34,7 @@ export class Sidebar {
           activeIcon: '/images/icons/dashboard/sidebar/active/servicos.svg',
         },
         {
-          label: 'Contratados',
+          label: 'Contratos',
           route: '/dashboard/hired',
           icon: '/images/icons/dashboard/sidebar/contratados.svg',
           activeIcon: '/images/icons/dashboard/sidebar/active/contratados.svg',

@@ -1,5 +1,5 @@
 <div class="flex flex-col h-full gap-4 font-inter">
-  <div class="w-full flex justify-between">
+  <div class="w-full flex justify-between px-10">
     <app-title-header
       title="Serviços"
       subtitle="Faça a gestão de todos os serviços na plataforma"
@@ -14,7 +14,7 @@
     </button>
   </div>
 
-  <div class="flex items-center justify-between gap-4">
+  <div class="flex items-center justify-between gap-4 px-10">
     <div class="flex items-center gap-3">
       <span class="font-semibold text-sm">Filtro</span>
 
@@ -64,7 +64,7 @@
     </div>
   </div>
 
-  <div class="w-full h-full overflow-y-auto overflow-x-hidden">
+  <div class="w-full h-full overflow-y-auto overflow-x-hidden px-10">
     @if (filteredServices().length > 0) {
       <div class="flex flex-wrap gap-6.25 justify-start w-full">
         @for (card of filteredServices(); track card.id) {
