@@ -1,3 +1,5 @@
+import { ServiceImage } from '../../services/models/service.model';
+
 export type OrderStatus = 'REQUESTED' | 'IN_PROGRESS' | 'REJECTED' | 'CANCELED' | 'ACCEPTED';
 
 export interface LatLng {
@@ -50,7 +52,7 @@ export interface Service {
   is_paid_by_installments: boolean;
   travel_price: number;
   description: string;
-  image?: string | null;
+  image?: ServiceImage;
   professionals?: Professional[];
   category?: Category;
   created_at: string;

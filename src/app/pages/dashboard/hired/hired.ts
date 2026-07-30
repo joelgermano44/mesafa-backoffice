@@ -15,6 +15,7 @@ import { OrdersService } from '../../../../core/features/orders/services/orders.
 import { toast } from 'ngx-sonner';
 import { animate, stagger } from 'motion';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog-component/confirm-dialog-component';
+import { API_CONFIG } from '../../../../core/config/api.config';
 
 @Component({
   selector: 'app-hired',
@@ -29,6 +30,7 @@ export class Hired implements OnInit, AfterViewInit {
   readonly admin = this.adminService.admin;
 
   private ordersService = inject(OrdersService);
+  apiUrl = API_CONFIG.baseUrl
 
   isConfirmOpen = signal(false);
   isLoading = signal(false);

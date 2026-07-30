@@ -36,8 +36,8 @@
           class="w-fit outline-none bg-transparent cursor-pointer"
         >
           <option value="Tudo" class="text-black">Tudo</option>
-          <option value="Ate100k" class="text-black">Até 100.000 AOA</option>
-          <option value="Mais100k" class="text-black">Acima de 100.000 AOA</option>
+          <option value="Ate100k" class="text-black">Até 100.000 Kz</option>
+          <option value="Mais100k" class="text-black">Acima de 100.000 Kz</option>
         </select>
       </div>
     </div>
@@ -56,7 +56,7 @@
     </div>
   </div>
 
-  <div class="table-container flex flex-col w-full h-full overflow-y-auto pb-4">
+  <div class="table-container flex flex-col w-full h-full overflow-y-auto overflow-x-hidden pb-4">
     <div class="flex flex-wrap gap-6.25 font-inter">
       @for (item of filteredServices(); track item.id) {
         <div
@@ -65,7 +65,11 @@
         >
           <div class="h-37 w-full overflow-hidden bg-gray-200">
             <img
-              [src]="item.service?.image ? item.service?.image : '/images/not-found.png'"
+              [src]="
+                item.service?.image
+                  ? apiUrl + '/' + item.service.image.path
+                  : '/images/not-found.png'
+              "
               [alt]="item.service?.name"
               class="w-full h-full object-cover rounded-sm"
             />
@@ -91,18 +95,18 @@
           </div>
 
           <div class="text-[10px] text-black">
-            {{ (item.service?.price || 0).toLocaleString('en-US') }}
-            <span class="font-extrabold">AOA</span>
+            {{ (item.service?.price || 0).toLocaleString('pt-PT') }}
+            <span class="font-extrabold">Kz</span>
           </div>
           <div>
             @if (getStatusLabel(item.status) === 'Pendente') {
               <div class="flex items-center gap-2">
-                <button
+                <!--  <button
                   (click)="acceptService(item.id, $event)"
                   class="hover:scale-105 cursor-pointer text-center py-0.75 px-1.25 bg-[#3BAC2838] text-[#19680C] text-[10px] font-semibold flex items-center justify-center gap-1 border border-[#498E3E] rounded-[4px] transition"
                 >
                   Aceitar
-                </button>
+                </button> -->
 
                 <button
                   (click)="rejectService(item.id, $event)"
@@ -178,124 +182,134 @@
           </button>
         </div>
 
-          <div class="h-full flex flex-col gap-4">
-            <span
-              class="w-fit text-[10px] font-semibold px-1.25 py-0.75 rounded bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]"
-            >
-              {{ getStatusLabel(detail.status) }}
-            </span>
+        <div class="h-full flex flex-col gap-4">
+          <span
+            class="w-fit text-[10px] font-semibold px-1.25 py-0.75 rounded bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]"
+          >
+            {{ getStatusLabel(detail.status) }}
+          </span>
 
-            <div class="flex gap-5">
-              <img
-                [src]="detail.service?.image ? detail.service?.image : '/images/not-found.png'"
-                [alt]="detail.service?.name"
-                class="w-[389px] h-[279px] object-cover rounded-lg"
-              />
+          <div class="flex gap-5">
+            <img
+              [src]="
+                detail.service?.image
+                  ? apiUrl + '/' + detail.service?.image.path
+                  : '/images/not-found.png'
+              "
+              [alt]="detail.service?.name"
+              class="w-[389px] h-[279px] object-cover rounded-lg"
+            />
 
-              <div class="flex flex-col gap-5">
-                <div class="flex flex-col gap-1 justify-between">
-                  <h3 class="text-xl font-semibold">{{ detail.service?.name }}</h3>
+            <div class="flex flex-col gap-5">
+              <div class="flex flex-col gap-1 justify-between">
+                <h3 class="text-xl font-semibold">{{ detail.service?.name }}</h3>
 
-                  <span class="text-base font-bold text-gray-900">
-                    <p
-                      class="bg-[#00000017] px-1.25 py-0.75 font-bold text-[15px] flex items-center gap-1 w-fit rounded-sm"
-                    >
-                      <img src="/images/icons/dashboard/flag.svg" alt="" />
-                      {{ (detail.service?.price || 0).toLocaleString('en-US') }} Kza
-                    </p></span
+                <span class="text-base font-bold text-gray-900">
+                  <p
+                    class="bg-[#00000017] px-1.25 py-0.75 font-bold text-[15px] flex items-center gap-1 w-fit rounded-sm"
                   >
-                </div>
+                    <img src="/images/icons/dashboard/flag.svg" alt="" />
+                    {{ (detail.service?.price || 0).toLocaleString('pt-PT') }} Kz
+                  </p></span
+                >
+              </div>
 
-                <div class="flex flex-col gap-2">
-                  <p class="text-xs font-semibold">Quem contrata</p>
+              <div class="flex flex-col gap-2">
+                <p class="text-xs font-semibold">Quem contrata</p>
 
-                  <div class="flex flex-wrap gap-4">
-                    <div class="flex items-center justify-center gap-2">
-                      <div
-                        class="w-7.75 h-7.75 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden"
-                      >
-                        @if (detail.client?.image) {
-                          <img [src]="detail.client?.image" class="w-7.75 h-7.75 object-cover" />
-                        } @else {
-                          {{ detail.client?.name?.charAt(0) }}
-                        }
-                      </div>
-                      <span class="text-[13px] font-medium">{{ detail.client?.name }}</span>
+                <div class="flex flex-wrap gap-4">
+                  <div class="flex items-center justify-center gap-2">
+                    <div
+                      class="w-7.75 h-7.75 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden"
+                    >
+                      @if (detail.client?.image) {
+                        <img [src]="detail.client?.image" class="w-7.75 h-7.75 object-cover" />
+                      } @else {
+                        {{ detail.client?.name?.charAt(0) }}
+                      }
                     </div>
+                    <span class="text-[13px] font-medium">{{ detail.client?.name }}</span>
                   </div>
                 </div>
-
-                <div class="flex flex-col gap-1">
-                  <p class="text-xs font-semibold">Detalhes do Serviço</p>
-                  <p class="text-[10px] text-[#818181]">
-                    {{
-                      detail.description ||
-                        detail.service?.description ||
-                        'Nenhuma descrição detalhada informada para este serviço.'
-                    }}
-                  </p>
-                </div>
               </div>
-            </div>
 
-            <div class="flex flex-col gap-2">
-              <h4 class="font-semibold">Amostras deste serviço</h4>
-
-              <div class="flex flex-wrap gap-2">
-                @if (detail.images && detail.images.length > 0) {
-                  @for (img of detail.images; track img.id) {
-                    <img [src]="img.path" class="w-[177px] h-[89px] object-cover rounded-lg" />
-                  }
-                } @else {
-                  <img
-                    [src]="detail.service?.image ? detail.service?.image : '/images/not-found.png'"
-                    class="w-[177px] h-[89px] object-cover rounded-lg"
-                  />
-                }
-              </div>
-            </div>
-
-            <div class="w-full flex flex-col gap-2.5">
-              <h1 class="font-semibold">Informações de Pagamento</h1>
-
-              <div class="bg-[#f9f9f9] rounded-xl w-full px-3.75 py-5 flex flex-col gap-5.5">
-                <span>Valor total do serviço</span>
-                <span class="font-semibold"
-                  >{{ (detail.service?.price || 0).toLocaleString('en-US') }} AOA</span
-                >
-
-                <div class="flex flex-col gap-2 w-full">
-                  <p class="flex items-center justify-between w-full">
-                    Valor do serviço
-                    <span class="font-semibold"
-                      >{{ (detail.service?.price || 0).toLocaleString('en-US') }} kz</span
-                    >
-                  </p>
-                  <p class="flex items-center justify-between w-full">
-                    Valor do deslocamento
-                    <span class="font-semibold">{{ detail.service?.travel_price || 0 }} kz</span>
-                  </p>
-                </div>
-
-                <hr class="w-1/2 border border-gray-200" />
-
-                <p class="flex items-center justify-between w-full text-[15px] font-semibold">
-                  Total
-                  <span class="font-medium text-base"
-                    >{{
-                      (detail.service?.travel_price || 0) + (detail.service?.price || 0)
-                    }}
-                    kz</span
-                  >
+              <div class="flex flex-col gap-1">
+                <p class="text-xs font-semibold">Detalhes do Serviço</p>
+                <p class="text-[10px] text-[#818181]">
+                  {{
+                    detail.description ||
+                      detail.service?.description ||
+                      'Nenhuma descrição detalhada informada para este serviço.'
+                  }}
                 </p>
               </div>
             </div>
           </div>
 
+          <div class="flex flex-col gap-2">
+            <h4 class="font-semibold">Amostras deste serviço</h4>
+
+            <div class="flex flex-wrap gap-2">
+              @if (detail.images && detail.images.length > 0) {
+                @for (img of detail.images; track img.id) {
+                  <img
+                    [src]="apiUrl + '/' + img.path"
+                    class="w-[177px] h-[89px] object-cover rounded-lg"
+                  />
+                }
+              } @else {
+                <img
+                  [src]="
+                    detail.service?.image
+                      ? apiUrl + '/' + detail.service?.image
+                      : '/images/not-found.png'
+                  "
+                  class="w-[177px] h-[89px] object-cover rounded-lg"
+                />
+              }
+            </div>
+          </div>
+
+          <div class="w-full flex flex-col gap-2.5">
+            <h1 class="font-semibold">Informações de Pagamento</h1>
+
+            <div class="bg-[#f9f9f9] rounded-xl w-full px-3.75 py-5 flex flex-col gap-5.5">
+              <div class="flex w-full justify-between">
+                <span>Valor total do serviço</span>
+                <span class="font-semibold">{{
+                  (detail.service?.price || 0).toLocaleString('pt-PT')
+                }}</span>
+              </div>
+
+              <div class="flex flex-col gap-2 w-full">
+                <p class="flex items-center justify-between w-full">
+                  Valor do serviço
+                  <span class="font-semibold"
+                    >{{ (detail.service?.price || 0).toLocaleString('pt-PT') }} kz</span
+                  >
+                </p>
+                <p class="flex items-center justify-between w-full">
+                  Valor do deslocamento
+                  <span class="font-semibold">{{ detail.service?.travel_price || 0 }} kz</span>
+                </p>
+              </div>
+
+              <hr class="w-1/2 border border-gray-200" />
+
+              <p class="flex items-center justify-between w-full text-[15px] font-semibold">
+                Total
+                <span class="font-medium text-base"
+                  >{{ (detail.service?.travel_price || 0) + (detail.service?.price || 0) }} kz</span
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div>
           @if (getStatusLabel(detail.status) === 'Pendente') {
             <div class="flex items-center gap-2">
-              <button
+              <!--  <button
                 (click)="acceptService(detail.id); closeDrawer()"
                 class="hover:scale-105 cursor-pointer text-center py-2 px-3 bg-[#3BAC2838] text-[#19680C] text-[15px] font-semibold flex items-center justify-center gap-1 border border-[#498E3E] rounded-[4px] transition"
               >
@@ -313,25 +327,12 @@
                 </svg>
 
                 Aceitar
-              </button>
+              </button> -->
 
               <button
                 (click)="rejectService(detail.id); closeDrawer()"
                 class="hover:scale-105 cursor-pointer text-center py-2 px-3 bg-[#FF2C2C36] text-[#8F0B0B] text-[15px] font-semibold flex items-center justify-center gap-1 border border-[#FF4040] rounded-[4px] transition"
               >
-                <svg
-                  width="8"
-                  height="8"
-                  viewBox="0 0 8 8"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4.6375 3.5775L6.9375 1.2775C7.2275 0.987499 7.2275 0.5075 6.9375 0.2175C6.6475 -0.0725 6.1675 -0.0725 5.8775 0.2175L3.5775 2.5175L1.2775 0.2175C0.987499 -0.0725 0.5075 -0.0725 0.2175 0.2175C-0.0725 0.5075 -0.0725 0.987499 0.2175 1.2775L2.5175 3.5775L0.2175 5.8775C-0.0725 6.1675 -0.0725 6.6475 0.2175 6.9375C0.3675 7.0875 0.5575 7.1575 0.7475 7.1575C0.9375 7.1575 1.1275 7.0875 1.2775 6.9375L3.5775 4.6375L5.8775 6.9375C6.0275 7.0875 6.2175 7.1575 6.4075 7.1575C6.5975 7.1575 6.7875 7.0875 6.9375 6.9375C7.2275 6.6475 7.2275 6.1675 6.9375 5.8775L4.6375 3.5775Z"
-                    fill="#8F0B0B"
-                  />
-                </svg>
-
                 Rejeitar
               </button>
             </div>

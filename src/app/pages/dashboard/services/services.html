@@ -18,7 +18,7 @@
     <div class="flex items-center gap-3">
       <span class="font-semibold text-sm">Filtro</span>
 
-      <div
+      <!--   <div
         class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
       >
         <label>Tipo ></label>
@@ -32,7 +32,7 @@
           <option value="hub" class="text-black">Hub</option>
           <option value="outros" class="text-black">Outros</option>
         </select>
-      </div>
+      </div> -->
 
       <div
         class="select-wrapper border-2 border-[#EFEFEF] rounded-xl px-4 py-2 text-[#6F767E] flex justify-center items-center font-semibold text-sm focus-within:ring-2 focus-within:ring-[#3278FF] focus-within:text-[#3278FF] focus-within:bg-[#3278FF1A]"
@@ -64,7 +64,7 @@
     </div>
   </div>
 
-  <div class="w-full h-full overflow-y-auto">
+  <div class="w-full h-full overflow-y-auto overflow-x-hidden">
     @if (filteredServices().length > 0) {
       <div class="flex flex-wrap gap-6.25 justify-start w-full">
         @for (card of filteredServices(); track card.id) {
@@ -106,8 +106,8 @@
                 <span class="text-[#2B57F3] font-medium block"> Preço Final:</span>
 
                 <span class="font-semibold">
-                  {{ card.price.toLocaleString('en-US') }}
-                  <strong>AOA</strong>
+                  {{ card.price.toLocaleString('pt-PT') }}
+                  <strong>Kz</strong>
                 </span>
               </div>
 

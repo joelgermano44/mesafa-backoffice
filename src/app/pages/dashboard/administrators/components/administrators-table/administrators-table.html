@@ -60,7 +60,7 @@
       <tr>
         <th class="px-4 py-3.5 text-left rounded-l-2xl">
           <div class="flex items-center gap-2">
-            <img src="/images/icons/dashboard/tables/funcionario.svg" alt="" class="w-4 h-4" />
+            <img src="/images/icons/dashboard/tables/administrador.svg" alt="" class="w-4 h-4" />
             <span>Administrador</span>
           </div>
         </th>
@@ -74,20 +74,23 @@
 
         <th class="px-4 py-3.5 text-left">
           <div class="flex items-center gap-2">
-            <img src="/images/icons/dashboard/tables/nivel-acesso.svg" alt="" class="w-4 h-4" />
-            <span>Nº de BI</span>
+            <img src="/images/icons/dashboard/tables/bi.svg" alt="" class="w-4 h-4" />
+            <span>BI</span>
           </div>
         </th>
 
         <th class="px-4 py-3.5 text-left">
           <div class="flex items-center gap-2">
-            <img src="/images/icons/dashboard/tables/cargo.svg" alt="" class="w-4 h-4" />
+            <img src="/images/icons/dashboard/tables/data.svg" alt="" class="w-4 h-4" />
             <span>Data de Registo</span>
           </div>
         </th>
 
         <th class="px-4 py-3.5 text-center rounded-r-2xl">
-          <span>Ação</span>
+          <div class="flex justify-center items-center gap-2">
+            <img src="/images/icons/dashboard/tables/acoes.svg" alt="" class="w-4 h-4" />
+            <span>Ação</span>
+          </div>
         </th>
       </tr>
     </thead>
@@ -143,11 +146,19 @@
             </td>
             <td>
               <div class="actions flex justify-center gap-2 z-50">
-                <button (click)="deleteAdmin(admin.id)" title="Eliminar" class="cursor-pointer hover:scale-115 transition-all duration-300">
+                <button
+                  (click)="deleteAdmin(admin.id)"
+                  title="Eliminar"
+                  class="cursor-pointer hover:scale-115 transition-all duration-300"
+                >
                   <img src="images/icons/dashboard/tables/eliminar.svg" alt="" class="w-6 h-6" />
                 </button>
 
-                <button (click)="selectAdmin(admin)" title="Editar" class="cursor-pointer hover:scale-115 transition-all duration-300">
+                <button
+                  (click)="selectAdmin(admin)"
+                  title="Editar"
+                  class="cursor-pointer hover:scale-115 transition-all duration-300"
+                >
                   <img src="images/icons/dashboard/tables/editar.svg" alt="" class="w-6 h-6" />
                 </button>
               </div>
