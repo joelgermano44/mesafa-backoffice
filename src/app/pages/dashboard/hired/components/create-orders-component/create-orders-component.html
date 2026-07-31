@@ -13,7 +13,7 @@
       <button
         (click)="onClose()"
         type="button"
-        class=" text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center transition-all cursor-pointer"
+        class="text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center transition-all cursor-pointer"
       >
         ✕
       </button>
@@ -24,13 +24,9 @@
         <div class="flex flex-col gap-1">
           <label class="text-[13px] font-medium text-gray-700">Cliente</label>
           <div
-            class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
-            [class]="
-              isControlInvalid(orderForm, 'client_id')
-                ? 'border-red-500 focus-within:ring-red-500 focus-within:ring-2'
-                : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
-            "
+            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
           >
+            <img src="/images/icons/dashboard/form-user.svg" alt="" />
             <select
               [value]="orderForm.get('client_id')?.value ?? ''"
               (change)="orderForm.get('client_id')?.setValue($any($event.target).value)"
@@ -50,13 +46,9 @@
         <div class="flex flex-col gap-1">
           <label class="text-[13px] font-medium text-gray-700">Profissional</label>
           <div
-            class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
-            [class]="
-              isControlInvalid(orderForm, 'professional_id')
-                ? 'border-red-500 focus-within:ring-red-500 focus-within:ring-2'
-                : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
-            "
+            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
           >
+            <img src="/images/icons/dashboard/form-user.svg" alt="" />
             <select
               [value]="orderForm.get('professional_id')?.value ?? ''"
               (change)="orderForm.get('professional_id')?.setValue($any($event.target).value)"
@@ -78,13 +70,9 @@
         <div class="flex flex-col gap-1">
           <label class="text-[13px] font-medium text-gray-700">Serviço</label>
           <div
-            class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
-            [class]="
-              isControlInvalid(orderForm, 'service_id')
-                ? 'border-red-[#EEEEEE] focus-within:ring-red-500 focus-within:ring-2'
-                : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
-            "
+            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
           >
+            <img src="/images/icons/dashboard/form-user.svg" alt="" />
             <select
               [value]="orderForm.get('service_id')?.value ?? ''"
               (change)="orderForm.get('service_id')?.setValue($any($event.target).value)"
@@ -104,13 +92,9 @@
         <div class="flex flex-col gap-1">
           <label class="text-[13px] font-medium text-gray-700">Endereço de Entrega/Execução</label>
           <div
-            class="flex bg-[#F4F4F4] gap-2 border-3 text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
-            [class]="
-              isControlInvalid(orderForm, 'address_id')
-                ? 'border-red-500 focus-within:ring-red-500 focus-within:ring-2'
-                : 'border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white'
-            "
+            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
           >
+            <img src="/images/icons/dashboard/form-user.svg" alt="" />
             <select
               [value]="orderForm.get('address_id')?.value ?? ''"
               (change)="orderForm.get('address_id')?.setValue($any($event.target).value || null)"
@@ -132,15 +116,13 @@
 
       <div class="flex flex-col gap-1">
         <label class="text-[13px] font-medium text-gray-700">Descrição do Pedido</label>
+
         <textarea
           [value]="orderForm.get('description')?.value ?? ''"
           (input)="orderForm.get('description')?.setValue($any($event.target).value)"
           rows="4"
           placeholder="Especifique os detalhes da necessidade ou contrato..."
           class="w-full bg-[#F4F4F4] border border-[#EEEEEE] focus:bg-white focus:ring-2 focus:ring-tertiary rounded-xl p-3 text-xs outline-none text-gray-700 resize-none transition-all"
-          [class]="
-            isControlInvalid(orderForm, 'description') ? 'border-red-500 focus:ring-red-500' : ''
-          "
         ></textarea>
         @if (hasError(orderForm, 'description', 'required')) {
           <span class="text-[11px] text-red-500 mt-0.5">A descrição é obrigatória.</span>

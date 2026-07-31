@@ -266,24 +266,47 @@
             <h1 class="font-semibold">Informações de Pagamento</h1>
 
             <div class="bg-[#f9f9f9] rounded-xl w-full px-3.75 py-5 flex flex-col gap-5.5">
-              <div class="flex w-full justify-between">
-                <span>Valor total do serviço</span>
-                <span class="font-semibold"
-                  >{{ (detail.service?.price || 0).toLocaleString('pt-PT') }} Kz</span
-                >
+              <div class="flex flex-col w-full gap-5">
+                <h1 class="font-semibold text-[15px]">Estado do pagamento</h1>
+
+                <div class="flex flex-col gap-2 w-full text-xs">
+                  <p class="flex items-center justify-between w-full">
+                    Valor do serviço
+                    <span class="font-semibold"
+                      >{{ (detail.service?.price || 0).toLocaleString('pt-PT') }} kz</span
+                    >
+                  </p>
+                  <p class="flex items-center justify-between w-full">
+                    Deslocação
+                    <span class="font-semibold">{{ detail.service?.travel_price || 0 }} kz</span>
+                  </p>
+                </div>
               </div>
 
-              <div class="flex flex-col gap-2 w-full">
-                <p class="flex items-center justify-between w-full">
-                  Valor do serviço
-                  <span class="font-semibold"
-                    >{{ (detail.service?.price || 0).toLocaleString('pt-PT') }} kz</span
-                  >
-                </p>
-                <p class="flex items-center justify-between w-full">
-                  Valor do deslocamento
-                  <span class="font-semibold">{{ detail.service?.travel_price || 0 }} kz</span>
-                </p>
+              <div class="flex flex-col w-full gap-5">
+                <h1 class="font-semibold text-[15px]">Prestações</h1>
+
+                @if (detail.service?.is_paid_by_installments === true) {
+                  <div class="flex flex-col gap-2 w-full text-xs">
+                    <p class="flex items-center justify-between w-full">
+                      1ª prestação
+                      <span class="font-semibold"
+                        >{{ (detail.first_payment?.amount || 0).toLocaleString('pt-PT') }} kz</span
+                      >
+                    </p>
+                    <p class="flex items-center justify-between w-full">
+                      2ª prestação
+                      <span class="font-semibold">{{ detail.second_payment?.amount }} kz</span>
+                    </p>
+                  </div>
+                } @else {
+                  <p class="flex items-center justify-between w-full text-xs">
+                    Pagamento único
+                    <span class="font-semibold"
+                      >{{ (detail.service?.price || 0).toLocaleString('pt-PT') }} kz</span
+                    >
+                  </p>
+                }
               </div>
 
               <hr class="w-1/2 border border-gray-200 mx-auto" />
