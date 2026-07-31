@@ -62,25 +62,28 @@
             <span>BI</span>
           </div>
         </th>
-        <th class="px-4 py-3.5 text-left">
-          <div class="flex items-center gap-2">
+        <th class="px-4 py-3.5">
+          <div class="flex items-center gap-2 justify-center">
             <img src="/images/icons/dashboard/tables/cargo.svg" alt="" class="w-4 h-4" />
             <span>Serviços</span>
           </div>
         </th>
         <th class="px-4 py-3.5 text-left">
-          <div class="flex items-center gap-2">
-            <img src="/images/icons/dashboard/tables/cargo.svg" alt="" class="w-4 h-4" />
-            <span>Atendidos</span>
+          <div class="flex items-center gap-2 justify-center">
+            <img src="/images/icons/dashboard/tables/data.svg" alt="" class="w-4 h-4" />
+            <span>Data de Registro</span>
           </div>
         </th>
         <th class="px-4 py-3.5 text-center rounded-r-2xl">
-          <span>Ações</span>
+          <div class="flex items-center gap-2 justify-center">
+            <img src="/images/icons/dashboard/tables/acoes.svg" alt="" class="w-4 h-4" />
+            <span>Ações</span>
+          </div>
         </th>
       </tr>
     </thead>
 
-    <tbody>
+    <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
       @if (isLoading()) {
         <tr>
           <td colspan="7" class="py-8 text-center text-sm text-gray-500">
@@ -104,6 +107,7 @@
                 <div class="avatar">
                   <img
                     [src]="item.image || '/images/icons/dashboard/user.svg'"
+                    (error)="$event.target.src = '/images/icons/dashboard/user.svg'"
                     [alt]="item.name"
                     class="w-10 h-10 rounded-full object-cover"
                   />
@@ -136,13 +140,15 @@
               </span>
             </td>
 
-            <td>
-              <span class="text-xs font-semibold">
-                {{ item.services ? item.services.length : 0 }} serviço(s)
+            <td class="text-center">
+              <span
+                class="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs text-center mx-auto font-semibold text-blue-700"
+              >
+                {{ item.services ? item.services.length : 0 }}
               </span>
             </td>
 
-            <td>
+            <td class="text-center">
               <span class="text-xs font-semibold">
                 {{ item.created_at | date: 'dd/MM/yyyy' }}
               </span>

@@ -125,6 +125,7 @@ export interface Order {
 }
 
 export interface CreateOrderPayload {
+  professional_id: number;
   service_id: number;
   address_id: number;
   description: string;

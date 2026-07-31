@@ -21,7 +21,12 @@
       class="flex items-center text-primary gap-2 bg-white py-2.25 px-2.5 rounded-lg hover:opacity-80 transition-all duration-300 cursor-pointer hover:scale-105"
     >
       @if (admin()?.image) {
-        <img [src]="admin()?.image" alt="User" class="w-6.25 h-6.25 rounded-full object-cover" />
+        <img
+          [src]="admin()?.image"
+          (error)="$event.target.src = '/images/icons/dashboard/user.svg'"
+          alt="User"
+          class="w-6.25 h-6.25 rounded-full object-cover"
+        />
       } @else {
         <img src="/images/icons/dashboard/user.svg" alt="User" class="w-6.25 h-6.25" />
       }

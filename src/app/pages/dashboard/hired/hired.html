@@ -1,10 +1,17 @@
 <div class="flex flex-col gap-4 h-full font-inter">
-  <div class="px-10">
+  <div class="px-10 flex justify-between w-full">
     <app-title-header
       title="Contratos"
       subtitle="Faça a gestão de todos os contratos e pedidos na plataforma."
       name="{{ admin()?.name }}"
     ></app-title-header>
+
+    <button
+      (click)="openCreateModal()"
+      class="bg-tertiary px-5 py-2.25 flex items-center justify-center h-fit gap-2 text-[13px] text-white rounded-lg hover:bg-tertiary/50 hover:scale-105 cursor-pointer transition-all duration-300"
+    >
+      <img src="/images/icons/dashboard/plus-new.svg" alt="" /> Novo
+    </button>
   </div>
 
   <div class="filter-bar flex w-full justify-between items-center gap-4 px-10">
@@ -58,7 +65,9 @@
     </div>
   </div>
 
-  <div class="table-container flex flex-col w-full h-full overflow-y-auto overflow-x-hidden pb-4 px-10">
+  <div
+    class="table-container flex flex-col w-full h-full overflow-y-auto overflow-x-hidden pb-4 px-10"
+  >
     <div class="flex flex-wrap gap-6.25 font-inter">
       @for (item of filteredServices(); track item.id) {
         <div
@@ -88,6 +97,7 @@
                   [src]="
                     item.client?.image ? item.client?.image : '/images/icons/dashboard/user.svg'
                   "
+                  (error)="$event.target.src = '/images/icons/dashboard/user.svg'"
                   alt="Avatar"
                   class="w-full h-full object-cover"
                 />
@@ -225,7 +235,11 @@
                       class="w-7.75 h-7.75 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden"
                     >
                       @if (detail.client?.image) {
-                        <img [src]="detail.client?.image" class="w-7.75 h-7.75 object-cover" />
+                        <img
+                          [src]="detail.client?.image"
+                          (error)="$event.target.src = '/images/icons/dashboard/user.svg'"
+                          class="w-7.75 h-7.75 object-cover"
+                        />
                       } @else {
                         {{ detail.client?.name?.charAt(0) }}
                       }
@@ -365,3 +379,10 @@
   (confirm)="onConfirmModal()"
   (cancel)="onCancelModal()"
 />
+
+@if (isCreateModalOpen()) {
+  <app-create-orders-component
+    (close)="closeCreateModal()"
+    (orderCreated)="onOrderCreated()"
+  ></app-create-orders-component>
+}

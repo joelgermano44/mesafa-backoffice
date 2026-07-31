@@ -16,10 +16,11 @@ import { toast } from 'ngx-sonner';
 import { animate, stagger } from 'motion';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog-component/confirm-dialog-component';
 import { API_CONFIG } from '../../../../core/config/api.config';
+import { CreateOrdersComponent } from "./components/create-orders-component/create-orders-component";
 
 @Component({
   selector: 'app-hired',
-  imports: [TitleHeader, ConfirmDialogComponent],
+  imports: [TitleHeader, ConfirmDialogComponent, CreateOrdersComponent],
   standalone: true,
   templateUrl: './hired.html',
   styleUrl: './hired.css',
@@ -30,7 +31,9 @@ export class Hired implements OnInit, AfterViewInit {
   readonly admin = this.adminService.admin;
 
   private ordersService = inject(OrdersService);
-  apiUrl = API_CONFIG.baseUrl
+  apiUrl = API_CONFIG.baseUrl;
+
+  isCreateModalOpen = signal(false);
 
   isConfirmOpen = signal(false);
   isLoading = signal(false);
@@ -270,6 +273,18 @@ export class Hired implements OnInit, AfterViewInit {
     if (!this.isLoading()) {
       this.isConfirmOpen.set(false);
     }
+  }
+
+  openCreateModal(): void {
+    this.isCreateModalOpen.set(true);
+  }
+
+  closeCreateModal(): void {
+    this.isCreateModalOpen.set(false);
+  }
+
+  onOrderCreated(): void {
+    this.ordersService.getOrders().subscribe();
   }
 
   private executeCancel(id: number): void {

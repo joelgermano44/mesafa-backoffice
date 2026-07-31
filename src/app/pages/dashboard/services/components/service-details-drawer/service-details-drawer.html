@@ -64,7 +64,7 @@
                       class="w-7.75 h-7.75 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden"
                     >
                       @if (prof.image) {
-                        <img [src]="prof.image" class="w-full h-full object-cover" />
+                        <img [src]="prof.image" (error)="$event.target.src = '/images/icons/dashboard/user.svg'" class="w-full h-full object-cover" />
                       } @else {
                         {{ prof.name.charAt(0) }}
                       }

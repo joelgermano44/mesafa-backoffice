@@ -268,7 +268,7 @@
 
                 @for (img of galleryPreviews(); track $index) {
                   <div class="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200 group">
-                    <img [src]="img" class="w-full h-full object-cover" alt="Galeria" />
+                    <img [src]="img" (error)="$event.target.src = '/images/not-found.png'" class="w-full h-full object-cover" alt="Galeria" />
                     <button
                       type="button"
                       (click)="removeGalleryImage($index)"

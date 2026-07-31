@@ -134,6 +134,7 @@
               <div class="avatar">
                 <img
                   [src]="item.image || '/images/icons/dashboard/user.svg'"
+                  (error)="$event.target.src = '/images/icons/dashboard/user.svg'"
                   class="w-10 h-10 rounded-full object-cover"
                 />
               </div>
@@ -193,11 +194,19 @@
           <td class="py-3.5 px-4">
             <div class="actions flex justify-center gap-2">
               <button (click)="onDelete(item.id, $event)">
-                <img src="images/icons/dashboard/tables/eliminar.svg" alt="" class="w-6 h-6 hover:scale-105 cursor-pointer" />
+                <img
+                  src="images/icons/dashboard/tables/eliminar.svg"
+                  alt=""
+                  class="w-6 h-6 hover:scale-105 cursor-pointer"
+                />
               </button>
 
               <button (click)="onEdit(item, $event)">
-                <img src="images/icons/dashboard/tables/editar.svg" alt="" class="w-6 h-6 hover:scale-105 cursor-pointer" />
+                <img
+                  src="images/icons/dashboard/tables/editar.svg"
+                  alt=""
+                  class="w-6 h-6 hover:scale-105 cursor-pointer"
+                />
               </button>
             </div>
           </td>
