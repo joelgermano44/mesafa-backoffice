@@ -35,7 +35,6 @@ export class CreateOrdersComponent {
   public addresses = signal<Address[]>([]);
   public galleryPreviews = signal<string[]>([]);
 
-  // Sinais para Clientes e Profissionais
   public clients = this.clientService.clients;
   public professionals = this.collaboratorService.collaborators;
 

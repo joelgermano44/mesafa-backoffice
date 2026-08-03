@@ -272,13 +272,13 @@
                 <div class="flex flex-col gap-2 w-full text-xs">
                   <p class="flex items-center justify-between w-full">
                     Valor do serviço
-                    <span class="font-semibold"
+                    <span class="font-normal"
                       >{{ (detail.service?.price || 0).toLocaleString('pt-PT') }} kz</span
                     >
                   </p>
                   <p class="flex items-center justify-between w-full">
                     Deslocação
-                    <span class="font-semibold">{{ detail.service?.travel_price || 0 }} kz</span>
+                    <span class="font-normal">{{ detail.service?.travel_price || 0 }} kz</span>
                   </p>
                 </div>
               </div>
@@ -290,19 +290,21 @@
                   <div class="flex flex-col gap-2 w-full text-xs">
                     <p class="flex items-center justify-between w-full">
                       1ª prestação
-                      <span class="font-semibold"
+                      <span class="font-normal"
                         >{{ (detail.first_payment?.amount || 0).toLocaleString('pt-PT') }} kz</span
                       >
                     </p>
                     <p class="flex items-center justify-between w-full">
                       2ª prestação
-                      <span class="font-semibold">{{ detail.second_payment?.amount }} kz</span>
+                      <span class="font-normal"
+                        >{{ (detail.second_payment?.amount || 0).toLocaleString('pt-PT') }} kz</span
+                      >
                     </p>
                   </div>
                 } @else {
                   <p class="flex items-center justify-between w-full text-xs">
                     Pagamento único
-                    <span class="font-semibold"
+                    <span class="font-normal"
                       >{{ (detail.service?.price || 0).toLocaleString('pt-PT') }} kz</span
                     >
                   </p>
@@ -312,11 +314,33 @@
               <hr class="w-1/2 border border-gray-200 mx-auto" />
 
               <p class="flex items-center justify-between w-full text-[15px] font-semibold">
-                Total
-                <span class="font-medium text-base"
-                  >{{ (detail.service?.travel_price || 0) + (detail.service?.price || 0) }} kz</span
+                Resumo
+                <span class="text-base font-normal"
+                  >{{
+                    (
+                      (detail.service?.travel_price || 0) + (detail.service?.price || 0)
+                    ).toLocaleString('pt-PT')
+                  }}
+                  kz</span
                 >
               </p>
+
+              <div class="flex items-center justify-between w-full text-[15px] font-semibold">
+                <p class="text-[13px] font-normal">Métodos de Pagamento</p>
+
+                <div class="flex items-center gap-2">
+                  <button class="hover:scale-105 transition-all duration-200">
+                    <img src="/images/express.png" alt="" class="object-contain w-12 rounded-lg" />
+                  </button>
+                  <button class="hover:scale-105 transition-all duration-200">
+                    <img
+                      src="/images/multicaixa.png"
+                      alt=""
+                      class="object-contain w-12 rounded-lg"
+                    />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

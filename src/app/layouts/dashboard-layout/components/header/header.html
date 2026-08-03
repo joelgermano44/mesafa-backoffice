@@ -3,15 +3,75 @@
     <img src="/images/logos/logo-white.svg" alt="Logo" class="w-26.75" />
   </a>
 
-  <div
-    class="flex bg-white p-2.5 rounded-lg max-w-77.5 w-full gap-3.75 items-center border border-primary shadow-white/30 shadow-sm"
-  >
-    <img src="/images/icons/search.svg" alt="Search" class="w-4.75 h-4.75" />
-    <input
-      type="text"
-      placeholder="Procurar..."
-      class="placeholder:text-[#9A9FA5] placeholder:font-semibold placeholder:text-[15px] outline-none w-full"
-    />
+  <div class="relative max-w-77.5 w-full">
+    <div
+      class="flex bg-white p-2.5 rounded-lg w-full gap-3.75 items-center border border-primary shadow-white/30 shadow-sm"
+    >
+      <img src="/images/icons/search.svg" alt="Search" class="w-4.75 h-4.75" />
+      <input
+        type="text"
+        [value]="searchTerm()"
+        (input)="onSearchInput($event)"
+        placeholder="Procurar..."
+        class="placeholder:text-[#9A9FA5] placeholder:font-semibold placeholder:text-[15px] outline-none w-full"
+      />
+    </div>
+
+    @if (searchTerm().trim().length > 0 && searchResults()) {
+      <div
+        #searchResultsContainer
+        class="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-100 py-2 max-h-96 overflow-y-auto z-50 flex flex-col font-medium text-sm text-gray-700"
+      >
+        @if (searchResults()?.services?.length) {
+          <div class="px-3 py-1 text-xs font-bold text-gray-400 uppercase tracking-wider">
+            Serviços
+          </div>
+          @for (service of searchResults()?.services; track service.id) {
+            <a
+              [routerLink]="['/services', service.id]"
+              (click)="closeSearchWithAnimation()"
+              class="px-4 py-2 hover:bg-gray-50 flex justify-between items-center transition-colors"
+            >
+              <span class="font-semibold text-gray-800">{{ service.name }}</span>
+              <span class="text-xs text-primary font-bold">{{ service.price }} Kz</span>
+            </a>
+          }
+        }
+
+        @if (searchResults()?.services?.length && searchResults()?.professionals?.length) {
+          <hr class="my-1 border-gray-100" />
+        }
+
+        @if (searchResults()?.professionals?.length) {
+          <div class="px-3 py-1 text-xs font-bold text-gray-400 uppercase tracking-wider">
+            Profissionais
+          </div>
+          @for (prof of searchResults()?.professionals; track prof.id) {
+            <a
+              [routerLink]="['/professionals', prof.id]"
+              (click)="closeSearchWithAnimation()"
+              class="px-4 py-2 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+            >
+              <img
+                [src]="prof.image || '/images/icons/dashboard/user.svg'"
+                alt="Foto"
+                class="w-7 h-7 rounded-full object-cover"
+              />
+              <div class="flex flex-col">
+                <span class="font-semibold text-gray-800">{{ prof.name }}</span>
+                <span class="text-xs text-gray-400">@{{ prof.username }}</span>
+              </div>
+            </a>
+          }
+        }
+
+        @if (!searchResults()?.services?.length && !searchResults()?.professionals?.length) {
+          <div class="px-4 py-3 text-center text-gray-500 text-xs">
+            Nenhum resultado encontrado para "{{ searchTerm() }}"
+          </div>
+        }
+      </div>
+    }
   </div>
 
   <div class="relative">
@@ -48,7 +108,7 @@
       >
         <a
           routerLink="/profile"
-          (click)="isDropdownOpen.set(false)"
+          (click)="closeDropdownWithAnimation()"
           class="px-4 py-2 hover:bg-gray-100 transition-colors duration-150 flex items-center gap-2"
         >
           <span>Perfil</span>
