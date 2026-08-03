@@ -1,13 +1,14 @@
-import { Component, ElementRef, inject, input, output, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, inject, input, output, AfterViewInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { animate } from 'motion';
 import { Admin } from '../../../../../../core/features/administrators/models/admin.model';
 import { AdminService } from '../../../../../../core/features/administrators/services/admin.service';
+import { ConfirmDialogComponent } from '../../../../components/confirm-dialog-component/confirm-dialog-component';
 
 @Component({
   selector: 'app-admin-details-drawer',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ConfirmDialogComponent],
   templateUrl: './admin-details-drawer-component.html',
 })
 export class AdminDetailsDrawerComponent implements AfterViewInit {
@@ -17,6 +18,9 @@ export class AdminDetailsDrawerComponent implements AfterViewInit {
   admin = input<Admin | null>(null);
   closeDrawer = output<void>();
   adminDeleted = output<number>();
+
+  isConfirmOpen = signal(false);
+  isDeleting = signal(false);
 
   ngAfterViewInit(): void {
     const backdrop = this.elementRef.nativeElement.querySelector('.fixed.inset-0');
@@ -35,7 +39,37 @@ export class AdminDetailsDrawerComponent implements AfterViewInit {
     }
   }
 
-  deleteAdmin(id: number): void {
+  openDeleteModal(): void {
+    this.isConfirmOpen.set(true);
+  }
+
+  closeDeleteModal(): void {
+    if (!this.isDeleting()) {
+      this.isConfirmOpen.set(false);
+    }
+  }
+
+  confirmDeleteAdmin(): void {
+    const user = this.admin();
+    if (!user) return;
+
+    this.isDeleting.set(true);
+
+    this.adminService.delete(user.id).subscribe({
+      next: () => {
+        this.isDeleting.set(false);
+        this.isConfirmOpen.set(false);
+        this.adminDeleted.emit(user.id);
+        this.onClose();
+      },
+      error: (err) => {
+        console.error('Erro ao eliminar:', err);
+        this.isDeleting.set(false);
+      },
+    });
+  }
+
+  /*  deleteAdmin(id: number): void {
     if (confirm('Tem certeza que deseja eliminar este administrador?')) {
       this.adminService.delete(id).subscribe({
         next: () => {
@@ -46,6 +80,7 @@ export class AdminDetailsDrawerComponent implements AfterViewInit {
       });
     }
   }
+ */
 
   onClose(): void {
     const backdrop = this.elementRef.nativeElement.querySelector('.fixed.inset-0');

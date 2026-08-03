@@ -1,9 +1,11 @@
-<app-title-header
-  title="Usuários Profissionais"
-  subtitle="Veja a informação de todos os professionas cadastrados no app."
-  name="{{ admin()?.name }}"
-></app-title-header>
+<div class="px-10">
+  <app-title-header
+    title="Usuários Profissionais"
+    subtitle="Veja a informação de todos os professionas cadastrados no app."
+    name="{{ admin()?.name }}"
+  ></app-title-header>
+</div>
 
-<div>
+<div class="px-10">
   <app-professionals-table></app-professionals-table>
 </div>

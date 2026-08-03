@@ -38,6 +38,7 @@ export class Home implements OnInit, AfterViewInit {
 
   readonly dashItems = computed(() => [
     {
+      icon: "/images/icons/dashboard/home/faturamento.svg",
       title: 'Faturamento',
       text: 'Faturamento gerado na plataforma.',
       stats: this.totalFaturamento(),
@@ -45,6 +46,7 @@ export class Home implements OnInit, AfterViewInit {
       link: '',
     },
     {
+      icon: "/images/icons/dashboard/home/pedidos.svg",
       title: 'Pedidos',
       text: 'Pedidos de serviço dos clientes.',
       stats: this.ordersService.orders().length,
@@ -52,6 +54,7 @@ export class Home implements OnInit, AfterViewInit {
       link: '/dashboard/hired',
     },
     {
+      icon: "/images/icons/dashboard/home/servicos.svg",
       title: 'Serviços',
       text: 'Serviços prestados por profissionais.',
       stats: this.servicesServiceList().length,
@@ -59,6 +62,7 @@ export class Home implements OnInit, AfterViewInit {
       link: '/dashboard/services',
     },
     {
+      icon: "/images/icons/dashboard/home/clientes.svg",
       title: 'Clientes',
       text: 'Total de usuários do app.',
       stats: this.clientService.clients().length,
@@ -66,6 +70,7 @@ export class Home implements OnInit, AfterViewInit {
       link: '/dashboard/clients-users',
     },
     {
+      icon: "/images/icons/dashboard/home/profissionais.svg",
       title: 'Profissionais',
       text: 'Total de profissionais cadastrados.',
       stats: this.collaboratorService.collaborators().length,

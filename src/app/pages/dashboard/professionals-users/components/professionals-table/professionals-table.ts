@@ -21,15 +21,26 @@ import { PortfolioService } from '../../../../../../core/features/portfolio/serv
 import { API_CONFIG } from '../../../../../../core/config/api.config';
 import { animate, stagger } from 'motion';
 import { ServicesService } from '../../../../../../core/features/services/services/services.service';
-import { ProfessionalService } from '../../../../../../core/features/services/models/professional-with-services.model';
 import { toast } from 'ngx-sonner';
+import { ProfessionalService } from '../../../../../../core/features/services/models/service.model';
+import { ConfirmDialogComponent } from "../../../../components/confirm-dialog-component/confirm-dialog-component";
 
 export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes';
+
+export interface ConfirmDialogState {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  isLoading: boolean;
+  action?: () => void;
+}
 
 @Component({
   selector: 'app-professionals-table',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmDialogComponent],
   templateUrl: './professionals-table.html',
   styleUrl: './professionals-table.css',
 })
@@ -42,6 +53,30 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
   protected readonly elementRef = inject(ElementRef);
 
   public services = signal<ProfessionalService[]>([]);
+
+  public confirmDialogState = signal<ConfirmDialogState>({
+    isOpen: false,
+    title: '',
+    message: '',
+    isLoading: false,
+  });
+
+  public closeConfirmDialog(): void {
+    this.confirmDialogState.set({
+      isOpen: false,
+      title: '',
+      message: '',
+      isLoading: false,
+      action: undefined,
+    });
+  }
+
+  public onConfirmDialogAction(): void {
+    const action = this.confirmDialogState().action;
+    if (action) {
+      action();
+    }
+  }
 
   isLoading = signal<boolean>(true);
   isOrdersLoading = signal<boolean>(false);
@@ -385,25 +420,39 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
     console.log('Editar profissional:', collaborator);
   }
 
-  deleteCollaborator(id: number, event?: Event): void {
+  public deleteCollaborator(id: number, event?: Event): void {
     event?.stopPropagation();
-    if (confirm('Tem certeza que deseja eliminar este profissional?')) {
-      this.collaboratorService.delete(id).subscribe({
-        next: () => {
-          if (this.collaboratorService.current()?.id === id) {
-            this.closeDrawer();
-          }
-        },
-        error: (err) => console.error('Erro ao eliminar:', err),
-      });
-    }
+
+    this.confirmDialogState.set({
+      isOpen: true,
+      title: 'Eliminar Profissional',
+      message:
+        'Tem certeza que deseja eliminar este profissional? Esta ação não pode ser desfeita.',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      isLoading: false,
+      action: () => {
+        this.confirmDialogState.update((state) => ({ ...state, isLoading: true }));
+
+        this.collaboratorService.delete(id).subscribe({
+          next: () => {
+            this.closeConfirmDialog();
+            if (this.collaboratorService.current()?.id === id) {
+              this.closeDrawer();
+            }
+            toast.success('Profissional eliminado com sucesso.');
+          },
+          error: (err) => {
+            this.confirmDialogState.update((state) => ({ ...state, isLoading: false }));
+            console.error('Erro ao eliminar:', err);
+            toast.error('Erro ao eliminar o profissional.');
+          },
+        });
+      },
+    });
   }
 
   public onDelete(service: any): void {
-    if (!confirm('Tem certeza de que deseja eliminar este serviço?')) {
-      return;
-    }
-
     const serviceId = service.id;
     const currentCollaborator = this.collaboratorService.current();
     const professionalId =
@@ -414,20 +463,32 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
       return;
     }
 
-    this.serviceServices
-      .deleteProfessionalService(Number(professionalId), Number(serviceId))
-      .subscribe({
-        next: () => {
-          this.services.update((items) => items.filter((item) => item.id !== serviceId));
+    this.confirmDialogState.set({
+      isOpen: true,
+      title: 'Eliminar Serviço',
+      message: 'Tem certeza de que deseja eliminar este serviço? Esta ação não pode ser desfeita.',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      isLoading: false,
+      action: () => {
+        this.confirmDialogState.update((state) => ({ ...state, isLoading: true }));
 
-          this.loadCollaborators();
-
-          toast.success('Serviço removido com sucesso.');
-        },
-        error: (err) => {
-          console.error('Erro ao eliminar serviço na API:', err);
-          toast.error('Erro ao eliminar o serviço. Tente novamente.');
-        },
-      });
+        this.serviceServices
+          .deleteProfessionalService(Number(professionalId), Number(serviceId))
+          .subscribe({
+            next: () => {
+              this.closeConfirmDialog();
+              this.services.update((items) => items.filter((item) => item.id !== serviceId));
+              this.loadCollaborators();
+              toast.success('Serviço removido com sucesso.');
+            },
+            error: (err) => {
+              this.confirmDialogState.update((state) => ({ ...state, isLoading: false }));
+              console.error('Erro ao eliminar serviço:', err);
+              toast.error('Erro ao remover o serviço.');
+            },
+          });
+      },
+    });
   }
 }

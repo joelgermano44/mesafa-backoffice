@@ -21,10 +21,11 @@ import { ProfessionalService } from '../../../../core/features/services/models/s
 import { API_CONFIG } from '../../../../core/config/api.config';
 import { ServiceDetailsDrawer } from './components/service-details-drawer/service-details-drawer';
 import { toast } from 'ngx-sonner';
+import { ConfirmDialogComponent } from "../../components/confirm-dialog-component/confirm-dialog-component";
 
 @Component({
   selector: 'app-services',
-  imports: [TitleHeader, CreateServiceModalComponent, ServiceDetailsDrawer],
+  imports: [TitleHeader, CreateServiceModalComponent, ServiceDetailsDrawer, ConfirmDialogComponent],
   templateUrl: './services.html',
   styleUrl: './services.css',
 })
@@ -36,6 +37,10 @@ export class Services implements AfterViewInit {
   public selectedService = signal<ProfessionalService | null>(null);
   public readonly api = API_CONFIG;
   readonly admin = this.adminService.admin;
+
+  isConfirmOpen = signal(false);
+  isDeleting = signal(false);
+  serviceToDelete = signal<number | null>(null);
 
   public searchTerm = signal('');
   public selectedType = signal('Tudo');
@@ -157,17 +162,35 @@ export class Services implements AfterViewInit {
   }
 
   public onDelete(serviceId: number): void {
-    if (!confirm('Tem certeza de que deseja eliminar este serviço?')) {
-      return;
+    this.serviceToDelete.set(serviceId);
+    this.isConfirmOpen.set(true);
+  }
+
+  public cancelDelete(): void {
+    if (!this.isDeleting()) {
+      this.isConfirmOpen.set(false);
+      this.serviceToDelete.set(null);
     }
+  }
+
+  public confirmDelete(): void {
+    const serviceId = this.serviceToDelete();
+    if (!serviceId) return;
+
+    this.isDeleting.set(true);
 
     this.servicesService.deleteService(serviceId).subscribe({
       next: () => {
         this.services.update((items) => items.filter((item) => item.id !== serviceId));
         toast.success('Serviço removido com sucesso');
+        this.isDeleting.set(false);
+        this.isConfirmOpen.set(false);
+        this.serviceToDelete.set(null);
       },
       error: (err) => {
         console.error(err);
+        toast.error('Erro ao remover o serviço');
+        this.isDeleting.set(false);
       },
     });
   }

@@ -16,8 +16,9 @@ export class Dashcard implements AfterViewInit {
   text = input.required<string>();
   money = input.required<boolean>();
   link = input.required<string>();
+  iconUrl = input.required<string>()
 
-  formattedStats = computed(() => this.stats().toLocaleString('en-US'));
+  formattedStats = computed(() => this.stats().toLocaleString('pt-PT'));
 
   ngAfterViewInit(): void {
     const nativeEl = this.el.nativeElement as HTMLElement;

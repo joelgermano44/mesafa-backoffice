@@ -12,7 +12,7 @@
       ✕
     </button>
 
-    <div class="w-full flex-col">
+    <div class="w-full flex flex-col">
       <h2 class="text-[25px] font-semibold">Cadastro de Administrador</h2>
       <p class="text-[15px] text-[#797979] font-medium">
         Cadastre de maneira eficiente e rápida os administradores
@@ -56,7 +56,7 @@
         />
       </div>
 
-      <div class="">
+      <div>
         <div class="flex items-center gap-2 mb-4">
           <span class="text-[15px] font-semibold">• Informações Pessoais</span>
         </div>
@@ -65,7 +65,7 @@
           <div class="flex flex-col gap-1">
             <label class="text-[13px] font-medium">Nome do administrador</label>
             <div
-              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
             >
               <img src="/images/icons/dashboard/form-user.svg" alt="" />
               <input
@@ -75,109 +75,164 @@
                 class="w-full outline-none text-black font-semibold text-[13px]"
               />
             </div>
-            @if (adminForm.get('name')?.hasError('serverError')) {
-              <span class="text-[10px] text-red-500">
-                {{ adminForm.get('name')?.getError('serverError') }}
-              </span>
+            @if (adminForm.get('name')?.invalid && (adminForm.get('name')?.touched || submitted)) {
+              <div class="flex flex-col gap-0.5 text-[10px] text-red-500">
+                @if (adminForm.get('name')?.hasError('required')) {
+                  <span>O nome é obrigatório.</span>
+                }
+                @if (adminForm.get('name')?.hasError('minlength')) {
+                  <span>O nome deve ter pelo menos 3 caracteres.</span>
+                }
+                @if (adminForm.get('name')?.hasError('serverError')) {
+                  <span>{{ adminForm.get('name')?.getError('serverError') }}</span>
+                }
+              </div>
             }
           </div>
 
           <div class="flex flex-col gap-1">
             <label class="text-[13px] font-medium">Bilhete de Identidade (BI)</label>
             <div
-              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
             >
               <img src="/images/icons/dashboard/form-user.svg" alt="" />
               <input
                 type="text"
                 formControlName="bi"
                 placeholder="000000000LA000"
-                class="w-full outline-none"
+                class="w-full outline-none text-black font-semibold text-[13px]"
               />
             </div>
-            @if (adminForm.get('bi')?.hasError('serverError')) {
-              <span class="text-[10px] text-red-500">
-                {{ adminForm.get('bi')?.getError('serverError') }}
-              </span>
+            @if (adminForm.get('bi')?.invalid && (adminForm.get('bi')?.touched || submitted)) {
+              <div class="flex flex-col gap-0.5 text-[10px] text-red-500">
+                @if (adminForm.get('bi')?.hasError('required')) {
+                  <span>O BI é obrigatório.</span>
+                }
+                @if (adminForm.get('bi')?.hasError('pattern')) {
+                  <span>Formato de BI inválido (Ex: 000000000LA000).</span>
+                }
+                @if (adminForm.get('bi')?.hasError('serverError')) {
+                  <span>{{ adminForm.get('bi')?.getError('serverError') }}</span>
+                }
+              </div>
             }
           </div>
 
           <div class="flex flex-col gap-1">
             <label class="text-[13px] font-medium">E-mail corporativo</label>
             <div
-              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
             >
               <img src="/images/icons/dashboard/form-user.svg" alt="" />
               <input
                 type="email"
                 formControlName="email"
                 placeholder="waltuxdesigner@job.co.ao"
-                class="w-full outline-none"
+                class="w-full outline-none text-black font-semibold text-[13px]"
               />
             </div>
-            @if (adminForm.get('email')?.hasError('serverError')) {
-              <span class="text-[10px] text-red-500">
-                {{ adminForm.get('email')?.getError('serverError') }}
-              </span>
+            @if (
+              adminForm.get('email')?.invalid && (adminForm.get('email')?.touched || submitted)
+            ) {
+              <div class="flex flex-col gap-0.5 text-[10px] text-red-500">
+                @if (adminForm.get('email')?.hasError('required')) {
+                  <span>O e-mail é obrigatório.</span>
+                }
+                @if (adminForm.get('email')?.hasError('email')) {
+                  <span>Insira um endereço de e-mail válido.</span>
+                }
+                @if (adminForm.get('email')?.hasError('serverError')) {
+                  <span>{{ adminForm.get('email')?.getError('serverError') }}</span>
+                }
+              </div>
             }
           </div>
 
           <div class="flex flex-col gap-1">
             <label class="text-[13px] font-medium">Telefone</label>
             <div
-              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
             >
               <img src="/images/icons/dashboard/form-user.svg" alt="" />
               <input
                 type="text"
                 formControlName="phone"
                 placeholder="+244 97843218"
-                class="w-full outline-none"
+                class="w-full outline-none text-black font-semibold text-[13px]"
               />
             </div>
-            @if (adminForm.get('phone')?.hasError('serverError')) {
-              <span class="text-[10px] text-red-500">
-                {{ adminForm.get('phone')?.getError('serverError') }}
-              </span>
+            @if (
+              adminForm.get('phone')?.invalid && (adminForm.get('phone')?.touched || submitted)
+            ) {
+              <div class="flex flex-col gap-0.5 text-[10px] text-red-500">
+                @if (adminForm.get('phone')?.hasError('required')) {
+                  <span>O telefone é obrigatório.</span>
+                }
+                @if (adminForm.get('phone')?.hasError('pattern')) {
+                  <span>Insira um número de telefone válido (Ex: 923456789).</span>
+                }
+                @if (adminForm.get('phone')?.hasError('serverError')) {
+                  <span>{{ adminForm.get('phone')?.getError('serverError') }}</span>
+                }
+              </div>
             }
           </div>
 
           <div class="flex flex-col gap-1">
             <label class="text-[13px] font-medium">Data de Nascimento</label>
             <div
-              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
             >
               <img src="/images/icons/dashboard/form-user.svg" alt="" />
               <input
                 type="date"
                 formControlName="birthdate"
-                class="w-full outline-none text-gray-700 cursor-pointer"
+                class="w-full outline-none text-gray-700 cursor-pointer text-[13px]"
               />
             </div>
-            @if (adminForm.get('birthdate')?.hasError('serverError')) {
-              <span class="text-[10px] text-red-500">
-                {{ adminForm.get('birthdate')?.getError('serverError') }}
-              </span>
+            @if (
+              adminForm.get('birthdate')?.invalid &&
+              (adminForm.get('birthdate')?.touched || submitted)
+            ) {
+              <div class="flex flex-col gap-0.5 text-[10px] text-red-500">
+                @if (adminForm.get('birthdate')?.hasError('required')) {
+                  <span>A data de nascimento é obrigatória.</span>
+                }
+                @if (adminForm.get('birthdate')?.hasError('serverError')) {
+                  <span>{{ adminForm.get('birthdate')?.getError('serverError') }}</span>
+                }
+              </div>
             }
           </div>
 
           <div class="flex flex-col gap-1">
             <label class="text-[13px] font-medium">Senha</label>
             <div
-              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-al"
+              class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
             >
               <img src="/images/icons/dashboard/form-user.svg" alt="" />
               <input
                 type="password"
                 formControlName="password"
                 placeholder="••••••••"
-                class="w-full outline-none"
+                class="w-full outline-none text-black font-semibold text-[13px]"
               />
             </div>
-            @if (adminForm.get('password')?.hasError('serverError')) {
-              <span class="text-[10px] text-red-500">
-                {{ adminForm.get('password')?.getError('serverError') }}
-              </span>
+            @if (
+              adminForm.get('password')?.invalid &&
+              (adminForm.get('password')?.touched || submitted)
+            ) {
+              <div class="flex flex-col gap-0.5 text-[10px] text-red-500">
+                @if (adminForm.get('password')?.hasError('required')) {
+                  <span>A senha é obrigatória.</span>
+                }
+                @if (adminForm.get('password')?.hasError('minlength')) {
+                  <span>A senha deve possuir no mínimo 6 caracteres.</span>
+                }
+                @if (adminForm.get('password')?.hasError('serverError')) {
+                  <span>{{ adminForm.get('password')?.getError('serverError') }}</span>
+                }
+              </div>
             }
           </div>
         </div>

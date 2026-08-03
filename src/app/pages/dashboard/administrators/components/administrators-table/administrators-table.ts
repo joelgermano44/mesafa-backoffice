@@ -1,21 +1,34 @@
-import { Component, ElementRef, OnInit, computed, inject, signal, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
+  AfterViewInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { animate, stagger } from 'motion';
 import { Admin } from '../../../../../../core/features/administrators/models/admin.model';
 import { AdminService } from '../../../../../../core/features/administrators/services/admin.service';
 import { AdminDetailsDrawerComponent } from '../admin-details-drawer-component/admin-details-drawer-component';
+import { ConfirmDialogComponent } from '../../../../components/confirm-dialog-component/confirm-dialog-component';
 
 @Component({
   selector: 'app-administrators-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminDetailsDrawerComponent],
+  imports: [CommonModule, FormsModule, AdminDetailsDrawerComponent, ConfirmDialogComponent],
   templateUrl: './administrators-table.html',
   styleUrl: './administrators-table.css',
 })
 export class AdministratorsTable implements OnInit, AfterViewInit {
   private readonly adminService = inject(AdminService);
   private readonly elementRef = inject(ElementRef);
+
+  isConfirmModalOpen = signal<boolean>(false);
+  isDeleting = signal<boolean>(false);
+  adminToDeleteId = signal<number | null>(null);
 
   admins = signal<Admin[]>([]);
   isLoading = signal<boolean>(true);
@@ -58,7 +71,7 @@ export class AdministratorsTable implements OnInit, AfterViewInit {
       animate(
         rows,
         { opacity: [0, 1], y: [10, 0] },
-        { duration: 0.35, delay: stagger(0.04), ease: [0.16, 1, 0.3, 1] }
+        { duration: 0.35, delay: stagger(0.04), ease: [0.16, 1, 0.3, 1] },
       );
     }
   }
@@ -160,13 +173,30 @@ export class AdministratorsTable implements OnInit, AfterViewInit {
   }
 
   deleteAdmin(id: number): void {
-    if (confirm('Tem certeza que deseja eliminar este administrador?')) {
-      this.adminService.delete(id).subscribe({
-        next: () => {
-          this.admins.update((list) => list.filter((item) => item.id !== id));
-        },
-        error: (err) => console.error('Erro ao eliminar:', err),
-      });
-    }
+    this.adminToDeleteId.set(id);
+    this.isConfirmModalOpen.set(true);
+  }
+
+  confirmDeleteAdmin(): void {
+    const id = this.adminToDeleteId();
+    if (!id) return;
+
+    this.isDeleting.set(true);
+    this.adminService.delete(id).subscribe({
+      next: () => {
+        this.admins.update((list) => list.filter((item) => item.id !== id));
+        this.closeConfirmModal();
+      },
+      error: (err) => {
+        console.error('Erro ao eliminar:', err);
+        this.isDeleting.set(false);
+      },
+    });
+  }
+
+  closeConfirmModal(): void {
+    this.isConfirmModalOpen.set(false);
+    this.isDeleting.set(false);
+    this.adminToDeleteId.set(null);
   }
 }

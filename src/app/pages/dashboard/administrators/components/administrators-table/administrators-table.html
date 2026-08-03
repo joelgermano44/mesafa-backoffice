@@ -60,7 +60,7 @@
       <tr>
         <th class="px-4 py-3.5 text-left rounded-l-2xl">
           <div class="flex items-center gap-2">
-            <img src="/images/icons/dashboard/tables/funcionario.svg" alt="" class="w-4 h-4" />
+            <img src="/images/icons/dashboard/tables/administrador.svg" alt="" class="w-4 h-4" />
             <span>Administrador</span>
           </div>
         </th>
@@ -74,25 +74,28 @@
 
         <th class="px-4 py-3.5 text-left">
           <div class="flex items-center gap-2">
-            <img src="/images/icons/dashboard/tables/nivel-acesso.svg" alt="" class="w-4 h-4" />
-            <span>Nº de BI</span>
+            <img src="/images/icons/dashboard/tables/bi.svg" alt="" class="w-4 h-4" />
+            <span>BI</span>
           </div>
         </th>
 
         <th class="px-4 py-3.5 text-left">
           <div class="flex items-center gap-2">
-            <img src="/images/icons/dashboard/tables/cargo.svg" alt="" class="w-4 h-4" />
+            <img src="/images/icons/dashboard/tables/data.svg" alt="" class="w-4 h-4" />
             <span>Data de Registo</span>
           </div>
         </th>
-        
+
         <th class="px-4 py-3.5 text-center rounded-r-2xl">
-          <span>Ação</span>
+          <div class="flex justify-center items-center gap-2">
+            <img src="/images/icons/dashboard/tables/acoes.svg" alt="" class="w-4 h-4" />
+            <span>Ação</span>
+          </div>
         </th>
       </tr>
     </thead>
 
-    <tbody>
+    <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
       @if (isLoading()) {
         <tr>
           <td colspan="5" class="py-8 text-center text-sm text-gray-500">
@@ -108,10 +111,9 @@
       } @else {
         @for (admin of paginatedAdmins(); track admin.id) {
           <tr
-            (click)="selectAdmin(admin)"
             class="even:bg-[#95B9FF0D] hover:bg-slate-100 transition-colors border border-[#EAECF0]"
           >
-            <td>
+            <td (click)="selectAdmin(admin)" class="cursor.pointer">
               <div class="user-cell flex items-center gap-2 p-3.75">
                 <div class="avatar">
                   <img
@@ -126,29 +128,37 @@
                 </div>
               </div>
             </td>
-            <td>
+            <td (click)="selectAdmin(admin)">
               <div class="contact-cell flex flex-col gap-1">
                 <div class="text-xs font-semibold">{{ admin.email }}</div>
                 <div class="sub-text text-xs text-[#898989] font-semibold">{{ admin.phone }}</div>
               </div>
             </td>
-            <td>
+            <td (click)="selectAdmin(admin)">
               <span class="text-xs font-semibold">
                 {{ admin.bi || 'N/D' }}
               </span>
             </td>
-            <td>
+            <td (click)="selectAdmin(admin)">
               <span class="text-xs font-semibold">
                 {{ admin.created_at | date: 'dd/MM/yyyy' }}
               </span>
             </td>
             <td>
-              <div class="actions flex justify-center gap-2">
-                <button (click)="deleteAdmin(admin.id)" title="Eliminar">
+              <div class="actions flex justify-center gap-2 z-50">
+                <button
+                  (click)="deleteAdmin(admin.id)"
+                  title="Eliminar"
+                  class="cursor-pointer hover:scale-115 transition-all duration-300"
+                >
                   <img src="images/icons/dashboard/tables/eliminar.svg" alt="" class="w-6 h-6" />
                 </button>
 
-                <button (click)="editAdmin(admin)" title="Editar">
+                <button
+                  (click)="selectAdmin(admin)"
+                  title="Editar"
+                  class="cursor-pointer hover:scale-115 transition-all duration-300"
+                >
                   <img src="images/icons/dashboard/tables/editar.svg" alt="" class="w-6 h-6" />
                 </button>
               </div>
@@ -184,3 +194,14 @@
     </button>
   </div>
 </div>
+
+<app-confirm-dialog-component
+  [isOpen]="isConfirmModalOpen()"
+  [isLoading]="isDeleting()"
+  title="Eliminar Administrador"
+  message="Tem a certeza de que deseja eliminar este administrador? Esta ação é irreversível e o utilizador perderá o acesso à plataforma."
+  confirmText="Eliminar permanentemente"
+  cancelText="Cancelar"
+  (confirm)="confirmDeleteAdmin()"
+  (cancel)="closeConfirmModal()"
+/>

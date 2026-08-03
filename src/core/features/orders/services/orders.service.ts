@@ -8,9 +8,6 @@ import { API_CONFIG } from '../../../config/api.config';
   providedIn: 'root',
 })
 export class OrdersService {
-  getOrdersByCollaborator(collaboratorId: number) {
-    throw new Error('Method not implemented.');
-  }
   private http = inject(HttpClient);
   private readonly apiUrl = API_CONFIG.baseUrl;
 
@@ -77,7 +74,13 @@ export class OrdersService {
       formData.append('service_id', payload.service_id.toString());
       formData.append('address_id', payload.address_id.toString());
       formData.append('description', payload.description);
-      if (payload.client_id) formData.append('client_id', payload.client_id);
+
+      if (payload.client_id) {
+        formData.append('client_id', payload.client_id);
+      }
+      if (payload.professional_id) {
+        formData.append('professional_id', payload.professional_id.toString());
+      }
 
       payload.images.forEach((file) => formData.append('images', file));
       body = formData;

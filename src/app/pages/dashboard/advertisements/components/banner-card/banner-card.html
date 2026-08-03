@@ -33,7 +33,7 @@
       </button>
     </div>
 
-    <img [src]="banner.image ? banner.image : '/images/not-found.png' " [alt]="banner.title" class="w-37 h-full object-cover rounded-r-xl" />
+    <img [src]="banner.image ? banner.image : '/images/not-found.png' " (error)="$event.target.src = '/images/not-found.png'" [alt]="banner.title" class="w-37 h-full object-cover rounded-r-xl" />
   </div>
 
   <div class="flex items-center gap-4">

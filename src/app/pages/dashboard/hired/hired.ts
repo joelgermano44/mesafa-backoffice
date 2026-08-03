@@ -14,10 +14,13 @@ import { Order, OrderStatus } from '../../../../core/features/orders/models/orde
 import { OrdersService } from '../../../../core/features/orders/services/orders.service';
 import { toast } from 'ngx-sonner';
 import { animate, stagger } from 'motion';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog-component/confirm-dialog-component';
+import { API_CONFIG } from '../../../../core/config/api.config';
+import { CreateOrdersComponent } from "./components/create-orders-component/create-orders-component";
 
 @Component({
   selector: 'app-hired',
-  imports: [TitleHeader],
+  imports: [TitleHeader, ConfirmDialogComponent, CreateOrdersComponent],
   standalone: true,
   templateUrl: './hired.html',
   styleUrl: './hired.css',
@@ -28,6 +31,23 @@ export class Hired implements OnInit, AfterViewInit {
   readonly admin = this.adminService.admin;
 
   private ordersService = inject(OrdersService);
+  apiUrl = API_CONFIG.baseUrl;
+
+  isCreateModalOpen = signal(false);
+
+  isConfirmOpen = signal(false);
+  isLoading = signal(false);
+  confirmConfig = signal<{
+    title: string;
+    message: string;
+    confirmText: string;
+    action: () => void;
+  }>({
+    title: '',
+    message: '',
+    confirmText: 'Confirmar',
+    action: () => {},
+  });
 
   searchTerm = signal<string>('');
   selectedStatus = signal<string>('Tudo');
@@ -92,6 +112,44 @@ export class Hired implements OnInit, AfterViewInit {
         },
       );
     }
+  }
+
+  rejectService(id: number, event?: Event): void {
+    event?.stopPropagation();
+    this.confirmConfig.set({
+      title: 'Rejeitar Contrato',
+      message: 'Tem certeza de que deseja rejeitar este contrato? Esta ação não pode ser desfeita.',
+      confirmText: 'Rejeitar',
+      action: () => this.executeReject(id),
+    });
+    this.isConfirmOpen.set(true);
+  }
+
+  private executeReject(id: number): void {
+    this.isLoading.set(true);
+    this.ordersService.rejectOrder(id).subscribe({
+      next: () => {
+        toast.error('Contrato rejeitado');
+        this.isLoading.set(false);
+        this.isConfirmOpen.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+        toast.error('Erro ao rejeitar o contrato');
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  cancelService(id: number, event?: Event): void {
+    event?.stopPropagation();
+    this.confirmConfig.set({
+      title: 'Cancelar Pedido',
+      message: 'Tem certeza de que deseja cancelar este pedido de serviço?',
+      confirmText: 'Cancelar Pedido',
+      action: () => this.executeCancel(id),
+    });
+    this.isConfirmOpen.set(true);
   }
 
   private animateDrawer(): void {
@@ -198,30 +256,55 @@ export class Hired implements OnInit, AfterViewInit {
     });
   }
 
-  rejectService(id: number, event?: Event): void {
-    event?.stopPropagation();
-    this.ordersService.rejectOrder(id).subscribe({
-      next: () => {
-        toast.error('Contrato rejeitado');
-      },
-    });
-  }
-
   completeService(id: number, event?: Event): void {
     event?.stopPropagation();
     toast.success('Serviço marcado como concluído com sucesso');
   }
 
-  cancelService(id: number, event?: Event): void {
-    event?.stopPropagation();
-    this.ordersService.cancelOrder(id).subscribe({
-      next: () => {
-        toast.error('Pedido cancelado');
-      },
-    });
-  }
-
   getStatusLabel(status: OrderStatus): string {
     return this.mapStatusToPortuguese(status);
+  }
+
+  onConfirmModal(): void {
+    this.confirmConfig().action();
+  }
+
+  onCancelModal(): void {
+    if (!this.isLoading()) {
+      this.isConfirmOpen.set(false);
+    }
+  }
+
+  openCreateModal(): void {
+    this.isCreateModalOpen.set(true);
+  }
+
+  closeCreateModal(): void {
+    this.isCreateModalOpen.set(false);
+  }
+
+  onOrderCreated(): void {
+    this.ordersService.getOrders().subscribe();
+  }
+
+  private executeCancel(id: number): void {
+    this.isLoading.set(true);
+    this.ordersService.cancelOrder?.(id)?.subscribe({
+      next: () => {
+        toast.success('Pedido cancelado com sucesso');
+        this.isLoading.set(false);
+        this.isConfirmOpen.set(false);
+        this.closeDrawer();
+      },
+      error: (err) => {
+        console.error(err);
+        toast.error('Erro ao cancelar o pedido');
+        this.isLoading.set(false);
+      },
+    }) ??
+      (() => {
+        this.isLoading.set(false);
+        this.isConfirmOpen.set(false);
+      })();
   }
 }

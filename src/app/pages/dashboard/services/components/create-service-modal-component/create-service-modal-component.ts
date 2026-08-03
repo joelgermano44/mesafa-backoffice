@@ -8,7 +8,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { animate } from 'motion';
 import { ServicesService } from '../../../../../../core/features/services/services/services.service';
 import { CollaboratorService } from '../../../../../../core/features/collaborators/services/collaborator.service';
@@ -45,12 +45,12 @@ export class CreateServiceModalComponent implements OnInit, AfterViewInit {
   public collaborators = this.collaboratorService.collaborators;
 
   public createForm = this.fb.group({
-    name: ['', [Validators.required]],
+    name: ['', [Validators.required, Validators.minLength(3)]],
     categoryId: [null as number | null, [Validators.required]],
     price: [null as number | null, [Validators.required, Validators.min(0)]],
     travelPrice: [null as number | null, [Validators.required, Validators.min(0)]],
     isPaidByInstallments: [false, [Validators.required]],
-    description: ['', [Validators.required]],
+    description: ['', [Validators.required, Validators.minLength(10)]],
     coverImage: [null as File | null],
     galleryImages: [[] as File[]],
   });
@@ -104,6 +104,17 @@ export class CreateServiceModalComponent implements OnInit, AfterViewInit {
     this.activeTab.set(tab);
   }
 
+  // Helper centralizado para validação individual de campos
+  public isControlInvalid(form: FormGroup, controlName: string): boolean {
+    const control = form.get(controlName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  public hasError(form: FormGroup, controlName: string, errorCode: string): boolean {
+    const control = form.get(controlName);
+    return !!(control && control.hasError(errorCode) && (control.dirty || control.touched));
+  }
+
   // Seleção da Imagem de Capa
   public onCoverSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -154,7 +165,6 @@ export class CreateServiceModalComponent implements OnInit, AfterViewInit {
   public onCreateSubmit(): void {
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
-      toast.error('Preencha todos os campos obrigatórios do serviço.');
       return;
     }
 
@@ -199,14 +209,12 @@ export class CreateServiceModalComponent implements OnInit, AfterViewInit {
   public onAssociateSubmit(): void {
     if (this.associateForm.invalid) {
       this.associateForm.markAllAsTouched();
-      toast.error('Por favor, selecione o profissional e o serviço.');
       return;
     }
 
     const { professionalId, serviceId } = this.associateForm.value;
 
     if (!professionalId || !serviceId) {
-      toast.error('Selecione um profissional e um serviço.');
       return;
     }
 

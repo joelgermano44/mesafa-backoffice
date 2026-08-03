@@ -1,0 +1,162 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-inter">
+  <div
+    class="modal-card bg-white max-w-3xl rounded-[20px] p-8 shadow-2xl w-full max-h-[90vh] overflow-y-auto relative border border-gray-100"
+  >
+    <div class="flex justify-between mb-6">
+      <div class="w-full flex flex-col">
+        <h3 class="text-[25px] font-semibold">Novo Pedido de Serviço</h3>
+        <p class="text-[15px] text-[#797979] font-medium">
+          Registe um novo contrato ou pedido na plataforma.
+        </p>
+      </div>
+
+      <button
+        (click)="onClose()"
+        type="button"
+        class="text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center transition-all cursor-pointer"
+      >
+        ✕
+      </button>
+    </div>
+
+    <form (submit)="onSubmit(); $event.preventDefault()" class="space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex flex-col gap-1">
+          <label class="text-[13px] font-medium text-gray-700">Cliente</label>
+          <div
+            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+          >
+            <img src="/images/icons/dashboard/form-user.svg" alt="" />
+            <select
+              [value]="orderForm.get('client_id')?.value ?? ''"
+              (change)="orderForm.get('client_id')?.setValue($any($event.target).value)"
+              class="w-full text-xs bg-transparent outline-none text-gray-700 cursor-pointer"
+            >
+              <option value="" disabled>Selecione um cliente...</option>
+              @for (client of clients(); track client.id) {
+                <option [value]="client.id">{{ client.name }}</option>
+              }
+            </select>
+          </div>
+          @if (hasError(orderForm, 'client_id', 'required')) {
+            <span class="text-[11px] text-red-500 mt-0.5">Por favor, selecione um cliente.</span>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-[13px] font-medium text-gray-700">Profissional</label>
+          <div
+            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+          >
+            <img src="/images/icons/dashboard/form-user.svg" alt="" />
+            <select
+              [value]="orderForm.get('professional_id')?.value ?? ''"
+              (change)="orderForm.get('professional_id')?.setValue($any($event.target).value)"
+              class="w-full text-xs bg-transparent outline-none text-gray-700 cursor-pointer"
+            >
+              <option value="" disabled>Selecione um profissional...</option>
+              @for (prof of professionals(); track prof.id) {
+                <option [value]="prof.id">{{ prof.name }}</option>
+              }
+            </select>
+          </div>
+          @if (hasError(orderForm, 'professional_id', 'required')) {
+            <span class="text-[11px] text-red-500 mt-0.5"
+              >Por favor, selecione um profissional.</span
+            >
+          }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-[13px] font-medium text-gray-700">Serviço</label>
+          <div
+            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+          >
+            <img src="/images/icons/dashboard/form-user.svg" alt="" />
+            <select
+              [value]="orderForm.get('service_id')?.value ?? ''"
+              (change)="orderForm.get('service_id')?.setValue($any($event.target).value)"
+              class="w-full text-xs bg-transparent outline-none text-gray-700 cursor-pointer"
+            >
+              <option value="" disabled>Selecione um serviço...</option>
+              @for (service of services(); track service.id) {
+                <option [value]="service.id">{{ service.name }}</option>
+              }
+            </select>
+          </div>
+          @if (hasError(orderForm, 'service_id', 'required')) {
+            <span class="text-[11px] text-red-500 mt-0.5">Por favor, selecione um serviço.</span>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-[13px] font-medium text-gray-700">Endereço de Entrega/Execução</label>
+          <div
+            class="flex bg-[#F4F4F4] gap-2 border-3 border-[#EEEEEE] focus-within:ring-tertiary focus-within:ring-2 focus-within:bg-white text-xs rounded-xl py-2.5 px-3 text-gray-700 outline-none transition-all"
+          >
+            <img src="/images/icons/dashboard/form-user.svg" alt="" />
+            <select
+              [value]="orderForm.get('address_id')?.value ?? ''"
+              (change)="orderForm.get('address_id')?.setValue($any($event.target).value || null)"
+              class="w-full text-xs bg-transparent outline-none text-gray-700 cursor-pointer"
+            >
+              <option value="" disabled>Selecione um endereço...</option>
+              @for (addr of addresses(); track addr.id) {
+                <option [value]="addr.id">
+                  {{ addr.province }} - {{ addr.municiple }}, {{ addr.address }}
+                </option>
+              }
+            </select>
+          </div>
+          @if (hasError(orderForm, 'address_id', 'required')) {
+            <span class="text-[11px] text-red-500 mt-0.5">Por favor, selecione um endereço.</span>
+          }
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-[13px] font-medium text-gray-700">Descrição do Pedido</label>
+
+        <textarea
+          [value]="orderForm.get('description')?.value ?? ''"
+          (input)="orderForm.get('description')?.setValue($any($event.target).value)"
+          rows="4"
+          placeholder="Especifique os detalhes da necessidade ou contrato..."
+          class="w-full bg-[#F4F4F4] border border-[#EEEEEE] focus:bg-white focus:ring-2 focus:ring-tertiary rounded-xl p-3 text-xs outline-none text-gray-700 resize-none transition-all"
+        ></textarea>
+        @if (hasError(orderForm, 'description', 'required')) {
+          <span class="text-[11px] text-red-500 mt-0.5">A descrição é obrigatória.</span>
+        } @else if (hasError(orderForm, 'description', 'minlength')) {
+          <span class="text-[11px] text-red-500 mt-0.5"
+            >A descrição deve ter pelo menos 10 caracteres.</span
+          >
+        }
+      </div>
+
+      <div class="flex justify-start gap-3 pt-4 border-t border-gray-100">
+        <button
+          type="submit"
+          [disabled]="isSubmitting()"
+          class="bg-tertiary hover:bg-tertiary min-w-36 justify-center text-white font-medium text-xs px-2.5 py-3 rounded-lg transition-all duration-300 disabled:opacity-50 cursor-pointer flex items-center gap-2"
+        >
+          @if (isSubmitting()) {
+            <div
+              class="w-3.5 h-3.5 border-2 border-t-transparent border-white rounded-full animate-spin"
+            ></div>
+            A processar...
+          } @else {
+            Criar Pedido
+          }
+        </button>
+
+        <button
+          type="button"
+          (click)="onClose()"
+          class="bg-[#B5B5C3] hover:bg-gray-400 text-white font-medium text-xs px-2.5 py-3 rounded-lg transition-all duration-300 cursor-pointer min-w-36 flex items-center justify-center"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
