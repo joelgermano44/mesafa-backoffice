@@ -6,6 +6,7 @@ import {
   computed,
   inject,
   signal,
+  DestroyRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -23,7 +24,9 @@ import { animate, stagger } from 'motion';
 import { ServicesService } from '../../../../../../core/features/services/services/services.service';
 import { toast } from 'ngx-sonner';
 import { ProfessionalService } from '../../../../../../core/features/services/models/service.model';
-import { ConfirmDialogComponent } from "../../../../components/confirm-dialog-component/confirm-dialog-component";
+import { ConfirmDialogComponent } from '../../../../components/confirm-dialog-component/confirm-dialog-component';
+import { ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export type TabType = 'estatisticas' | 'servicos' | 'portfolio' | 'habilitacoes';
 
@@ -49,10 +52,12 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
   protected readonly collaboratorService = inject(CollaboratorService);
   protected readonly ordersService = inject(OrdersService);
   protected readonly portfolioService = inject(PortfolioService);
+  private readonly route = inject(ActivatedRoute);
   protected readonly apiUrl = API_CONFIG.baseUrl;
   protected readonly elementRef = inject(ElementRef);
 
   public services = signal<ProfessionalService[]>([]);
+  private readonly destroyRef = inject(DestroyRef);
 
   public confirmDialogState = signal<ConfirmDialogState>({
     isOpen: false,
@@ -88,6 +93,7 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
   portfolios = signal<Portfolio[]>([]);
   selectedAlbum = signal<Portfolio | null>(null);
   selectedModalImage = signal<PortfolioImage | null>(null);
+  selectedServiceId = signal<number | null>(null);
 
   drawerStatusFilter = signal<string>('Tudo');
   drawerDateFilter = signal<string>('Tudo');
@@ -117,6 +123,22 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
 
     return ['Tudo', ...Array.from(years).sort().reverse()];
   });
+
+  ngOnInit(): void {
+    this.loadCollaborators();
+
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      if (params['search']) {
+        this.searchQuery.set(params['search']);
+      }
+
+      if (params['serviceId']) {
+        const serviceId = Number(params['serviceId']);
+        this.isDrawerOpen.set(true);
+        this.selectedServiceId.set(serviceId);
+      }
+    });
+  }
 
   ngAfterViewInit() {
     const root = this.elementRef.nativeElement;
@@ -319,10 +341,6 @@ export class ProfessionalsTable implements OnInit, AfterViewInit {
         this.isOrdersLoading.set(false);
       },
     });
-  }
-
-  ngOnInit(): void {
-    this.loadCollaborators();
   }
 
   loadCollaborators(): void {

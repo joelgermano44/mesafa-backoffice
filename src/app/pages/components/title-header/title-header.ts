@@ -13,6 +13,8 @@ export class TitleHeader implements AfterViewInit {
   title = input.required<string>();
   subtitle = input.required<string>();
 
+  total = input<number | null | undefined>();
+
   name = input.required<string>();
   role = input<string>();
 

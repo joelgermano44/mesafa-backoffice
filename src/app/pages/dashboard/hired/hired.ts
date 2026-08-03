@@ -16,7 +16,7 @@ import { toast } from 'ngx-sonner';
 import { animate, stagger } from 'motion';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog-component/confirm-dialog-component';
 import { API_CONFIG } from '../../../../core/config/api.config';
-import { CreateOrdersComponent } from "./components/create-orders-component/create-orders-component";
+import { CreateOrdersComponent } from './components/create-orders-component/create-orders-component';
 
 @Component({
   selector: 'app-hired',
@@ -32,6 +32,8 @@ export class Hired implements OnInit, AfterViewInit {
 
   private ordersService = inject(OrdersService);
   apiUrl = API_CONFIG.baseUrl;
+
+  public totalOrders = computed(() => this.ordersService.orders().length);
 
   isCreateModalOpen = signal(false);
 

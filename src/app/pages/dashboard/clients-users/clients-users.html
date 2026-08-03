@@ -3,6 +3,7 @@
     title="Usuários Clientes"
     subtitle="Veja a informação de todos os clientes cadastrados no app."
     name="{{ admin()?.name }}"
+    [total]="totalClients()"
   ></app-title-header>
 
   <div class="filter-bar flex w-full justify-between items-center mb-5 gap-4 flex-wrap">

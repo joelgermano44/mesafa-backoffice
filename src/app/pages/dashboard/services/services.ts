@@ -8,10 +8,12 @@ import {
   ElementRef,
   viewChildren,
   viewChild,
+  DestroyRef,
+  OnInit,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
-import { animate, hover, stagger } from 'motion';
+import { animate, stagger } from 'motion';
 
 import { TitleHeader } from '../../components/title-header/title-header';
 import { AdminService } from '../../../../core/features/administrators/services/admin.service';
@@ -21,7 +23,8 @@ import { ProfessionalService } from '../../../../core/features/services/models/s
 import { API_CONFIG } from '../../../../core/config/api.config';
 import { ServiceDetailsDrawer } from './components/service-details-drawer/service-details-drawer';
 import { toast } from 'ngx-sonner';
-import { ConfirmDialogComponent } from "../../components/confirm-dialog-component/confirm-dialog-component";
+import { ConfirmDialogComponent } from '../../components/confirm-dialog-component/confirm-dialog-component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-services',
@@ -29,14 +32,22 @@ import { ConfirmDialogComponent } from "../../components/confirm-dialog-componen
   templateUrl: './services.html',
   styleUrl: './services.css',
 })
-export class Services implements AfterViewInit {
+export class Services implements AfterViewInit, OnInit {
   private readonly adminService = inject(AdminService);
   private readonly servicesService = inject(ServicesService);
   private readonly el = inject(ElementRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
 
-  public selectedService = signal<ProfessionalService | null>(null);
   public readonly api = API_CONFIG;
   readonly admin = this.adminService.admin;
+
+  public totalServices = computed(() => this.filteredServices().length);
+
+  public selectedService = signal<ProfessionalService | null>(null);
+  readonly selectedCategory = signal<string>('all');
+  readonly searchQuery = signal<string>('');
 
   isConfirmOpen = signal(false);
   isDeleting = signal(false);
@@ -61,14 +72,60 @@ export class Services implements AfterViewInit {
   );
 
   public services = signal<ProfessionalService[]>([]);
+  cards = viewChildren<ElementRef>('serviceCard');
+  cardsContainer = viewChild<ElementRef>('cardsContainer');
 
   constructor() {
+    // Sincroniza rawServices com a signal de services
     effect(() => {
       const data = this.rawServices();
       this.services.set(data);
 
       setTimeout(() => this.animateCards(), 50);
     });
+
+    // Abre automaticamente o drawer se houver `serviceId` na URL
+    effect(() => {
+      const list = this.services();
+      const currentSelected = this.selectedService();
+
+      if (list.length > 0 && !currentSelected) {
+        const targetId = Number(this.route.snapshot.queryParams['serviceId']);
+        if (targetId) {
+          const found = list.find((s) => s.id === targetId);
+          if (found) {
+            this.selectedService.set(found);
+          }
+        }
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    // Escuta alterações de queryParams enquanto o utilizador navega
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const serviceId = params['serviceId'] ? Number(params['serviceId']) : null;
+      if (serviceId && this.services().length > 0) {
+        const found = this.services().find((s) => s.id === serviceId);
+        if (found) {
+          this.selectedService.set(found);
+        }
+      }
+    });
+  }
+
+  loadServices(): void {
+    this.servicesService
+      .getAll()
+      .pipe(
+        catchError((err) => {
+          console.error('Erro ao carregar serviços:', err);
+          return of([]);
+        }),
+      )
+      .subscribe((data) => {
+        this.services.set(data);
+      });
   }
 
   ngAfterViewInit(): void {
@@ -91,42 +148,33 @@ export class Services implements AfterViewInit {
     }
   }
 
-  public openModal(): void {
-    this.isModalOpen.set(true);
-  }
-
-  public closeModal(): void {
-    this.isModalOpen.set(false);
-  }
-
-  public reloadServices(): void {
-    this.servicesService.getAll().subscribe({
-      next: (data) => {
-        this.services.set(data);
-      },
-      error: (err) => console.error(err),
-    });
-  }
-
   public filteredServices = computed(() => {
-    const search = this.searchTerm().toLowerCase().trim();
+    const search = (this.searchTerm() || this.searchQuery()).toLowerCase().trim();
     const type = this.selectedType();
+    const category = this.selectedCategory();
     const priceFilter = this.selectedPriceFilter();
 
     let result = this.services().filter((service) => {
       const serviceName = service.name.toLowerCase();
+      const serviceDesc = service.description ? service.description.toLowerCase() : '';
 
       const professionals =
         service.professionals?.some((professional) =>
           professional.name.toLowerCase().includes(search),
         ) ?? false;
 
-      const matchesSearch = serviceName.includes(search) || professionals;
+      const matchesSearch =
+        search === '' ||
+        serviceName.includes(search) ||
+        serviceDesc.includes(search) ||
+        professionals;
 
       const matchesType =
         type === 'Tudo' || service.category?.name?.toLowerCase() === type.toLowerCase();
 
-      return matchesSearch && matchesType;
+      const matchesCategory = category === 'all' || service.category?.name === category;
+
+      return matchesSearch && matchesType && matchesCategory;
     });
 
     if (priceFilter === 'menor') {
@@ -161,6 +209,38 @@ export class Services implements AfterViewInit {
     });
   }
 
+  openDetails(service: ProfessionalService) {
+    this.selectedService.set(service);
+  }
+
+  closeDetails() {
+    this.selectedService.set(null);
+  }
+
+  readonly categories = computed(() => {
+    const list = this.services();
+    const unique = Array.from(new Set(list.map((s) => s.category?.name).filter(Boolean)));
+    return ['all', ...unique];
+  });
+
+  openModal(): void {
+    this.isModalOpen.set(true);
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+  }
+
+  reloadServices(): void {
+    this.loadServices();
+  }
+
+  public onCardClick(service: ProfessionalService): void {
+    this.selectedService.set(service);
+  }
+
+  public onEdit(serviceId: number): void {}
+
   public onDelete(serviceId: number): void {
     this.serviceToDelete.set(serviceId);
     this.isConfirmOpen.set(true);
@@ -186,6 +266,9 @@ export class Services implements AfterViewInit {
         this.isDeleting.set(false);
         this.isConfirmOpen.set(false);
         this.serviceToDelete.set(null);
+        if (this.selectedService()?.id === serviceId) {
+          this.selectedService.set(null);
+        }
       },
       error: (err) => {
         console.error(err);
@@ -195,15 +278,13 @@ export class Services implements AfterViewInit {
     });
   }
 
-  public onEdit(id: number): void {
-    console.log(id);
-  }
-
-  openDetails(service: ProfessionalService) {
-    this.selectedService.set(service);
-  }
-
-  closeDetails() {
+  closeDrawer(): void {
     this.selectedService.set(null);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { serviceId: null },
+      queryParamsHandling: 'merge',
+    });
   }
 }

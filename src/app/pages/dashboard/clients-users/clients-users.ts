@@ -22,6 +22,7 @@ export class ClientsUsers {
   readonly selectedServiceType = signal<string>('ALL');
   readonly selectedStatusFilter = signal<string>('ALL');
   readonly selectedProvinceFilter = signal<string>('ALL');
+  readonly totalClients = computed(() => this.clientService.clients().length);
 
   isConfirmOpen = signal(false);
   isLoading = signal(false);

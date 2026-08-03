@@ -7,8 +7,9 @@ import {
   effect,
   HostListener,
   untracked,
+  DestroyRef,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AdminService } from '../../../../../core/features/administrators/services/admin.service';
 import { animate } from 'motion';
 import { AuthService } from '../../../../../core/features/auth/services/auth.service';
@@ -27,20 +28,19 @@ export class Header {
   private readonly authservice = inject(AuthService);
   private readonly searchService = inject(SearchService);
   private readonly el = inject(ElementRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly admin = this.adminService.admin;
   readonly isDropdownOpen = signal(false);
 
-  // ViewChildren do Dropdown do usuário
   readonly dropdownMenu = viewChild<ElementRef<HTMLElement>>('dropdownMenu');
   readonly chevronIcon = viewChild<ElementRef<HTMLElement>>('chevronIcon');
 
-  // ViewChild dos resultados da Busca
   readonly searchResultsContainer = viewChild<ElementRef<HTMLElement>>('searchResultsContainer');
 
   readonly searchTerm = signal('');
 
-  readonly searchResults = toSignal(
+  /*   readonly searchResults = toSignal(
     toObservable(this.searchTerm).pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -52,10 +52,22 @@ export class Header {
       }),
     ),
     { initialValue: { services: [], professionals: [] } },
+  ); */
+
+  private readonly router = inject(Router);
+
+  private readonly search$ = toObservable(this.searchTerm).pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    switchMap((term) => {
+      if (!term.trim()) return of(null);
+      return this.searchService.search(term, 'tudo');
+    }),
   );
 
+  readonly searchResults = toSignal(this.search$, { initialValue: null });
+
   constructor() {
-    // Animação da Chevron e do Menu Dropdown do Usuário
     effect(() => {
       const isOpen = this.isDropdownOpen();
       const dropdownEl = this.dropdownMenu()?.nativeElement;
@@ -85,7 +97,6 @@ export class Header {
       }
     });
 
-    // Animação de Entrada para os Resultados da Busca
     effect(() => {
       const searchEl = this.searchResultsContainer()?.nativeElement;
       if (searchEl) {
@@ -105,21 +116,62 @@ export class Header {
     });
   }
 
-  // Fecha os dropdowns ao clicar em qualquer lugar fora do componente
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.el.nativeElement.contains(event.target)) {
-      this.closeDropdownWithAnimation();
-      
-      // Fecha a busca limpando o termo (se desejar manter o termo, basta remover esta linha)
-      this.closeSearchWithAnimation();
-    }
-  }
-
   onSearchInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchTerm.set(input.value);
   }
+
+  onSelectResult(item: any): void {
+    this.closeSearchWithAnimation();
+
+    if (item.type === 'service' || item.price !== undefined) {
+      this.router.navigate(['/dashboard/services'], {
+        queryParams: { serviceId: item.id },
+      });
+    } else if (item.type === 'professional' || item.role === 'collaborator' || item.username) {
+      this.router.navigate(['/dashboard/professionals-users'], {
+        queryParams: { search: item.name || item.id },
+      });
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  closeSearchWithAnimation(): void {
+    const searchEl = this.searchResultsContainer()?.nativeElement;
+
+    if (searchEl && this.searchTerm().trim().length > 0) {
+      const controls = animate(
+        searchEl,
+        { opacity: [1, 0], scale: [1, 0.98], y: [0, -4] },
+        { duration: 0.15, ease: [0.16, 1, 0.3, 1] },
+      );
+
+      controls.finished.then(() => {
+        this.searchTerm.set('');
+      });
+    } else {
+      this.searchTerm.set('');
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent): void {
+    if (!this.el.nativeElement.contains(event.target)) {
+      if (this.searchTerm().length > 0) {
+        this.closeSearchWithAnimation();
+      }
+    }
+  }
+
+  /*   @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.el.nativeElement.contains(event.target)) {
+      this.closeDropdownWithAnimation();
+
+      this.closeSearchWithAnimation();
+    }
+  } */
 
   toggleDropdown(): void {
     if (this.isDropdownOpen()) {
@@ -133,7 +185,6 @@ export class Header {
     const dropdownEl = this.dropdownMenu()?.nativeElement;
 
     if (dropdownEl && this.isDropdownOpen()) {
-      // Executa animação de saída suave antes de desmontar o elemento (*ngIf / @if)
       const controls = animate(
         dropdownEl,
         {
@@ -155,6 +206,7 @@ export class Header {
     }
   }
 
+  /* 
   closeSearchWithAnimation(): void {
     const searchEl = this.searchResultsContainer()?.nativeElement;
 
@@ -178,7 +230,7 @@ export class Header {
     } else {
       this.searchTerm.set('');
     }
-  }
+  } */
 
   logout(): void {
     this.authservice.logout();

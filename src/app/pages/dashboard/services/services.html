@@ -4,6 +4,7 @@
       title="Serviços"
       subtitle="Faça a gestão de todos os serviços na plataforma"
       name="{{ admin()?.name }}"
+      [total]="totalServices()"
     ></app-title-header>
 
     <button
@@ -148,7 +149,7 @@
 @if (selectedService(); as service) {
   <app-service-details-drawer
     [service]="service"
-    (close)="selectedService.set(null)"
+    (close)="closeDrawer()"
   ></app-service-details-drawer>
 }
 

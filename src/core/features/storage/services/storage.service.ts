@@ -1,46 +1,37 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { AencriptJdecriptDToken } from '../../../config/encriptation/aencript-jdecript-dtoken';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StorageService {
+  private secureStorage = inject(AencriptJdecriptDToken);
+
   set(key: string, value: unknown): void {
-    localStorage.setItem(key, JSON.stringify(value));
+    this.secureStorage.guardarDadosSegurosNoStorage(key, value);
   }
 
   get<T>(key: string): T | null {
-    const value = localStorage.getItem(key);
-
-    if (!value) {
-      return null;
-    }
-
-    return JSON.parse(value);
+    return this.secureStorage.buscarDadosSegurosDoStorage<T>(key);
   }
 
   getObject<T>(key: string): T | null {
-    const item = localStorage.getItem(key);
-    if (!item) return null;
-    try {
-      return JSON.parse(item);
-    } catch {
-      return null;
-    }
+    return this.get<T>(key);
   }
 
   setString(key: string, value: string): void {
-    localStorage.setItem(key, value);
+    this.secureStorage.setSecureItem(key, value);
   }
 
   getString(key: string): string | null {
-    return localStorage.getItem(key);
+    return this.secureStorage.getSecureItem(key);
   }
 
   remove(key: string): void {
-    localStorage.removeItem(key);
+    this.secureStorage.removeSecureItem(key);
   }
 
-  clear() {
-    localStorage.clear();
+  clear(): void {
+    this.secureStorage.clearSession();
   }
 }

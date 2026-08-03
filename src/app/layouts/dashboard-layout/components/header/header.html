@@ -3,7 +3,7 @@
     <img src="/images/logos/logo-white.svg" alt="Logo" class="w-26.75" />
   </a>
 
-  <div class="relative max-w-77.5 w-full">
+  <div class="relative max-w-100 w-full">
     <div
       class="flex bg-white p-2.5 rounded-lg w-full gap-3.75 items-center border border-primary shadow-white/30 shadow-sm"
     >
@@ -12,8 +12,8 @@
         type="text"
         [value]="searchTerm()"
         (input)="onSearchInput($event)"
-        placeholder="Procurar..."
-        class="placeholder:text-[#9A9FA5] placeholder:font-semibold placeholder:text-[15px] outline-none w-full"
+        placeholder="Procurar por serviços, profissionais..."
+        class="placeholder:text-[#9A9FA5] placeholder:font-normal placeholder:text-[15px] outline-none w-full"
       />
     </div>
 
@@ -27,14 +27,14 @@
             Serviços
           </div>
           @for (service of searchResults()?.services; track service.id) {
-            <a
-              [routerLink]="['/services', service.id]"
-              (click)="closeSearchWithAnimation()"
-              class="px-4 py-2 hover:bg-gray-50 flex justify-between items-center transition-colors"
+            <button
+              type="button"
+              (click)="onSelectResult(service)"
+              class="w-full text-left px-4 py-2 hover:bg-gray-50 flex justify-between items-center transition-colors cursor-pointer"
             >
               <span class="font-semibold text-gray-800">{{ service.name }}</span>
               <span class="text-xs text-primary font-bold">{{ service.price }} Kz</span>
-            </a>
+            </button>
           }
         }
 
@@ -47,10 +47,10 @@
             Profissionais
           </div>
           @for (prof of searchResults()?.professionals; track prof.id) {
-            <a
-              [routerLink]="['/professionals', prof.id]"
-              (click)="closeSearchWithAnimation()"
-              class="px-4 py-2 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+            <button
+              type="button"
+              (click)="onSelectResult(prof)"
+              class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3 transition-colors cursor-pointer"
             >
               <img
                 [src]="prof.image || '/images/icons/dashboard/user.svg'"
@@ -61,7 +61,7 @@
                 <span class="font-semibold text-gray-800">{{ prof.name }}</span>
                 <span class="text-xs text-gray-400">@{{ prof.username }}</span>
               </div>
-            </a>
+            </button>
           }
         }
 
